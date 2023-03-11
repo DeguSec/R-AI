@@ -3,6 +3,7 @@ import { AIController } from "src/AIController";
 import { ClientReady } from "./ClientReady";
 import { ChatInputCommandInteractionFunction } from "./InteractionCreate/ChatInputCommandInteraction";
 import { ModalSubmitInteractionFunction } from "./InteractionCreate/ModalSubmitInteraction";
+import { MessageCreateFunction } from "./MessageCreate";
 
 export interface CommonComponents {
     ais: Map<string, AIController>,
@@ -18,5 +19,6 @@ export function Strap(cc: CommonComponents) {
     cc.client.addListener(Events.InteractionCreate, (args) => ChatInputCommandInteractionFunction(args, cc));
     cc.client.addListener(Events.InteractionCreate, (args) => ModalSubmitInteractionFunction(args, cc));
     
-
+    // message related listeners
+    cc.client.addListener(Events.MessageCreate, (args) => MessageCreateFunction(args, cc));
 }
