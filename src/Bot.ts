@@ -1,4 +1,4 @@
-import { ChatInputCommandInteraction, Client, Events, InteractionType, Message, ModalSubmitInteraction, Partials, User } from "discord.js";
+import { ChatInputCommandInteraction, Client, Events, Message, ModalSubmitInteraction, Partials, User } from "discord.js";
 import { AIController } from "./AIController";
 import { commands } from "./Commands/_Commands";
 import { EnvSecrets } from "./EnvSecrets";
@@ -16,45 +16,45 @@ client.login(EnvSecrets.getSecretOrThrow<string>('TOKEN'));
 
 client.addListener(Events.ClientReady, async () => {
     console.log("Ready");
-    await client.application?.commands.set(commands.map( (command) => command.data));
+    await client.application?.commands.set(commands.map((command) => command.data));
 });
 
 client.addListener(Events.InteractionCreate, (args: ChatInputCommandInteraction) => {
-    if(args.isModalSubmit())
+    if (args.isModalSubmit())
         return;
 
-    if(!ais[args.channelId])
+    if (!ais[args.channelId])
         ais[args.channelId] = new AIController()
-    
+
     const ai = ais[args.channelId];
-    const command = commands.filter( (command) => command.name == args.commandName)[0];
+    const command = commands.filter((command) => command.name == args.commandName)[0];
 
     command.commandRun(args, ai);
 });
 
 
 client.addListener(Events.InteractionCreate, (args: ModalSubmitInteraction) => {
-    if(!args.isModalSubmit()) return;
+    if (!args.isModalSubmit()) return;
 
     console.log(args);
 
-    if(!args.channelId) {
+    if (!args.channelId) {
         args.reply(":computer::warning: Malformed modal!");
         return;
     }
 
-    
-    if(!ais[args.channelId])
+
+    if (!ais[args.channelId])
         ais[args.channelId] = new AIController()
 
     const ai = ais[args.channelId];
-    const command = commands.filter( (command) => command.name == args.customId)[0];
+    const command = commands.filter((command) => command.name == args.customId)[0];
 
-    if(!command || !command.modalRun) {
+    if (!command || !command.modalRun) {
         args.reply(":computer::warning: Wrong command for processing modal.")
         return;
     }
-    
+
     command.modalRun(args, ai)
 
 });
@@ -63,7 +63,7 @@ let ais: Record<string, AIController> = {}
 
 client.addListener(Events.MessageCreate, (message: Message) => {
     // prevent bot from sending itself stuff
-    if(message.author.id == "1083497030334292028") return;
+    if (message.author.id == "1083497030334292028") return;
 
     //console.log(message);
 
@@ -71,17 +71,22 @@ client.addListener(Events.MessageCreate, (message: Message) => {
         console.log(message.channelId + " u: " + message.content);
 
         let ai = ais[message.channelId]
-        if(ai === undefined) {
+        if (ai === undefined) {
             ai = ais[message.channelId] = new AIController()
         }
 
-        ai.sendAMessage(message.content, (response: string) => {
-            console.log(message.channelId + " b: " + response)
-            message.reply(response)
-        }, undefined, convertUserForBot(message.author));
+        ai.sendAMessage(
+            {
+                "message": message.content,
+                "retried": false,
+                "user": convertUserForBot(message.author)
+            }, (response: string) => {
+                console.log(message.channelId + " b: " + response)
+                message.reply(response)
+            });
 
         return;
-    } 
+    }
 });
 
 
