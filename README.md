@@ -16,9 +16,9 @@ yarn install
 You need your own Discord bot token, so make a test bot for your account: https://discord.com/developers/applications.
 
 Create a .env file in the root dir of the project
-Eaxmple .env file
+Example .env file
 ```
-TOKEN=Disocrd bot token goes here
+TOKEN=Discord bot token goes here
 API_KEY=OpenAI api key goes here
 ```
 
