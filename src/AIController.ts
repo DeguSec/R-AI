@@ -10,8 +10,10 @@ const configuration = new Configuration({
 
 const personalityFactory = new PersonalityFactory();
 
-export interface MessageOptions {
-
+export interface AIMessage {
+    message: string,
+    user?: string,
+    retried: boolean,
 }
 
 export class AIController {
@@ -24,24 +26,25 @@ export class AIController {
         this.user = user;
     }
 
-    async sendAMessage(message: string, onRespond: (message: string) => any, retried: boolean = false, user?: string) {
-        this.personality.addUserMessage(message, user);
+    async sendAMessage(message: AIMessage, onRespond: (message: string) => any) {
+        this.personality.addUserMessage(message.message, message.user);
         let resp;
         try {
             resp = (await this.openai.createChatCompletion(this.personality.getChatCompletion())).data.choices[0].message?.content
         } catch(e) {
+            // TODO: Log this.
             console.log(e);
         }
 
         if(resp) {
-            if (retried) resp = ":computer::warning: Bot reset\n\n" + resp;
+            if (message.retried) resp = ":computer::warning: Bot reset\n\n" + resp;
             this.personality.addAssistantMessage(resp);
             onRespond(resp)
         }
         else {
             // reset if failed
             this.personality.reset();
-            if(!retried) this.sendAMessage(message, onRespond, true, user);
+            if(!message.retried) this.sendAMessage(message, onRespond);
             else return;
         }
     }
