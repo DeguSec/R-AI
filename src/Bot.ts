@@ -17,17 +17,12 @@ const client = new Client({
 });
 client.login(EnvSecrets.getSecretOrThrow<string>('TOKEN'));
 
-client.addListener(Events.ClientReady, async () => {
-    console.log("Ready");
-    await client.application?.commands.set(commands.map((command) => command.data));
-});
-
 
 const ais: AIPool = new Map();
 
 
 // Trap client with listeners 
-Strap(client, {ais});
+Strap({ais, client});
 
 
 client.addListener(Events.InteractionCreate, (args: ModalSubmitInteraction) => {

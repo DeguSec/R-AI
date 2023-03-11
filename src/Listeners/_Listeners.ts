@@ -1,12 +1,20 @@
 import { Client, Events } from "discord.js";
 import { AIController } from "src/AIController";
+import { ClientReady } from "./ClientReady";
 import { ChatInputCommandInteractionFunction } from "./InteractionCreate/ChatInputCommandInteraction";
 
 export interface CommonComponents {
-    ais: Map<string, AIController>
+    ais: Map<string, AIController>,
+    client: Client,
 } 
 
 
-export function Strap(client: Client, cc: CommonComponents) {
-    client.addListener(Events.InteractionCreate, (args) => ChatInputCommandInteractionFunction(args, cc));
+export function Strap(cc: CommonComponents) {
+    // on ready
+    cc.client.addListener(Events.ClientReady, async () => await ClientReady(cc));
+
+    // interaction creates
+    cc.client.addListener(Events.InteractionCreate, (args) => ChatInputCommandInteractionFunction(args, cc));
+    
+
 }
