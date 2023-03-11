@@ -20,7 +20,7 @@ export class AIController {
     private user?: string;
     constructor(user?: string) {
         this.openai = new OpenAIApi(configuration);
-        this.personality = new LolBot();
+        this.personality = personalityFactory.generateBot();
         this.user = user;
     }
 
