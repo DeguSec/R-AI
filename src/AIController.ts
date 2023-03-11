@@ -1,11 +1,11 @@
 import { Configuration, OpenAIApi } from "openai";
+import { EnvSecrets } from "./EnvSecrets";
 import { Basic } from "./Personality/Basic";
 import { LolBot } from "./Personality/LolBot";
 import { Personalities, Personality, PersonalityFactory } from "./Personality/_Personality";
-import { apiKey } from "./secrets";
 
 const configuration = new Configuration({
-  apiKey,
+	apiKey: EnvSecrets.getSecretOrThrow<string>('API_KEY'),
 });
 
 const personalityFactory = new PersonalityFactory();
