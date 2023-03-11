@@ -2,6 +2,7 @@ import { Client, Events } from "discord.js";
 import { AIController } from "src/AIController";
 import { ClientReady } from "./ClientReady";
 import { ChatInputCommandInteractionFunction } from "./InteractionCreate/ChatInputCommandInteraction";
+import { ModalSubmitInteractionFunction } from "./InteractionCreate/ModalSubmitInteraction";
 
 export interface CommonComponents {
     ais: Map<string, AIController>,
@@ -15,6 +16,7 @@ export function Strap(cc: CommonComponents) {
 
     // interaction creates
     cc.client.addListener(Events.InteractionCreate, (args) => ChatInputCommandInteractionFunction(args, cc));
+    cc.client.addListener(Events.InteractionCreate, (args) => ModalSubmitInteractionFunction(args, cc));
     
 
 }

@@ -24,30 +24,6 @@ const ais: AIPool = new Map();
 // Trap client with listeners 
 Strap({ais, client});
 
-
-client.addListener(Events.InteractionCreate, (args: ModalSubmitInteraction) => {
-    if (!args.isModalSubmit()) return;
-
-    console.log(args);
-
-    if (!args.channelId) {
-        args.reply(":computer::warning: Malformed modal!");
-        return;
-    }
-
-
-    const ai = CheckAI(ais, args.channelId);
-    const command = commands.filter((command) => command.name == args.customId)[0];
-
-    if (!command || !command.modalRun) {
-        args.reply(":computer::warning: Wrong command for processing modal.")
-        return;
-    }
-
-    command.modalRun(args, ai)
-
-});
-
 client.addListener(Events.MessageCreate, (message: Message) => {
     // prevent bot from sending itself stuff
     if (message.author.id == "1083497030334292028") return;
