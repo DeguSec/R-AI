@@ -1,7 +1,10 @@
-import { ChatInputCommandInteraction, Client, Events, Message, ModalSubmitInteraction, Partials, User } from "discord.js";
+import { Client, Events, Message, ModalSubmitInteraction, Partials, User } from "discord.js";
 import { AIController } from "./AIController";
 import { commands } from "./Commands/_Commands";
 import { EnvSecrets } from "./EnvSecrets";
+import { CheckAI } from "./Functions/CheckAI";
+import { Strap } from "./Listeners/_Listeners";
+import { AIPool } from "./Types/AIPool";
 
 console.log("Bot is starting...");
 
@@ -19,18 +22,12 @@ client.addListener(Events.ClientReady, async () => {
     await client.application?.commands.set(commands.map((command) => command.data));
 });
 
-client.addListener(Events.InteractionCreate, (args: ChatInputCommandInteraction) => {
-    if (args.isModalSubmit())
-        return;
 
-    if (!ais[args.channelId])
-        ais[args.channelId] = new AIController()
+const ais: AIPool = new Map();
 
-    const ai = ais[args.channelId];
-    const command = commands.filter((command) => command.name == args.commandName)[0];
 
-    command.commandRun(args, ai);
-});
+// Trap client with listeners 
+Strap(client, {ais});
 
 
 client.addListener(Events.InteractionCreate, (args: ModalSubmitInteraction) => {
@@ -44,10 +41,7 @@ client.addListener(Events.InteractionCreate, (args: ModalSubmitInteraction) => {
     }
 
 
-    if (!ais[args.channelId])
-        ais[args.channelId] = new AIController()
-
-    const ai = ais[args.channelId];
+    const ai = CheckAI(ais, args.channelId);
     const command = commands.filter((command) => command.name == args.customId)[0];
 
     if (!command || !command.modalRun) {
@@ -59,8 +53,6 @@ client.addListener(Events.InteractionCreate, (args: ModalSubmitInteraction) => {
 
 });
 
-let ais: Record<string, AIController> = {}
-
 client.addListener(Events.MessageCreate, (message: Message) => {
     // prevent bot from sending itself stuff
     if (message.author.id == "1083497030334292028") return;
@@ -70,10 +62,7 @@ client.addListener(Events.MessageCreate, (message: Message) => {
     if (message.guild == null || (true && message.channelId == "1083495067966242986" && message.guildId == "851504886854975489")) {
         console.log(message.channelId + " u: " + message.content);
 
-        let ai = ais[message.channelId]
-        if (ai === undefined) {
-            ai = ais[message.channelId] = new AIController()
-        }
+        let ai = CheckAI(ais, message.channelId);
 
         ai.sendAMessage(
             {
