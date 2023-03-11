@@ -1,6 +1,6 @@
 import { Client, Partials } from "discord.js";
 import { EnvSecrets } from "./EnvSecrets";
-import { Strap } from "./Listeners/_Listeners";
+import { StrapListeners } from "./Listeners/_Listeners";
 import { AIPool } from "./Types/AIPool";
 
 console.log("Bot is starting...");
@@ -15,5 +15,5 @@ client.login(EnvSecrets.getSecretOrThrow<string>('TOKEN'));
 const ais: AIPool = new Map();
 
 // Trap client with listeners 
-Strap({ais, client});
+StrapListeners({ais, client});
 

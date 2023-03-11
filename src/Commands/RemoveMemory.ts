@@ -1,4 +1,4 @@
-import { ApplicationCommandType, CommandInteraction, SlashCommandBuilder } from "discord.js";
+import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { AIController } from "../AIController";
 import { Command } from "./_Commands";
 

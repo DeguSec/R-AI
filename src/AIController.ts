@@ -1,7 +1,6 @@
 import { Configuration, OpenAIApi } from "openai";
 import { EnvSecrets } from "./EnvSecrets";
 import { Basic } from "./Personality/Basic";
-import { LolBot } from "./Personality/LolBot";
 import { Personalities, Personality, PersonalityFactory } from "./Personality/_Personality";
 
 const configuration = new Configuration({
@@ -19,11 +18,9 @@ export interface AIMessage {
 export class AIController {
     private openai: OpenAIApi;
     private personality: Personality;
-    private user?: string;
     constructor(user?: string) {
         this.openai = new OpenAIApi(configuration);
         this.personality = personalityFactory.generateBot();
-        this.user = user;
     }
 
     async sendAMessage(message: AIMessage, onRespond: (message: string) => any) {

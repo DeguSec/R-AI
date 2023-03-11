@@ -11,7 +11,7 @@ export interface CommonComponents {
 } 
 
 
-export function Strap(cc: CommonComponents) {
+export function StrapListeners(cc: CommonComponents) {
     // on ready
     cc.client.addListener(Events.ClientReady, async () => await ClientReady(cc));
 

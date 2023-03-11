@@ -1,4 +1,4 @@
-import { CommandInteraction, SlashCommandBuilder, ModalBuilder, TextInputComponent, TextInputBuilder, TextInputStyle, ActionRowBuilder, CacheType, ModalSubmitInteraction } from "discord.js";
+import { CommandInteraction, SlashCommandBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, CacheType, ModalSubmitInteraction } from "discord.js";
 import { AIController } from "src/AIController";
 import { ModalListener } from "./_Commands";
 
