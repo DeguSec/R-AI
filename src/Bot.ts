@@ -1,8 +1,7 @@
 import { ChatInputCommandInteraction, Client, Events, InteractionType, Message, ModalSubmitInteraction, Partials, User } from "discord.js";
 import { AIController } from "./AIController";
 import { commands } from "./Commands/_Commands";
-import { token } from "./secrets";
-
+import { EnvSecrets } from "./EnvSecrets";
 
 console.log("Bot is starting...");
 
@@ -13,7 +12,7 @@ const client = new Client({
     partials: [Partials.Message, Partials.Channel, Partials.Reaction],
     intents: ['DirectMessages', 'MessageContent', 'DirectMessageReactions', 'GuildMessages', 'GuildMessageReactions', 'Guilds']
 });
-client.login(token);
+client.login(EnvSecrets.getSecretOrThrow<string>('TOKEN'));
 
 client.addListener(Events.ClientReady, async () => {
     console.log("Ready");
