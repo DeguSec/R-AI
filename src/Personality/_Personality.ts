@@ -4,7 +4,7 @@ import { Rchan } from "./Rchan";
 import { Gazelle } from "./Gazelle";
 import { Hope } from "./Hope";
 import { Joe } from "./Joe";
-import { RLol } from "./Rlol";
+import { RLol } from "./RLol";
 
 export interface Personality {
     addUserMessage: (message: string, user?: string) => void,

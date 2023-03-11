@@ -1,4 +1,4 @@
-import { CommandInteraction, Client, ChatInputApplicationCommandData, SlashCommandBuilder, ModalSubmitInteraction} from "discord.js";
+import { CommandInteraction, SlashCommandBuilder, ModalSubmitInteraction} from "discord.js";
 import { AIController } from "src/AIController";
 import { ChangePersonality } from "./ChangePersonality";
 import { CustomPersonality } from "./CustomPersonality";
