@@ -37,7 +37,8 @@ export class AIController {
     }
 
     typing(typing: boolean, user: string) {
-
+        console.log("Typing: ", typing);
+        console.log("User:", user);
     }
 
     private async react(retried?: boolean) {
