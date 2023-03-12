@@ -30,6 +30,8 @@ export class AIController {
     private typingTimeout = 10000;
     private messageDelay = 4000;
 
+    private _debug = false;
+
     constructor(client: Client, channel: Channel) {
         this.openai = new OpenAIApi(configuration);
         this.personality = personalityFactory.generateBot();
@@ -143,5 +145,19 @@ export class AIController {
 
         if (this.queuedRequest)
             clearTimeout(this.queuedRequest);
+    }
+
+    /**
+     * toggles debug mode
+     */
+    toggleDebug() {
+        this._debug =! this._debug;
+    }
+
+    /**
+     * Readonly debug param
+     */
+    get debug() {
+        return this._debug;
     }
 }

@@ -33,7 +33,6 @@ export class ChangePersonality implements Command {
     }
 
     public commandRun(interaction: CommandInteraction, ai?: AIController) {
-        // console.log(interaction);
         let res = "";
 
         if(ai) {
