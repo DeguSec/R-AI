@@ -1,9 +1,10 @@
 import { AIController } from "../AI/AIController";
+import { CommonComponents } from "../Listeners/_Listeners";
 import { AIPool } from "../Types/AIPool";
 
-export const CheckAI = (ais: AIPool, channelId: string): AIController => {
-    if (!ais.has(channelId))
-        ais.set(channelId, new AIController())
+export const CheckAI = (cc: CommonComponents, channelId: string): AIController => {
+    if (!cc.ais.has(channelId))
+        cc.ais.set(channelId, new AIController(cc.client, channelId))
 
-    return ais.get(channelId) as AIController; // will ALWAYS return an AIController
+    return cc.ais.get(channelId) as AIController; // will ALWAYS return an AIController
 } 

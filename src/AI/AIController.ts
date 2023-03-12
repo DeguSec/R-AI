@@ -1,3 +1,4 @@
+import { Client } from "discord.js";
 import { Configuration, OpenAIApi } from "openai";
 import { EnvSecrets } from "../EnvSecrets";
 import { Basic } from "../Personality/Basic";
@@ -18,14 +19,29 @@ export interface AIMessage {
 export class AIController {
     private openai: OpenAIApi;
     private personality: Personality;
+    private client: Client;
+    private channelId: string;
+    private userMessageTimer: number = -1;
+    private userTypingTimer: number = -1;
+    private typingUsers: Array<string> = [];
 
-    constructor(user?: string) {
+    constructor(client: Client, channelId: string) {
         this.openai = new OpenAIApi(configuration);
         this.personality = personalityFactory.generateBot();
+        this.client = client;
+        this.channelId = channelId;
     }
 
-    async sendAMessage(message: AIMessage, onRespond: (message: string) => any) {
+    addMessage(message: AIMessage) {
         this.personality.addUserMessage(message.message, message.user);
+    }
+
+    typing(typing: boolean, user: string) {
+
+    }
+
+    private async react(retried?: boolean) {
+        /*
         let resp;
         try {
             resp = (await this.openai.createChatCompletion(this.personality.getChatCompletion())).data.choices[0].message?.content
@@ -42,13 +58,10 @@ export class AIController {
         else {
             // reset if failed
             this.personality.reset();
-            if(!message.retried) this.sendAMessage(message, onRespond);
+            if(!message.retried) this.addMessage(message, onRespond);
             else return;
         }
-    }
-
-    private async react(onRespond: (message: string) => any) {
-        
+        */
     }
 
     changePersonality(personality?: Personalities) {

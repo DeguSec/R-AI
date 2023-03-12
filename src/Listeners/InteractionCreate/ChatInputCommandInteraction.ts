@@ -7,7 +7,7 @@ export const ChatInputCommandInteractionFunction = (args: ChatInputCommandIntera
     if (args.isModalSubmit())
         return;
 
-    const ai = CheckAI(cc.ais, args.channelId);
+    const ai = CheckAI(cc, args.channelId);
     const command = commands.filter((command) => command.name == args.commandName)[0];
 
     command.commandRun(args, ai);

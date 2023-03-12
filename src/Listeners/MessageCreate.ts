@@ -14,22 +14,13 @@ export const MessageCreateFunction = (message: Message, cc: CommonComponents) =>
     if (message.guild == null || (true && message.channelId == "1083495067966242986" && message.guildId == "851504886854975489")) {
         console.log(message.channelId + " u: " + message.content);
 
-        let ai = CheckAI(cc.ais, message.channelId);
+        let ai = CheckAI(cc, message.channelId);
 
-        ai.sendAMessage(
+        ai.addMessage(
             {
                 "message": message.content,
                 "retried": false,
                 "user": convertUserForBot(message.author)
-            }, async (response: string) => {
-                console.log(message.channelId + " b: " + response);
-
-                const channel: Channel | null = (await cc.client.channels.fetch(message.channelId));
-
-                if(!channel || !(channel.isDMBased() || channel.isTextBased()))
-                    return;
-
-                (channel as DMChannel | TextChannel).send(response);
             });
 
         return;

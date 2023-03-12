@@ -14,7 +14,7 @@ export const ModalSubmitInteractionFunction = (args: ModalSubmitInteraction, cc:
     }
 
 
-    const ai = CheckAI(cc.ais, args.channelId);
+    const ai = CheckAI(cc, args.channelId);
     const command = commands.filter((command) => command.name == args.customId)[0];
 
     if (!command || !command.modalRun) {

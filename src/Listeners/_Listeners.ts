@@ -1,5 +1,5 @@
 import { Client, Events } from "discord.js";
-import { AIController } from "src/AI/AIController";
+import { AIController } from "../AI/AIController";
 import { ClientReady } from "./ClientReady";
 import { ChatInputCommandInteractionFunction } from "./InteractionCreate/ChatInputCommandInteraction";
 import { ModalSubmitInteractionFunction } from "./InteractionCreate/ModalSubmitInteraction";
