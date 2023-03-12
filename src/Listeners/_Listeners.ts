@@ -9,6 +9,7 @@ import { TypingStartFunction } from "./TypingStart";
 export interface CommonComponents {
     ais: Map<string, AIController>,
     client: Client,
+    id?: string,
 } 
 
 
