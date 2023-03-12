@@ -1,5 +1,5 @@
 import { APIApplicationCommandOptionChoice, CommandInteraction, SlashCommandBuilder } from "discord.js";
-import { AIController } from "../AIController";
+import { AIController } from "../AI/AIController";
 import { Personalities } from "../Personality/_Personality";
 import { Command } from "./_Commands";
 

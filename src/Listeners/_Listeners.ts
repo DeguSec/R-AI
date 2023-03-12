@@ -1,9 +1,10 @@
 import { Client, Events } from "discord.js";
-import { AIController } from "src/AIController";
+import { AIController } from "../AI/AIController";
 import { ClientReady } from "./ClientReady";
 import { ChatInputCommandInteractionFunction } from "./InteractionCreate/ChatInputCommandInteraction";
 import { ModalSubmitInteractionFunction } from "./InteractionCreate/ModalSubmitInteraction";
 import { MessageCreateFunction } from "./MessageCreate";
+import { TypingStartFunction } from "./TypingStart";
 
 export interface CommonComponents {
     ais: Map<string, AIController>,
@@ -21,4 +22,7 @@ export function StrapListeners(cc: CommonComponents) {
     
     // message related listeners
     cc.client.addListener(Events.MessageCreate, (args) => MessageCreateFunction(args, cc));
+
+    // typing listener
+    cc.client.addListener(Events.TypingStart, (args) => TypingStartFunction(args, cc) );
 }
