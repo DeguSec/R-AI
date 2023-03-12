@@ -1,4 +1,4 @@
-import { Message, User } from "discord.js";
+import { Channel, DMChannel, Message, TextChannel, User } from "discord.js";
 import { CheckAI } from "../Functions/CheckAI";
 import { CommonComponents } from "./_Listeners";
 
@@ -21,9 +21,15 @@ export const MessageCreateFunction = (message: Message, cc: CommonComponents) =>
                 "message": message.content,
                 "retried": false,
                 "user": convertUserForBot(message.author)
-            }, (response: string) => {
-                console.log(message.channelId + " b: " + response)
-                message.reply(response)
+            }, async (response: string) => {
+                console.log(message.channelId + " b: " + response);
+
+                const channel: Channel | null = (await cc.client.channels.fetch(message.channelId));
+
+                if(!channel || !(channel.isDMBased() || channel.isTextBased()))
+                    return;
+
+                (channel as DMChannel | TextChannel).send(response);
             });
 
         return;
