@@ -20,7 +20,8 @@ export const MessageCreateFunction = (message: Message, cc: CommonComponents) =>
             {
                 "message": message.content,
                 "retried": false,
-                "user": convertUserForBot(message.author)
+                "user": convertUserForBot(message.author),
+                "userMessage": message,
             });
 
         return;

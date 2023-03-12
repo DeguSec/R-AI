@@ -1,4 +1,4 @@
-import { Client } from "discord.js";
+import { Client, Message, Typing } from "discord.js";
 import { Configuration, OpenAIApi } from "openai";
 import { EnvSecrets } from "../EnvSecrets";
 import { Basic } from "../Personality/Basic";
@@ -14,6 +14,7 @@ export interface AIMessage {
     message: string,
     user?: string,
     retried: boolean,
+    userMessage: Message,
 }
 
 export class AIController {
@@ -21,9 +22,12 @@ export class AIController {
     private personality: Personality;
     private client: Client;
     private channelId: string;
-    private userMessageTimer: number = -1;
-    private userTypingTimer: number = -1;
-    private typingUsers: Array<string> = [];
+    private userMessageDate: Date | undefined;
+    private typingUsers: Map<string, NodeJS.Timeout> = new Map();
+    private queuedRequest: NodeJS.Timeout | undefined;
+
+    private typingTimeout = 10000;
+    private messageDelay = 3000;
 
     constructor(client: Client, channelId: string) {
         this.openai = new OpenAIApi(configuration);
@@ -34,14 +38,49 @@ export class AIController {
 
     addMessage(message: AIMessage) {
         this.personality.addUserMessage(message.message, message.user);
+
+        this.userTypingFinished(message.userMessage.author.id);
+        
+        this.userMessageDate = new Date();
+
+        if(this.queuedRequest)
+            clearTimeout(this.queuedRequest);
     }
 
-    typing(typing: boolean, user: string) {
-        console.log("Typing: ", typing);
-        console.log("User:", user);
+    typing(typing: Typing) {
+        console.log(new Date(), "Typing: ", typing.user.id);
+
+        if(this.queuedRequest)
+            clearTimeout(this.queuedRequest);
+
+        if(this.typingUsers.has(typing.user.id))
+            clearTimeout(this.typingUsers.get(typing.user.id));
+        
+        this.typingUsers.set(typing.user.id, setTimeout( () => this.userTypingFinished(typing.user.id), this.typingTimeout));
+    }
+
+    private userTypingFinished(typing: string) {
+        if(this.typingUsers.has(typing))
+            clearTimeout(this.typingUsers.get(typing))
+        
+        this.typingUsers.delete(typing);
+
+        if(this.typingUsers.size == 0)
+            this.typingFinished();
+    }
+
+    private typingFinished() {
+        console.log(new Date(), "Assuming everyone finished typing");
+        const delta = new Date().getMilliseconds() - (this.userMessageDate ? this.userMessageDate : new Date(0)).getMilliseconds() + this.messageDelay;
+        console.log(delta, "delta");
+        
+
+        // fire messages
+        this.queuedRequest = setTimeout(() => this.react(), delta);
     }
 
     private async react(retried?: boolean) {
+        console.log(new Date(), "Reacting");
         /*
         let resp;
         try {
@@ -66,14 +105,19 @@ export class AIController {
     }
 
     changePersonality(personality?: Personalities) {
+        this.reset();
         this.personality = personalityFactory.generateBot(personality);
     }
 
     replacePrompt(newPrompt: string) {
+        this.reset();
         this.personality = new Basic(newPrompt);
     }
 
     reset() {
-        this.personality.reset()
+        this.personality.reset();
+
+        if(this.queuedRequest)
+            clearTimeout(this.queuedRequest);
     }
 }

@@ -1,6 +1,5 @@
 import { AIController } from "../AI/AIController";
 import { CommonComponents } from "../Listeners/_Listeners";
-import { AIPool } from "../Types/AIPool";
 
 export const CheckAI = (cc: CommonComponents, channelId: string): AIController => {
     if (!cc.ais.has(channelId))
