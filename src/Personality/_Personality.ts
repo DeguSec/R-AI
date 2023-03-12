@@ -5,6 +5,7 @@ import { Gazelle } from "./Gazelle";
 import { Hope } from "./Hope";
 import { Joe } from "./Joe";
 import { RLol } from "./RLol";
+import { Mommy } from "./Mommy";
 
 export interface Personality {
     addUserMessage: (message: string, user?: string) => void,
@@ -21,6 +22,7 @@ export enum Personalities {
     Gazelle = "Gazelle",
     Hope = "Hope",
     Joe = "Joe",
+    Mommy = "Mommy"
 }
 
 export class PersonalityFactory {
@@ -43,6 +45,9 @@ export class PersonalityFactory {
 
             case Personalities.Joe:
                 return new Joe();
+
+            case Personalities.Mommy:
+                return new Mommy();
 
             default:
                 return this.generateBot(Personalities.RChan);
