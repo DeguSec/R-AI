@@ -25,9 +25,10 @@ export class AIController {
     private userMessageDate: Date | undefined;
     private typingUsers: Map<string, NodeJS.Timeout> = new Map();
     private queuedRequest: NodeJS.Timeout | undefined;
+    private messageSinceReaction: boolean = false;
 
     private typingTimeout = 10000;
-    private messageDelay = 3000;
+    private messageDelay = 5000;
 
     constructor(client: Client, channelId: string) {
         this.openai = new OpenAIApi(configuration);
@@ -39,19 +40,17 @@ export class AIController {
     addMessage(message: AIMessage) {
         this.personality.addUserMessage(message.message, message.user);
 
+        this.clearQueueMessageTimeout();
+        this.messageSinceReaction = true;
         this.userTypingFinished(message.userMessage.author.id);
-        
-        this.userMessageDate = new Date();
 
-        if(this.queuedRequest)
-            clearTimeout(this.queuedRequest);
+        this.userMessageDate = new Date();
     }
 
     typing(typing: Typing) {
         console.log(new Date(), "Typing: ", typing.user.id);
 
-        if(this.queuedRequest)
-            clearTimeout(this.queuedRequest);
+        this.clearQueueMessageTimeout();
 
         if(this.typingUsers.has(typing.user.id))
             clearTimeout(this.typingUsers.get(typing.user.id));
@@ -71,8 +70,12 @@ export class AIController {
 
     private typingFinished() {
         console.log(new Date(), "Assuming everyone finished typing");
+
+        if(!this.messageSinceReaction)
+            return;
+
         const delta = new Date().getMilliseconds() - (this.userMessageDate ? this.userMessageDate : new Date(0)).getMilliseconds() + this.messageDelay;
-        console.log(delta, "delta");
+        console.log(new Date(), `${delta}s delta`);
         
 
         // fire messages
@@ -81,6 +84,9 @@ export class AIController {
 
     private async react(retried?: boolean) {
         console.log(new Date(), "Reacting");
+
+        // received message
+        this.messageSinceReaction = false;
         /*
         let resp;
         try {
@@ -102,6 +108,15 @@ export class AIController {
             else return;
         }
         */
+    }
+
+    private clearQueueMessageTimeout() {
+        console.log("Cleared queue");
+
+        if(this.queuedRequest)
+            clearTimeout(this.queuedRequest);
+
+        this.queuedRequest = undefined;
     }
 
     changePersonality(personality?: Personalities) {
