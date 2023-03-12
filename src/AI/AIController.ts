@@ -1,4 +1,4 @@
-import { Client, Message, Typing } from "discord.js";
+import { Channel, Client, DMChannel, Message, TextBasedChannel, TextChannel, Typing } from "discord.js";
 import { Configuration, OpenAIApi } from "openai";
 import { EnvSecrets } from "../EnvSecrets";
 import { Basic } from "../Personality/Basic";
@@ -21,7 +21,7 @@ export class AIController {
     private openai: OpenAIApi;
     private personality: Personality;
     private client: Client;
-    private channelId: string;
+    private channel: TextChannel;
     private userMessageDate: Date | undefined;
     private typingUsers: Map<string, NodeJS.Timeout> = new Map();
     private queuedRequest: NodeJS.Timeout | undefined;
@@ -30,11 +30,15 @@ export class AIController {
     private typingTimeout = 10000;
     private messageDelay = 5000;
 
-    constructor(client: Client, channelId: string) {
+    constructor(client: Client, channel: Channel) {
         this.openai = new OpenAIApi(configuration);
         this.personality = personalityFactory.generateBot();
         this.client = client;
-        this.channelId = channelId;
+
+        if(!channel.isTextBased())
+            throw "This channel isn't text based. Cannot make an AI Controller"
+
+        this.channel = channel as TextChannel;
     }
 
     addMessage(message: AIMessage) {
@@ -74,8 +78,10 @@ export class AIController {
         if(!this.messageSinceReaction)
             return;
 
-        const delta = new Date().getMilliseconds() - (this.userMessageDate ? this.userMessageDate : new Date(0)).getMilliseconds() + this.messageDelay;
+        const delta = (this.userMessageDate ? this.userMessageDate : new Date(0)).getMilliseconds() - new Date().getMilliseconds() + this.messageDelay;
         console.log(new Date(), `${delta}s delta`);
+
+        this.channel.sendTyping();
         
 
         // fire messages

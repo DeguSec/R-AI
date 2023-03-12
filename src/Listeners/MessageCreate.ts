@@ -14,7 +14,7 @@ export const MessageCreateFunction = (message: Message, cc: CommonComponents) =>
     if (message.guild == null || (true && message.channelId == "1083495067966242986" && message.guildId == "851504886854975489")) {
         console.log(message.channelId + " u: " + message.content);
 
-        let ai = CheckAI(cc, message.channelId);
+        let ai = CheckAI(cc, message.channel);
 
         ai.addMessage(
             {

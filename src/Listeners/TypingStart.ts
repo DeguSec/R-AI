@@ -6,7 +6,7 @@ import { CommonComponents } from "./_Listeners";
 
 export const TypingStartFunction = (typing: Typing, cc: CommonComponents) => {
     if (CheckAllowedSource(typing.channel.id, typing.guild?.id)) {
-        const ai = CheckAI(cc, typing.channel.id);
+        const ai = CheckAI(cc, typing.channel);
         ai.typing(typing);
     }
 }

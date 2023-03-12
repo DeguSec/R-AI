@@ -1,9 +1,9 @@
 const channels = new Set<string>([
-    //"1083495067966242986",
+    "1083495067966242986",
 ])
 
 const guilds = new Set<string>([
-    //"851504886854975489",
+    "851504886854975489",
 ])
 
 export const CheckAllowedSource = (channel?: string, guild?: string) => {
