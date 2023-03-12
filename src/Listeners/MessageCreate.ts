@@ -26,13 +26,10 @@ export const MessageCreateFunction = (message: Message, cc: CommonComponents) =>
 
                 const channel: Channel | null = (await cc.client.channels.fetch(message.channelId));
 
-                console.log(channel);
-
                 if(!channel || !(channel.isDMBased() || channel.isTextBased()))
                     return;
 
-                const cast = channel as DMChannel | TextChannel;
-                cast.send(response);
+                (channel as DMChannel | TextChannel).send(response);
             });
 
         return;
