@@ -1,5 +1,5 @@
 import { CommandInteraction, SlashCommandBuilder } from "discord.js";
-import { AIController } from "../AIController";
+import { AIController } from "../AI/AIController";
 import { Command } from "./_Commands";
 
 export class RemoveMemory implements Command {

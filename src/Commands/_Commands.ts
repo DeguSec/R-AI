@@ -1,5 +1,5 @@
 import { CommandInteraction, SlashCommandBuilder, ModalSubmitInteraction} from "discord.js";
-import { AIController } from "src/AIController";
+import { AIController } from "src/AI/AIController";
 import { ChangePersonality } from "./ChangePersonality";
 import { CustomPersonality } from "./CustomPersonality";
 import { RemoveMemory } from "./RemoveMemory";

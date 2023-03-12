@@ -1,7 +1,7 @@
 import { Configuration, OpenAIApi } from "openai";
-import { EnvSecrets } from "./EnvSecrets";
-import { Basic } from "./Personality/Basic";
-import { Personalities, Personality, PersonalityFactory } from "./Personality/_Personality";
+import { EnvSecrets } from "../EnvSecrets";
+import { Basic } from "../Personality/Basic";
+import { Personalities, Personality, PersonalityFactory } from "../Personality/_Personality";
 
 const configuration = new Configuration({
 	apiKey: EnvSecrets.getSecretOrThrow<string>('API_KEY'),
@@ -18,6 +18,7 @@ export interface AIMessage {
 export class AIController {
     private openai: OpenAIApi;
     private personality: Personality;
+
     constructor(user?: string) {
         this.openai = new OpenAIApi(configuration);
         this.personality = personalityFactory.generateBot();
@@ -44,6 +45,10 @@ export class AIController {
             if(!message.retried) this.sendAMessage(message, onRespond);
             else return;
         }
+    }
+
+    private async react(onRespond: (message: string) => any) {
+        
     }
 
     changePersonality(personality?: Personalities) {

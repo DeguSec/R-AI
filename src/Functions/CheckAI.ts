@@ -1,4 +1,4 @@
-import { AIController } from "../AIController";
+import { AIController } from "../AI/AIController";
 import { AIPool } from "../Types/AIPool";
 
 export const CheckAI = (ais: AIPool, channelId: string): AIController => {
