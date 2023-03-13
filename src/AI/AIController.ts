@@ -5,7 +5,7 @@ import { CheckSelfInteract } from "../Functions/CheckSelfInteract";
 import { CommonComponents } from "../Listeners/_Listeners";
 import { Basic } from "../Personality/Basic";
 import { Personalities, Personality, PersonalityFactory } from "../Personality/_Personality";
-import { AIControllerDebugger } from "./AIControllerDebugger";
+import { AIDebugger } from "./AIDebugger";
 
 const configuration = new Configuration({
     apiKey: EnvSecrets.getSecretOrThrow<string>('API_KEY'),
@@ -33,7 +33,7 @@ export class AIController {
     private typingTimeout = 10000;
     private messageDelay = 4000;
 
-    private _debug = new AIControllerDebugger();
+    private _debug = new AIDebugger();
 
     constructor(cc: CommonComponents, channel: Channel) {
         this.openai = new OpenAIApi(configuration);
@@ -140,7 +140,7 @@ export class AIController {
 
     replacePrompt(newPrompt: string) {
         this.reset();
-        this.personality = new Basic(newPrompt);
+        this.personality = new Basic(newPrompt, this.debug);
     }
 
     reset() {

@@ -1,4 +1,4 @@
-export class AIControllerDebugger {
+export class AIDebugger {
     debugMode = false;
 
     log(log: any) {

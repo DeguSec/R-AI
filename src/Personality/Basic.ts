@@ -1,4 +1,5 @@
 import { ChatCompletionRequestMessage, ChatCompletionRequestMessageRoleEnum, CreateChatCompletionRequest, CreateChatCompletionRequestStop } from "openai";
+import { AIDebugger } from "../AI/AIDebugger";
 import { Personality } from "./_Personality";
 
 
@@ -7,10 +8,16 @@ export class Basic implements Personality {
 
     messages: Array<ChatCompletionRequestMessage> = [];
     protected initialSystemMessage: string;
+    private _debug?: AIDebugger;
 
     constructor(initialSystemMessage: string) {
         this.initialSystemMessage = initialSystemMessage;
-        this.addSystemMessage(initialSystemMessage)
+        this.addSystemMessage(initialSystemMessage);
+    }
+
+    private log(str: any) {
+        if(this._debug)
+            this._debug.log(str);
     }
 
     addAssistantMessage(message: string): void {
@@ -34,7 +41,7 @@ export class Basic implements Personality {
     }
 
     getChatCompletion(): CreateChatCompletionRequest {
-        console.log(this.messages);
+        this.log(this.messages);
         return {
             model: "gpt-3.5-turbo",
             messages: this.messages,
@@ -42,6 +49,7 @@ export class Basic implements Personality {
     }
 
     reset() {
+        this.log("Reset the personality");
         this.messages = [];
         this.addSystemMessage(this.initialSystemMessage);
     }
