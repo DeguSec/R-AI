@@ -37,7 +37,7 @@ export class AIController {
 
     constructor(cc: CommonComponents, channel: Channel) {
         this.openai = new OpenAIApi(configuration);
-        this.personality = personalityFactory.generateBot();
+        this.personality = personalityFactory.generateBot(this._debug);
         this.cc = cc;
 
         if (!channel.isTextBased())
@@ -135,12 +135,13 @@ export class AIController {
 
     changePersonality(personality?: Personalities) {
         this.reset();
-        this.personality = personalityFactory.generateBot(personality);
+        this.personality = personalityFactory.generateBot(this._debug, personality);
     }
 
     replacePrompt(newPrompt: string) {
         this.reset();
-        this.personality = new Basic(newPrompt, this.debug);
+        this.personality = new Basic(newPrompt);
+        this.personality.setDebugger(this._debug);
     }
 
     reset() {

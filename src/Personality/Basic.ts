@@ -18,6 +18,8 @@ export class Basic implements Personality {
     private log(str: any) {
         if(this._debug)
             this._debug.log(str);
+
+        else throw new Error("No debugger");
     }
 
     addAssistantMessage(message: string): void {
@@ -58,5 +60,9 @@ export class Basic implements Personality {
         return this.messages
             .filter( (message) => message.role == ChatCompletionRequestMessageRoleEnum.User )
             .length
+    }
+
+    setDebugger(debug: AIDebugger) {
+        this._debug = debug;
     }
 } 
