@@ -104,7 +104,9 @@ export class AIController {
 
         let resp;
         try {
-            resp = (await this.openai.createChatCompletion(this.personality.getChatCompletion())).data.choices[0].message?.content
+            const req = await this.openai.createChatCompletion(this.personality.getChatCompletion());
+            this._debug.logResponse(req);
+            resp = req.data.choices[0].message?.content;
         } catch (e) {
             // TODO: Log this.
             this._debug.log(e);
