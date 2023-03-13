@@ -1,13 +1,22 @@
 import { CreateChatCompletionResponse } from "openai";
 import { AxiosResponse } from "axios";
 
-const calculateChatCost = (tokens: number) => {
+// token ration: 0.002 / 1000
+const ratio = {cost: 2, per: 1000000}
 
+const calculateChatCost = (tokens: number) => {
+    return (tokens * ratio.cost / ratio.per);
 }
 
 
 export class AIDebugger {
     debugMode = false;
+
+    tokens = {
+        prompt: 0,
+        completion: 0,
+        total: 0,
+    }
 
     log(log: any) {
         if (this.debugMode)
@@ -25,6 +34,17 @@ export class AIDebugger {
         this.log(`\tPrompt   ${data.prompt_tokens}`);
         this.log(`\tComplete ${data.completion_tokens}`);
         this.log(`\tTotal    ${data.total_tokens}`);
+        this.log(`\tCost:    $${calculateChatCost(data.total_tokens)}`);
+
+        this.tokens.completion += data.completion_tokens;
+        this.tokens.prompt += data.prompt_tokens;
+        this.tokens.total += data.total_tokens;
+
+        this.log(`Tokens for conversation:`);
+        this.log(`\tPrompt   ${this.tokens.prompt}`);
+        this.log(`\tComplete ${this.tokens.completion}`);
+        this.log(`\tTotal    ${this.tokens.total}`);
+        this.log(`\tCost:    $${calculateChatCost(this.tokens.total)}`);
     }
 
     toggleDebug() {
