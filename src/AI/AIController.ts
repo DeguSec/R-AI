@@ -1,8 +1,11 @@
 import { Channel, Client, Message, TextChannel, Typing } from "discord.js";
 import { Configuration, OpenAIApi } from "openai";
 import { EnvSecrets } from "../EnvSecrets";
+import { CheckSelfInteract } from "../Functions/CheckSelfInteract";
+import { CommonComponents } from "../Listeners/_Listeners";
 import { Basic } from "../Personality/Basic";
 import { Personalities, Personality, PersonalityFactory } from "../Personality/_Personality";
+import { AIControllerDebugger } from "./AIControllerDebugger";
 
 const configuration = new Configuration({
     apiKey: EnvSecrets.getSecretOrThrow<string>('API_KEY'),
@@ -20,7 +23,7 @@ export interface AIMessage {
 export class AIController {
     private openai: OpenAIApi;
     private personality: Personality;
-    private client: Client;
+    private cc: CommonComponents;
     private channel: TextChannel;
     private userMessageDate: Date | undefined;
     private typingUsers: Map<string, NodeJS.Timeout> = new Map();
@@ -30,12 +33,12 @@ export class AIController {
     private typingTimeout = 10000;
     private messageDelay = 4000;
 
-    private _debug = false;
+    private _debug = new AIControllerDebugger();
 
-    constructor(client: Client, channel: Channel) {
+    constructor(cc: CommonComponents, channel: Channel) {
         this.openai = new OpenAIApi(configuration);
         this.personality = personalityFactory.generateBot();
-        this.client = client;
+        this.cc = cc;
 
         if (!channel.isTextBased())
             throw "This channel isn't text based. Cannot make an AI Controller"
@@ -54,9 +57,9 @@ export class AIController {
     }
 
     typing(typing: Typing) {
-        console.log(new Date(), "Typing: ", typing.user.id);
+        this._debug.log(`Typing: ${typing.user.id}`);
 
-        if (typing.user.id == "1083497030334292028")
+        if (CheckSelfInteract(typing.user.id, this.cc))
             return;
 
         this.clearQueueMessageTimeout();
@@ -78,13 +81,13 @@ export class AIController {
     }
 
     private typingFinished() {
-        console.log(new Date(), "Assuming everyone finished typing");
+        this._debug.log("Assuming everyone finished typing");
 
         if (!this.messageSinceReaction)
             return;
 
         const delta = (this.userMessageDate ? this.userMessageDate : new Date(0)).getMilliseconds() - new Date().getMilliseconds() + this.messageDelay;
-        console.log(new Date(), `${delta}s delta`);
+        this._debug.log(`${delta}s delta`);
 
 
         // fire messages
@@ -92,7 +95,7 @@ export class AIController {
     }
 
     private async react(retried?: boolean) {
-        console.log(new Date(), "Reacting");
+        this._debug.log("Reacting");
 
         // received message
         this.messageSinceReaction = false;
@@ -104,7 +107,7 @@ export class AIController {
             resp = (await this.openai.createChatCompletion(this.personality.getChatCompletion())).data.choices[0].message?.content
         } catch (e) {
             // TODO: Log this.
-            console.log(e);
+            this._debug.log(e);
         }
 
         if (resp) {
@@ -122,7 +125,7 @@ export class AIController {
     }
 
     private clearQueueMessageTimeout() {
-        console.log("Cleared queue");
+        this._debug.log("Cleared queue");
 
         if (this.queuedRequest)
             clearTimeout(this.queuedRequest);
@@ -151,13 +154,13 @@ export class AIController {
      * toggles debug mode
      */
     toggleDebug() {
-        this._debug =! this._debug;
+        this._debug.toggleDebug()
     }
 
     /**
      * Readonly debug param
      */
     get debug() {
-        return this._debug;
+        return this._debug.debugMode;
     }
 }
