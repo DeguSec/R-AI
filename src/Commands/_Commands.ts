@@ -2,6 +2,7 @@ import { CommandInteraction, SlashCommandBuilder, ModalSubmitInteraction} from "
 import { AIController } from "../AI/AIController";
 import { ChangePersonality } from "./ChangePersonality";
 import { CustomPersonality } from "./CustomPersonality";
+import { Debug } from "./Debug";
 import { RemoveMemory } from "./RemoveMemory";
 
 export interface Command {
@@ -19,6 +20,7 @@ export const commands: Array<Command> = [
     new RemoveMemory(),
     new ChangePersonality(),
     new CustomPersonality(),
+    new Debug(),
 ];
 
 export const modalListener: Array<ModalListener> = [

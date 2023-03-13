@@ -10,10 +10,7 @@ const convertUserForBot = (user: User) => `${stripBad(user.username)}${user.disc
 export const MessageCreateFunction = (message: Message, cc: CommonComponents) => {
     // prevent bot from sending itself stuff
     if (CheckSelfInteract(message.author.id, cc) || !CheckAllowedSource(message.channel.id, message.guild?.id)) return;
-
-
-    console.log(message.channelId + " u: " + message.content);
-
+    
     let ai = CheckAI(cc, message.channel);
 
     ai.addMessage(

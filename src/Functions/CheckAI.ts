@@ -4,7 +4,7 @@ import { CommonComponents } from "../Listeners/_Listeners";
 
 export const CheckAI = (cc: CommonComponents, channel: Channel): AIController => {
     if (!cc.ais.has(channel.id))
-        cc.ais.set(channel.id, new AIController(cc.client, channel))
+        cc.ais.set(channel.id, new AIController(cc, channel))
 
     return cc.ais.get(channel.id) as AIController; // will ALWAYS return an AIController
 } 
