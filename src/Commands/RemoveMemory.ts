@@ -24,8 +24,6 @@ export class RemoveMemory implements Command {
             content = ":computer::warning: An AI isn't assigned to you."
         }
 
-        console.log(interaction);
-
         await interaction.deferReply();
 
         await interaction.followUp({
