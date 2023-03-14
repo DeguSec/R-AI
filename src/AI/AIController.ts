@@ -2,6 +2,7 @@ import { Channel, Client, Message, TextChannel, Typing } from "discord.js";
 import { Configuration, OpenAIApi } from "openai";
 import { EnvSecrets } from "../EnvSecrets";
 import { CheckSelfInteract } from "../Functions/CheckSelfInteract";
+import { SeparateMessages } from "../Functions/SeparateMessages";
 import { CommonComponents } from "../Listeners/_Listeners";
 import { Basic } from "../Personality/Basic";
 import { Personalities, Personality, PersonalityFactory } from "../Personality/_Personality";
@@ -115,7 +116,11 @@ export class AIController {
         if (resp) {
             if (retried) resp = ":computer::warning: Bot reset\n\n" + resp;
             this.personality.addAssistantMessage(resp);
-            this.channel.send(resp);
+
+            SeparateMessages(resp).forEach( message => {
+                this.channel.send(message.trim());
+            });
+            
         }
         else {
             // reset if failed
