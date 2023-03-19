@@ -1,7 +1,9 @@
 {
   "dependencies": {
+    "bson": "^5.0.1",
     "discord.js": "^14.7.1",
     "dotenv": "^16.0.3",
+    "mongoose": "^7.0.1",
     "openai": "^3.2.1"
   },
   "devDependencies": {
