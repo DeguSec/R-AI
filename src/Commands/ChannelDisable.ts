@@ -3,9 +3,9 @@ import { AIController } from "../AI/AIController";
 import { Command } from "./_Commands";
 import { ChannelModel } from "../Database/Models/Channel.model";
 
-export class ChannelEnable implements Command {
-    name: string = "enable";
-    private description = "Allow the AI to interact to process and interact with this channel.";
+export class ChannelDisable implements Command {
+    name: string = "disable";
+    private description = "Disallow the AI to interact to process and interact with this channel.";
     public data: SlashCommandBuilder;
 
     constructor() {
@@ -23,12 +23,12 @@ export class ChannelEnable implements Command {
         }
 
         const res = await ChannelModel.find({'channel': interaction.channelId}).exec();
-        if(res.length) {
-            interaction.reply("AI is already enabled in this channel");
+        if(!res.length) {
+            interaction.reply("AI is already disabled in this channel");
             return;
         }
 
-        new ChannelModel({channel: interaction.channelId}).save();
-        interaction.reply("AI has been enabled");
+        res[0].deleteOne();
+        interaction.reply("AI has been disabled");
     }
 }
