@@ -2,7 +2,7 @@ import { Message, User } from "discord.js";
 import { CheckAI } from "../Functions/CheckAI";
 import { CheckAllowedSource } from "../Functions/CheckAllowedSource";
 import { CheckSelfInteract } from "../Functions/CheckSelfInteract";
-import { CommonComponents } from "./_Listeners";
+import { CommonComponents } from "../CommonComponents";
 
 const stripBad = (text: string) => text.replace(/[^A-Z|a-z|0-9]/g, "");
 const convertUserForBot = (user: User) => `${stripBad(user.username)}${user.discriminator}`;

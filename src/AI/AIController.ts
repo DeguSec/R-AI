@@ -3,10 +3,10 @@ import { Configuration, OpenAIApi } from "openai";
 import { EnvSecrets } from "../EnvSecrets";
 import { CheckSelfInteract } from "../Functions/CheckSelfInteract";
 import { SeparateMessages } from "../Functions/SeparateMessages";
-import { CommonComponents } from "../Listeners/_Listeners";
 import { Basic } from "../Personality/Basic";
 import { Personalities, Personality, PersonalityFactory } from "../Personality/_Personality";
 import { AIDebugger } from "./AIDebugger";
+import { CommonComponents } from "../CommonComponents";
 
 const configuration = new Configuration({
     apiKey: EnvSecrets.getSecretOrThrow<string>('API_KEY'),

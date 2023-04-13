@@ -1,4 +1,4 @@
-import {CommonComponents} from "./_Listeners";
+import { CommonComponents } from "../CommonComponents";
 import {DbSeeder} from "../Database/Seeding/Seeder";
 
 export const ShutdownFunction = async (cc: CommonComponents) => {

@@ -1,5 +1,5 @@
 import { commands } from "../Commands/_Commands";
-import { CommonComponents } from "./_Listeners";
+import { CommonComponents } from "../CommonComponents";
 
 export const ClientReady = async (cc: CommonComponents) => {
     console.log("Ready");

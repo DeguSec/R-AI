@@ -1,19 +1,11 @@
-import {Client, Events} from "discord.js";
-import {Connection} from "mongoose";
-import {AIController} from "../AI/AIController";
+import {Events} from "discord.js";
 import {ClientReady} from "./ClientReady";
 import {ChatInputCommandInteractionFunction} from "./InteractionCreate/ChatInputCommandInteraction";
 import {ModalSubmitInteractionFunction} from "./InteractionCreate/ModalSubmitInteraction";
 import {MessageCreateFunction} from "./MessageCreate";
 import {TypingStartFunction} from "./TypingStart";
 import {ShutdownFunction} from "./Shutdown";
-
-export interface CommonComponents {
-    ais: Map<string, AIController>,
-    client: Client,
-    id?: string,
-    db?: Connection
-}
+import { CommonComponents } from "../CommonComponents";
 
 
 export function StrapListeners(cc: CommonComponents) {
@@ -30,7 +22,7 @@ export function StrapListeners(cc: CommonComponents) {
     // typing listener
     cc.client.addListener(Events.TypingStart, (args) => TypingStartFunction(args, cc));
 
-    // Shutdown event listners
+    // Shutdown event listeners
     process.on('SIGINT', () => ShutdownFunction(cc));  // CTRL+C
     process.on('SIGQUIT', () => ShutdownFunction(cc)); // Keyboard quit
     process.on('SIGTERM', () => ShutdownFunction(cc)); // `kill` command

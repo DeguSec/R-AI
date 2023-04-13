@@ -1,6 +1,6 @@
 import { Channel } from "discord.js";
 import { AIController } from "../AI/AIController";
-import { CommonComponents } from "../Listeners/_Listeners";
+import { CommonComponents } from "../CommonComponents";
 
 export const CheckAI = (cc: CommonComponents, channel: Channel): AIController => {
     if (!cc.ais.has(channel.id))

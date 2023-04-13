@@ -1,7 +1,7 @@
 import { ModalSubmitInteraction } from "discord.js";
 import { commands } from "../../Commands/_Commands";
 import { CheckAI } from "../../Functions/CheckAI";
-import { CommonComponents } from "../_Listeners";
+import { CommonComponents } from "../../CommonComponents";
 
 export const ModalSubmitInteractionFunction = (args: ModalSubmitInteraction, cc: CommonComponents) => {
     if (!args.isModalSubmit() || !args.channel) return;
