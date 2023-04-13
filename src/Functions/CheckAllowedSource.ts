@@ -1,7 +1,4 @@
-const channels = new Set<string>([
-    //"1083495067966242986",
-    "1084614270806929469",
-]);
+import { ChannelModel } from "../Database/Models/Channel.model";
 
 /**
  * Will return true if the source is allowed
@@ -9,12 +6,14 @@ const channels = new Set<string>([
  * @param guild 
  * @returns 
  */
-export const CheckAllowedSource = (channel?: string, guild?: string) => {
+export const CheckAllowedSource = async (channel?: string, guild?: string) => {
     if(channel == null)
         return false;
 
     if(guild == null)
         return true;
+
+    const res = await ChannelModel.find({'channel': channel}).exec();
         
-    return channels.has(channel);
+    return res.length > 0;
 }
