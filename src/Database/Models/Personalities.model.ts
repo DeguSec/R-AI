@@ -2,6 +2,7 @@ import mongoose, {Schema} from "mongoose";
 
 const personalitySchema: Schema = new Schema({
     _id: {type: Schema.Types.ObjectId, required: true, auto: true},
+    
     name: {type: String, required: true, unique: true, index: true},
     initialSystemMessage: {type: String, required: true},
 }, {timestamps: {createdAt: 'Created', updatedAt: 'LastUpdated'}});
