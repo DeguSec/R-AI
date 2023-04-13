@@ -13,16 +13,12 @@ const client = new Client({
     intents: ['DirectMessages', 'MessageContent', 'DirectMessageReactions', 'GuildMessages', 'GuildMessageReactions', 'Guilds', 'GuildMessageTyping', 'DirectMessageTyping']
 });
 
-const dbPromise = mongoose.connect(EnvSecrets.getSecretOrThrow<string>('DB_CONNECTION_STRING'), {
+mongoose.connect(EnvSecrets.getSecretOrThrow<string>('DB_CONNECTION_STRING'), {
     dbName: EnvSecrets.getSecretOrThrow<string>('DB_NAME'),
 }).then(async () => {
     console.log(`Connected to Database Server`);
     await DbSeeder.SeedDb();
 }).catch((err) => console.error(err));
-
-dbPromise.then((db) => {
-    console.log(db);
-})
 
 client.login(EnvSecrets.getSecretOrThrow<string>('TOKEN'));
 
