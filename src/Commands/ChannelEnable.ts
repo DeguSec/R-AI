@@ -2,9 +2,9 @@ import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { AIController } from "../AI/AIController";
 import { Command } from "./_Commands";
 
-export class Debug implements Command {
-    name: string = "debug";
-    private description = "Toggle debug mode on the current AI";
+export class ChannelEnable implements Command {
+    name: string = "enable";
+    private description = "Allow the AI to interact to process and interact with this channel.";
     public data: SlashCommandBuilder;
 
     constructor() {
@@ -16,9 +16,8 @@ export class Debug implements Command {
     commandRun(interaction: CommandInteraction, ai?: AIController) {
         if(!ai) return;
 
-        ai.toggleDebug();
-
-        const res = `Debug ${ai.debug ? "enabled" : "disabled"}`;
-        interaction.reply(res);
+        
+        
+        interaction.reply("AI has been enabled");
     }
 }

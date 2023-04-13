@@ -4,6 +4,7 @@ import { ChangePersonality } from "./ChangePersonality";
 import { CustomPersonality } from "./CustomPersonality";
 import { Debug } from "./Debug";
 import { RemoveMemory } from "./RemoveMemory";
+import { ChannelEnable } from "./ChannelEnable";
 
 export interface Command {
     name: string;
@@ -21,6 +22,7 @@ export const commands: Array<Command> = [
     new ChangePersonality(),
     new CustomPersonality(),
     new Debug(),
+    new ChannelEnable(),
 ];
 
 export const modalListener: Array<ModalListener> = [
