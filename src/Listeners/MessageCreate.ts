@@ -1,5 +1,7 @@
-import { Channel, DMChannel, Message, TextChannel, User } from "discord.js";
+import { Message, User } from "discord.js";
 import { CheckAI } from "../Functions/CheckAI";
+import { CheckAllowedSource } from "../Functions/CheckAllowedSource";
+import { CheckSelfInteract } from "../Functions/CheckSelfInteract";
 import { CommonComponents } from "./_Listeners";
 
 const stripBad = (text: string) => text.replace(/[^A-Z|a-z|0-9]/g, "");
@@ -7,31 +9,18 @@ const convertUserForBot = (user: User) => `${stripBad(user.username)}${user.disc
 
 export const MessageCreateFunction = (message: Message, cc: CommonComponents) => {
     // prevent bot from sending itself stuff
-    if (message.author.id == "1083497030334292028") return;
+    if (CheckSelfInteract(message.author.id, cc) || !CheckAllowedSource(message.channel.id, message.guild?.id)) return;
+    
+    let ai = CheckAI(cc, message.channel);
 
-    //console.log(message);
+    ai.addMessage(
+        {
+            "message": message.content,
+            "retried": false,
+            "user": convertUserForBot(message.author),
+            "userMessage": message,
+        });
 
-    if (message.guild == null || (true && message.channelId == "1083495067966242986" && message.guildId == "851504886854975489")) {
-        console.log(message.channelId + " u: " + message.content);
+    return;
 
-        let ai = CheckAI(cc.ais, message.channelId);
-
-        ai.sendAMessage(
-            {
-                "message": message.content,
-                "retried": false,
-                "user": convertUserForBot(message.author)
-            }, async (response: string) => {
-                console.log(message.channelId + " b: " + response);
-
-                const channel: Channel | null = (await cc.client.channels.fetch(message.channelId));
-
-                if(!channel || !(channel.isDMBased() || channel.isTextBased()))
-                    return;
-
-                (channel as DMChannel | TextChannel).send(response);
-            });
-
-        return;
-    }
 }

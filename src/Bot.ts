@@ -1,19 +1,20 @@
 import { Client, Partials } from "discord.js";
 import { EnvSecrets } from "./EnvSecrets";
-import { StrapListeners } from "./Listeners/_Listeners";
+import { CommonComponents, StrapListeners } from "./Listeners/_Listeners";
 import { AIPool } from "./Types/AIPool";
 
 console.log("Bot is starting...");
 
 const client = new Client({
     partials: [Partials.Message, Partials.Channel, Partials.Reaction],
-    intents: ['DirectMessages', 'MessageContent', 'DirectMessageReactions', 'GuildMessages', 'GuildMessageReactions', 'Guilds']
+    intents: ['DirectMessages', 'MessageContent', 'DirectMessageReactions', 'GuildMessages', 'GuildMessageReactions', 'Guilds', 'GuildMessageTyping', 'DirectMessageTyping']
 });
 
 client.login(EnvSecrets.getSecretOrThrow<string>('TOKEN'));
 
 const ais: AIPool = new Map();
+const cc: CommonComponents = {ais, client};
 
 // Trap client with listeners 
-StrapListeners({ais, client});
+StrapListeners(cc);
 

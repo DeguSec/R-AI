@@ -6,12 +6,15 @@ import { Hope } from "./Hope";
 import { Joe } from "./Joe";
 import { RLol } from "./RLol";
 import { Mommy } from "./Mommy";
+import { AIDebugger } from "../AI/AIDebugger";
+
 
 export interface Personality {
     addUserMessage: (message: string, user?: string) => void,
     addAssistantMessage: (message: string) => void,
     getChatCompletion: () => CreateChatCompletionRequest
     reset: () => void;
+    setDebugger: (debug: AIDebugger) => void;
 }
 
 export enum Personalities {
@@ -26,7 +29,7 @@ export enum Personalities {
 }
 
 export class PersonalityFactory {
-    generateBot(bot?: Personalities): Personality {
+    private initBot(bot?: Personalities): Personality {
         switch(bot) {
             case Personalities.LOLBot:
                 return new LolBot();
@@ -50,7 +53,13 @@ export class PersonalityFactory {
                 return new Mommy();
 
             default:
-                return this.generateBot(Personalities.RChan);
+                return this.initBot(Personalities.RChan);
         }
+    }
+
+    generateBot(debug: AIDebugger, bot?: Personalities): Personality {
+        const ai = this.initBot(bot)
+        ai.setDebugger(debug);
+        return ai;
     }
 }

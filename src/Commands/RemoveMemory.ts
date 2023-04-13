@@ -1,5 +1,5 @@
 import { CommandInteraction, SlashCommandBuilder } from "discord.js";
-import { AIController } from "../AIController";
+import { AIController } from "../AI/AIController";
 import { Command } from "./_Commands";
 
 export class RemoveMemory implements Command {
@@ -23,8 +23,6 @@ export class RemoveMemory implements Command {
         } else {
             content = ":computer::warning: An AI isn't assigned to you."
         }
-
-        console.log(interaction);
 
         await interaction.deferReply();
 
