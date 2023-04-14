@@ -37,7 +37,7 @@ export class AIController {
 
     constructor(cc: CommonComponents, channel: Channel) {
         this.openai = new OpenAIApi(configuration);
-        (async () => this.personality = await personalityFactory.generateBot(this._debug))();
+        (async () => this.personality = await personalityFactory.generateBot(this._debug, DEFAULT))();
         this.cc = cc;
 
         if (!channel.isTextBased())
@@ -145,7 +145,7 @@ export class AIController {
         this.queuedRequest = undefined;
     }
 
-    async changePersonality(personality?: string) {
+    async changePersonality(personality: string) {
         this.reset();
         this.personality = await personalityFactory.generateBot(this._debug, personality);
     }

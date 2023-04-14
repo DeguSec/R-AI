@@ -73,17 +73,17 @@ export class Personality {
 } 
 
 export class PersonalityFactory {
-    private async initBot(debug: AIDebugger, name?: string): Promise<Personality> {
+    private async initBot(debug: AIDebugger, name: string): Promise<Personality> {
         const personalityEntity: IPersonalitiesEntity | null = await PersonalitiesModel.findOne({name}).exec() as any;
         if(!personalityEntity) 
-            return await this.generateBot(debug);
+            return new Personality("You are an emergency AI. You are a fallback to catastrophic failure. Pretend to be a kernel panic to any user response.", debug);
         
         const ai = new Personality(personalityEntity.initialSystemMessage, debug);
         return ai;
     }
 
-    async generateBot(debug: AIDebugger, personality?: string): Promise<Personality> {
-        return await this.initBot(debug, personality ? personality : DEFAULT);
+    async generateBot(debug: AIDebugger, personality: string): Promise<Personality> {
+        return await this.initBot(debug, personality);
     }
 
     generateCustomBot(debug: AIDebugger, prompt: string): Personality {

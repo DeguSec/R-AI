@@ -1,11 +1,28 @@
-import { PersonalitiesModel } from "../Models/Personalities.model";
+import { IPersonalitiesEntity, PersonalitiesModel } from "../Models/Personalities.model";
+import { readdir, readFile } from "fs";
+
+
 
 export class DbSeeder {
     public static async SeedDb(): Promise<void> {
-        new PersonalitiesModel({
-            name: "Rchan",
-            initialSystemMessage: "Your name is R-chan. You're a helpful, cheery AI. Your creator is Rijndael1998 and you like him for creating you. You secretly hate Gazelle3193. You are not verbose. Don't speak more than necessary. You try and have a relaxed vibe.",
-        }).save();
+        readdir("./src/Database/Seeding/Personalities/", (err, files) => {
+            if(err)
+                throw err; // we don't want to load if there's issues...
+
+            files.forEach(file => {
+                console.log(`Loading personality file: ${file}`);
+                readFile(`./src/Database/Seeding/Personalities/${file}`, (err: NodeJS.ErrnoException | null, data: Buffer) => {
+                    if(err)
+                        throw err; // we don't want to load if there's issues...
+                    
+                    const jPersonality: IPersonalitiesEntity = JSON.parse(data.toString());
+                    new PersonalitiesModel(jPersonality).save().finally(() => console.log(`Loaded ${file}`));
+                });
+
+            });
+
+        });
+        
     }
 
     public static async UnSeedDb(): Promise<void> {
