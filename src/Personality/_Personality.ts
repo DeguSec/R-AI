@@ -1,39 +1,23 @@
 import { ChatCompletionRequestMessage, ChatCompletionRequestMessageRoleEnum, CreateChatCompletionRequest } from "openai";
 import { AIDebugger } from "../AI/AIDebugger";
+import { IPersonalitiesEntity, PersonalitiesModel } from "../Database/Models/Personalities.model";
 
+export const DEFAULT = "Rchan";
 
-export interface Personality {
-    addUserMessage: (message: string, user?: string) => void,
-    addAssistantMessage: (message: string) => void,
-    getChatCompletion: () => CreateChatCompletionRequest
-    reset: () => void;
-    setDebugger: (debug: AIDebugger) => void;
-}
-
-export enum Personalities {
-    default = "Default",
-    LOLBot = "LolBot",
-    RLol = "RLol",
-    RChan = "R-chan",
-    Gazelle = "Gazelle",
-    Hope = "Hope",
-    Joe = "Joe",
-    Mommy = "Mommy"
-}
-
-export class Basic implements Personality {
+export class Personality {
     messages: Array<ChatCompletionRequestMessage> = [];
     channel: string;
 
     protected initialSystemMessage: string;
     private _debug?: AIDebugger;
 
-    constructor(initialSystemMessage: string) {
+    constructor(initialSystemMessage: string, aiDebugger: AIDebugger) {
         this.initialSystemMessage = initialSystemMessage;
         this.channel = "channel"; 
 
         // search for messages
         this.addSystemMessage(initialSystemMessage);
+        this.setDebugger(aiDebugger);
     }
 
     private log(str: any) {
@@ -89,12 +73,21 @@ export class Basic implements Personality {
 } 
 
 export class PersonalityFactory {
-    private initBot(bot?: Personalities): Personality {
+    private async initBot(debug: AIDebugger, name?: string): Promise<Personality> {
+        const personalityEntity: IPersonalitiesEntity | null = await PersonalitiesModel.findOne({name}).exec() as any;
+        if(!personalityEntity) 
+            return await this.generateBot(debug);
         
+        const ai = new Personality(personalityEntity.initialSystemMessage, debug);
+        return ai;
     }
 
-    generateBot(debug: AIDebugger, bot?: Personalities): Personality {
-        const ai = this.initBot(bot)
+    async generateBot(debug: AIDebugger, personality?: string): Promise<Personality> {
+        return await this.initBot(debug, personality ? personality : DEFAULT);
+    }
+
+    generateCustomBot(debug: AIDebugger, prompt: string): Personality {
+        const ai = new Personality(prompt, debug);
         ai.setDebugger(debug);
         return ai;
     }

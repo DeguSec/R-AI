@@ -3,8 +3,7 @@ import { Configuration, OpenAIApi } from "openai";
 import { EnvSecrets } from "../EnvSecrets";
 import { CheckSelfInteract } from "../Functions/CheckSelfInteract";
 import { SeparateMessages } from "../Functions/SeparateMessages";
-import { Basic } from "../Personality/Basic";
-import { Personalities, Personality, PersonalityFactory } from "../Personality/_Personality";
+import { DEFAULT, Personality, PersonalityFactory } from "../Personality/_Personality";
 import { AIDebugger } from "./AIDebugger";
 import { CommonComponents } from "../CommonComponents";
 
@@ -23,7 +22,7 @@ export interface AIMessage {
 
 export class AIController {
     private openai: OpenAIApi;
-    private personality: Personality;
+    private personality?: Personality;
     private cc: CommonComponents;
     private channel: TextChannel;
     private userMessageDate: Date | undefined;
@@ -38,7 +37,7 @@ export class AIController {
 
     constructor(cc: CommonComponents, channel: Channel) {
         this.openai = new OpenAIApi(configuration);
-        this.personality = personalityFactory.generateBot(this._debug);
+        (async () => this.personality = await personalityFactory.generateBot(this._debug))();
         this.cc = cc;
 
         if (!channel.isTextBased())
@@ -48,6 +47,9 @@ export class AIController {
     }
 
     addMessage(message: AIMessage) {
+        if(!this.personality)
+            return;
+        
         this.personality.addUserMessage(message.message, message.user);
 
         this.clearQueueMessageTimeout();
@@ -96,6 +98,9 @@ export class AIController {
     }
 
     private async react(retried?: boolean) {
+        if(!this.personality)
+            return;
+
         this._debug.log("Reacting");
 
         // received message
@@ -140,18 +145,22 @@ export class AIController {
         this.queuedRequest = undefined;
     }
 
-    changePersonality(personality?: Personalities) {
+    async changePersonality(personality?: string) {
         this.reset();
-        this.personality = personalityFactory.generateBot(this._debug, personality);
+        this.personality = await personalityFactory.generateBot(this._debug, personality);
     }
 
     replacePrompt(newPrompt: string) {
         this.reset();
-        this.personality = new Basic(newPrompt);
+        this.personality = personalityFactory.generateCustomBot(this._debug, newPrompt);
         this.personality.setDebugger(this._debug);
     }
 
-    reset() {
+    async reset() {
+        if(!this.personality) {
+            this.personality = await personalityFactory.generateBot(this._debug, DEFAULT);
+        }
+
         this.personality.reset();
 
         if (this.queuedRequest)
