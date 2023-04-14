@@ -12,7 +12,11 @@ export interface Command {
     commandRun: (interaction: CommandInteraction, ai?: AIController) => void;
     data: SlashCommandBuilder;
     modalRun?: (interaction: ModalSubmitInteraction, ai?: AIController) => void;
-} 
+}
+
+export interface AsyncCommand extends Omit<Command, "data"> {
+    data?: SlashCommandBuilder;
+}
 
 export interface ModalListener extends Command{
     modalRun: (interaction: ModalSubmitInteraction, ai?: AIController) => void;
@@ -20,12 +24,15 @@ export interface ModalListener extends Command{
 
 export const commands: Array<Command> = [
     new RemoveMemory(),
-    new ChangePersonality(),
     new CustomPersonality(),
     new Debug(),
     new ChannelEnable(),
     new ChannelDisable(),
 ];
+
+export const asyncCommands: Array<AsyncCommand> = [
+    new ChangePersonality(),
+]
 
 export const modalListener: Array<ModalListener> = [
     new CustomPersonality(),

@@ -5,6 +5,8 @@ import { readdir, readFile } from "fs";
 
 export class DbSeeder {
     public static async SeedDb(): Promise<void> {
+        await this.UnSeedDb();
+
         readdir("./src/Database/Seeding/Personalities/", (err, files) => {
             if(err)
                 throw err; // we don't want to load if there's issues...

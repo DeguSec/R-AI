@@ -1,39 +1,38 @@
 import { APIApplicationCommandOptionChoice, CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { AIController } from "../AI/AIController";
-import { Command } from "./_Commands";
+import { AsyncCommand } from "./_Commands";
+import { IPersonalitiesEntity, PersonalitiesModel } from "../Database/Models/Personalities.model";
 
-export class ChangePersonality implements Command {
+export class ChangePersonality implements AsyncCommand {
 
     name = "change-personality";
     private description = "You can change the personality of the bot that you are speaking to.";
-    public data: SlashCommandBuilder;
 
-    constructor() {
-        // TODO: FILL
-        const a: APIApplicationCommandOptionChoice<string>[] = [];
+    strap(): Promise<SlashCommandBuilder> {
+        (async () => {
+            const data = new SlashCommandBuilder()
+                .setName(this.name)
+                .setDescription(this.description)
+            
+            const a: APIApplicationCommandOptionChoice<string>[] = [];
+            (await PersonalitiesModel.find({}).exec() as Array<any>).forEach((personality: IPersonalitiesEntity) => {
+                console.log(personality);
+            });
 
-        this.data = new SlashCommandBuilder()
-            .addStringOption( 
-                option => option.setName("personality")
-                    .setDescription("Available Personalities")
-                    .setRequired(true)
-                    .addChoices(...a)
-            )
-            .setName(this.name)
-            .setDescription(this.description)
+            //console.trace(a);
+
+            
+            return data;
+        })();
     }
 
     public async commandRun(interaction: CommandInteraction, ai?: AIController) {
-        let res = "";
-
-        if(ai) {
-            ai.changePersonality(interaction.options.get("personality", true).value as string);
-            res = ":computer: Personality Changed";
-        } else {
-            res = ":computer::warning: You're not assigned an AI slot. Talk and an AI Slot will be made for you."
+        if (!ai) {
+            interaction.reply(":computer::warning: You're not assigned an AI slot. Talk and an AI Slot will be made for you.");
+            return;
         }
 
-        interaction.reply(res);
-
+        ai.changePersonality(interaction.options.get("personality", true).value as string);
+        interaction.reply(":computer: Personality Changed");
     }
 }
