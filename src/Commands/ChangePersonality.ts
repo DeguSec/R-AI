@@ -1,7 +1,6 @@
 import { APIApplicationCommandOptionChoice, CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { AIController } from "../AI/AIController";
 import { Command } from "./_Commands";
-import { Personality } from "../Personality/_Personality";
 
 export class ChangePersonality implements Command {
 
