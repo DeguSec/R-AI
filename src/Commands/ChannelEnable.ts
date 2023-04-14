@@ -28,7 +28,7 @@ export class ChannelEnable implements Command {
             return;
         }
 
-        new ChannelModel({channel: interaction.channelId}).save();
+        await new ChannelModel({channel: interaction.channelId}).save();
         interaction.reply("AI has been enabled");
     }
 }
