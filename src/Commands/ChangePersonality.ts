@@ -1,7 +1,7 @@
 import { APIApplicationCommandOptionChoice, CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { AIController } from "../AI/AIController";
-import { Personalities } from "../Personality/_Personality";
 import { Command } from "./_Commands";
+import { Personality } from "../Personality/_Personality";
 
 export class ChangePersonality implements Command {
 
@@ -10,16 +10,8 @@ export class ChangePersonality implements Command {
     public data: SlashCommandBuilder;
 
     constructor() {
+        // TODO: FILL
         const a: APIApplicationCommandOptionChoice<string>[] = [];
-        
-        Object.values(Personalities).forEach(personality => {
-            a.push(
-                {
-                    name: personality,
-                    value: personality,
-                }
-            )
-        })
 
         this.data = new SlashCommandBuilder()
             .addStringOption( 
@@ -32,11 +24,11 @@ export class ChangePersonality implements Command {
             .setDescription(this.description)
     }
 
-    public commandRun(interaction: CommandInteraction, ai?: AIController) {
+    public async commandRun(interaction: CommandInteraction, ai?: AIController) {
         let res = "";
 
         if(ai) {
-            ai.changePersonality(interaction.options.get("personality", true).value as Personalities);
+            ai.changePersonality(interaction.options.get("personality", true).value as string);
             res = ":computer: Personality Changed";
         } else {
             res = ":computer::warning: You're not assigned an AI slot. Talk and an AI Slot will be made for you."
