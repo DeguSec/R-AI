@@ -25,15 +25,15 @@ async function main() {
     console.log("Seeding");
     await DbSeeder.SeedDb();
 
-    await client.login(EnvSecrets.getSecretOrThrow<string>('TOKEN'));
-    console.log("Connected to Discord");
-
     const ais: AIPool = new Map();
     const cc: CommonComponents = { ais, client };
 
     // Strap client with listeners 
     console.log("Strapping listeners");
     StrapListeners(cc);
+
+    await client.login(EnvSecrets.getSecretOrThrow<string>('TOKEN'));
+    console.log("Connected to Discord");
 }
 
 main() //.catch((reason) => {

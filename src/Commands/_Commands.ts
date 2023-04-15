@@ -7,22 +7,25 @@ import { RemoveMemory } from "./RemoveMemory";
 import { ChannelEnable } from "./ChannelEnable";
 import { ChannelDisable } from "./ChannelDisable";
 
-export interface Command {
+export interface RunnableCommand {
     name: string;
     commandRun: (interaction: CommandInteraction, ai?: AIController) => void;
-    data: SlashCommandBuilder;
     modalRun?: (interaction: ModalSubmitInteraction, ai?: AIController) => void;
 }
 
-export interface AsyncCommand extends Omit<Command, "data"> {
-    data?: SlashCommandBuilder;
+export interface Command extends RunnableCommand {
+    data: SlashCommandBuilder;
+}
+
+export interface AsyncCommand extends RunnableCommand {
+    strap(): Promise<SlashCommandBuilder>,
 }
 
 export interface ModalListener extends Command{
     modalRun: (interaction: ModalSubmitInteraction, ai?: AIController) => void;
 }
 
-export const commands: Array<Command> = [
+export const syncCommands: Array<Command> = [
     new RemoveMemory(),
     new CustomPersonality(),
     new Debug(),
@@ -32,8 +35,13 @@ export const commands: Array<Command> = [
 
 export const asyncCommands: Array<AsyncCommand> = [
     new ChangePersonality(),
-]
+];
+
+export const commands: Array<RunnableCommand> = [
+    ...syncCommands,
+    ...asyncCommands,
+];
 
 export const modalListener: Array<ModalListener> = [
     new CustomPersonality(),
-]
+];

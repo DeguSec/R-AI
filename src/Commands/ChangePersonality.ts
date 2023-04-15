@@ -7,20 +7,31 @@ export class ChangePersonality implements AsyncCommand {
     name = "change-personality";
     private description = "You can change the personality of the bot that you are speaking to.";
 
-    strap(): Promise<SlashCommandBuilder> {
+    async strap(): Promise<SlashCommandBuilder> {
         return (async () => {
             const data = new SlashCommandBuilder()
                 .setName(this.name)
                 .setDescription(this.description)
-            
-            const a: APIApplicationCommandOptionChoice<string>[] = [];
+
+            const personalities: APIApplicationCommandOptionChoice<string>[] = [];
             (await PersonalitiesModel.find({}).exec() as Array<any>).forEach((personality: IPersonalitiesEntity) => {
-                console.log(personality);
+                personalities.push(
+                    {
+                        name: personality.name,
+                        value: personality.name,
+                    }
+                )
             });
 
-            //console.trace(a);
+            data.addStringOption(
+                option => option.setName("personality")
+                    .setDescription("Available Personalities")
+                    .setRequired(true)
+                    .setChoices(...personalities)
+            );
 
-            
+            console.log(data);
+
             return data;
         })();
     }
@@ -31,7 +42,11 @@ export class ChangePersonality implements AsyncCommand {
             return;
         }
 
-        ai.changePersonality(interaction.options.get("personality", true).value as string);
-        interaction.reply(":computer: Personality Changed");
+        try {
+            ai.changePersonality(interaction.options.get("personality", true).value as string);
+            interaction.reply(":computer: Personality Changed");
+        } catch (e) {
+            interaction.reply(":computer::warning: Faulty Request");
+        }
     }
 }
