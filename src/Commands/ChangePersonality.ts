@@ -4,12 +4,11 @@ import { AsyncCommand } from "./_Commands";
 import { IPersonalitiesEntity, PersonalitiesModel } from "../Database/Models/Personalities.model";
 
 export class ChangePersonality implements AsyncCommand {
-
     name = "change-personality";
     private description = "You can change the personality of the bot that you are speaking to.";
 
     strap(): Promise<SlashCommandBuilder> {
-        (async () => {
+        return (async () => {
             const data = new SlashCommandBuilder()
                 .setName(this.name)
                 .setDescription(this.description)

@@ -15,13 +15,12 @@ async function main() {
         intents: ['DirectMessages', 'MessageContent', 'DirectMessageReactions', 'GuildMessages', 'GuildMessageReactions', 'Guilds', 'GuildMessageTyping', 'DirectMessageTyping']
     });
 
-    await mongoose.connect(EnvSecrets.getSecretOrThrow<string>('DB_CONNECTION_STRING'), {
+    const db = await mongoose.connect(EnvSecrets.getSecretOrThrow<string>('DB_CONNECTION_STRING'), {
         dbName: EnvSecrets.getSecretOrThrow<string>('DB_NAME'),
-    }).then(async () => {
-        console.log(`Connected to Database Server`);
-    }).catch((err) => {
-        throw err;
     });
+    
+    if(!db.connection) 
+        throw new Error("Database connection failed.");
 
     console.log("Seeding");
     await DbSeeder.SeedDb();
