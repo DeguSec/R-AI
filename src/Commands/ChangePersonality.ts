@@ -8,32 +8,28 @@ export class ChangePersonality implements AsyncCommand {
     private description = "You can change the personality of the bot that you are speaking to.";
 
     async strap(): Promise<SlashCommandBuilder> {
-        return (async () => {
-            const data = new SlashCommandBuilder()
-                .setName(this.name)
-                .setDescription(this.description)
+        const data = new SlashCommandBuilder()
+            .setName(this.name)
+            .setDescription(this.description)
 
-            const personalities: APIApplicationCommandOptionChoice<string>[] = [];
-            (await PersonalitiesModel.find({}).exec() as Array<any>).forEach((personality: IPersonalitiesEntity) => {
-                personalities.push(
-                    {
-                        name: personality.name,
-                        value: personality.name,
-                    }
-                )
-            });
+        const personalities: APIApplicationCommandOptionChoice<string>[] = [];
+        (await PersonalitiesModel.find({}).exec() as Array<any>).forEach((personality: IPersonalitiesEntity) => {
+            personalities.push(
+                {
+                    name: personality.name,
+                    value: personality.name,
+                }
+            )
+        });
 
-            data.addStringOption(
-                option => option.setName("personality")
-                    .setDescription("Available Personalities")
-                    .setRequired(true)
-                    .setChoices(...personalities)
-            );
+        data.addStringOption(
+            option => option.setName("personality")
+                .setDescription("Available Personalities")
+                .setRequired(true)
+                .setChoices(...personalities)
+        );
 
-            console.log(data);
-
-            return data;
-        })();
+        return data;
     }
 
     public async commandRun(interaction: CommandInteraction, ai?: AIController) {
