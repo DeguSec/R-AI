@@ -52,7 +52,8 @@ export class AIController {
             this.personality = await personalityFactory.initBot(this._debug, channel.id);
 
             while (true) {
-                const ret = this.messagesAwaiting.pop();
+                const ret = this.messagesAwaiting.shift();
+                console.log(ret);
                 if (!ret)
                     break;
 

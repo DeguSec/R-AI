@@ -10,7 +10,7 @@ const calculateChatCost = (tokens: number) => {
 
 
 export class AIDebugger {
-    debugMode = false;
+    debugMode = true;
 
     tokens = {
         prompt: 0,
@@ -20,7 +20,7 @@ export class AIDebugger {
 
     log(log: any) {
         if (this.debugMode)
-            console.log(new Date(), log);
+            console.trace(new Date(), log);
     }
 
     logResponse(res: AxiosResponse<CreateChatCompletionResponse, any>) {

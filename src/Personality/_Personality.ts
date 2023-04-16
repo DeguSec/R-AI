@@ -24,10 +24,11 @@ export class Personality {
             // search for messages
             const messages: Array<IMessageEntity> | null = await MessagesModel.find({ channel }).exec() as any;
 
-            console.log(messages);
+            this.log(messages);
 
             // there's no messages in the db
             if (!messages || messages.length == 0) {
+                this.log("no messages so adding the initial system message");
                 await this.addSystemMessage(initialSystemMessage);
                 this.ready = true;
                 return;
@@ -47,14 +48,17 @@ export class Personality {
     }
 
     async addAssistantMessage(message: string) {
+        this.log("assistant message added");
         await this.addMessage(ChatCompletionRequestMessageRoleEnum.Assistant, message);
     }
 
     async addUserMessage(message: string, userId?: string) {
+        this.log("user message added");
         await this.addMessage(ChatCompletionRequestMessageRoleEnum.User, message, userId);
     }
 
     protected async addSystemMessage(message: string) {
+        this.log("system message added");
         await this.addMessage(ChatCompletionRequestMessageRoleEnum.System, message);
     }
 
@@ -69,8 +73,8 @@ export class Personality {
     }
 
     private async addMessageObject(messageObject: ChatCompletionRequestMessage) {
-        console.log("added object");
-        console.log(messageObject);
+        this.log("added object");
+        this.log(messageObject);
         await new MessagesModel({ channel: this.channel, content: messageObject }).save();
         this.messages.push(messageObject);
     }
@@ -106,7 +110,7 @@ export class Personality {
 
     private async processBacklog() {
         while(true) {
-            const message = this.messageWaitingBuffer.pop();
+            const message = this.messageWaitingBuffer.shift();
             if(!message) break;
 
             await this.addMessageObject(message);

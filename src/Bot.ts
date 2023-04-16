@@ -2,7 +2,7 @@ import { Client, Partials } from "discord.js";
 import mongoose from "mongoose";
 import { EnvSecrets } from "./EnvSecrets";
 import { StrapListeners } from "./Listeners/_Listeners";
-import { AIPool } from "./Types/AIPool";
+import { AIPool } from "./AI/AIPool";
 import { DbSeeder } from "./Database/Seeding/Seeder";
 import { CommonComponents } from "./CommonComponents";
 
