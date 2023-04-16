@@ -1,5 +1,5 @@
 import { ChatCompletionRequestMessage, ChatCompletionRequestMessageRoleEnum, CreateChatCompletionRequest } from "openai";
-import { AIDebugger } from "../AI/AIDebugger";
+import { AIDebugger } from "./AIDebugger";
 import { IPersonalitiesEntity, PersonalitiesModel } from "../Database/Models/Personalities.model";
 import { ChannelModel, IChannelEntity } from "../Database/Models/Channel.model";
 import { MessagesModel } from "../Database/Models/Messages.model";

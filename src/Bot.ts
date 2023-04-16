@@ -25,7 +25,7 @@ async function main() {
     console.log("Seeding");
     await DbSeeder.SeedDb();
 
-    const ais: AIPool = new Map();
+    const ais: AIPool = new AIPool();
     const cc: CommonComponents = { ais, client };
 
     // Strap client with listeners 

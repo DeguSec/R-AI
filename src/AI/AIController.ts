@@ -3,7 +3,7 @@ import { Configuration, OpenAIApi } from "openai";
 import { EnvSecrets } from "../EnvSecrets";
 import { CheckSelfInteract } from "../Functions/CheckSelfInteract";
 import { SeparateMessages } from "../Functions/SeparateMessages";
-import { DEFAULT, Personality, PersonalityFactory } from "../Personality/_Personality";
+import { DEFAULT, Personality, PersonalityFactory } from "./AIPersonality";
 import { AIDebugger } from "./AIDebugger";
 import { CommonComponents } from "../CommonComponents";
 import { ChannelModel, IChannelEntity } from "../Database/Models/Channel.model";
@@ -40,6 +40,7 @@ export class AIController {
     private messagesAwaiting: Array<AIMessage> = [];
 
     constructor(cc: CommonComponents, channel: Channel) {
+        console.log("Made new AI for ", channel.id);
         this.openai = new OpenAIApi(configuration);
         this.cc = cc;
 
@@ -53,8 +54,20 @@ export class AIController {
         this.personality = personality;
     }
 
+    finishStrapping() {
+        while (true) {
+            const message = this.messagesAwaiting.shift();
+            if(!message)
+                break
+
+            console.log("adding awaiting message", message);
+            this.addMessage(message);
+        }
+    }
+
     addMessage(message: AIMessage) {
         if (!this.personality) {
+            console.log("pushed awaiting message", this.messagesAwaiting);
             this.messagesAwaiting.push(message);
             return;
         }
