@@ -6,6 +6,7 @@ import { SeparateMessages } from "../Functions/SeparateMessages";
 import { DEFAULT, Personality, PersonalityFactory } from "./AIPersonality";
 import { AIDebugger } from "./AIDebugger";
 import { CommonComponents } from "../CommonComponents";
+import { IChannelEntity } from "../Database/Models/Channel.model";
 
 const personalityFactory = new PersonalityFactory();
 const configuration = new Configuration({
@@ -53,6 +54,13 @@ export class AIController {
 
     strapPersonality(personality: Personality) {
         this.personality = personality;
+    }
+
+    restore(channel: IChannelEntity) {
+        if(!this.personality)
+            throw Error("Cannot restore without personality");
+
+        
     }
 
     finishStrapping() {
