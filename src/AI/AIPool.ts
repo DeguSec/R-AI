@@ -4,7 +4,7 @@ import { AIController } from "./AIController";
 
 export class AIPool extends Map<string, AIController> {
     private cc: CommonComponents;
-    
+
     constructor(cc: CommonComponentsPending) {
         super();
         this.cc = cc as CommonComponents;
@@ -14,14 +14,27 @@ export class AIPool extends Map<string, AIController> {
     async populate() {
         // Get all of the existing AIs
         const enabledChannels: Array<IChannelEntity> = await ChannelModel.find({}).exec() as any;
-        
+
         console.log(enabledChannels);
 
         // Strap the AIs
-        enabledChannels.forEach(channel => {
-            //const ai = 
-            //this.strap()
-        })
+        await Promise.all(enabledChannels.map(async enabledChannel => {
+            try {
+                const channel = await this.cc.client.channels.fetch(enabledChannel.channel);
+                if (!channel) {
+                    console.log(`The channel returned null: ${enabledChannel.channel}`);
+                    this.disable(enabledChannel.channel);
+                    return;
+                }
+
+                const ai = new AIController(this.cc, channel);
+                await this.strap(ai);
+            } catch(error) {
+                console.log(`There was an error with: ${enabledChannel.channel}`);
+                //console.trace(error);
+                this.disable(enabledChannel.channel);
+            }
+        }));
     }
 
     enable(channel: string) {
@@ -30,11 +43,11 @@ export class AIPool extends Map<string, AIController> {
     }
 
     disable(channel: string) {
-        // delete the
-
+        // delete the channel from db
+        
     }
 
-    strap(ai: AIController) {
+    async strap(ai: AIController) {
 
     }
 

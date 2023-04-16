@@ -28,7 +28,7 @@ async function main() {
     console.log("Populating components");
     const cc: CommonComponentsPending = { client };
     const ais: AIPool = new AIPool(cc);
-    await ais.populate();
+    //await ais.populate();
 
 
     // Strap client with listeners 
