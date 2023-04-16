@@ -47,19 +47,10 @@ export class AIController {
             throw new Error("This channel isn't text based. Cannot make an AI Controller");
 
         this.channel = channel as TextChannel;
+    }
 
-        (async () => {
-            this.personality = await personalityFactory.initBot(this._debug, channel.id);
-
-            while (true) {
-                const ret = this.messagesAwaiting.shift();
-                console.log(ret);
-                if (!ret)
-                    break;
-
-                this.addMessage(ret);
-            }
-        })();
+    strapPersonality(personality: Personality) {
+        this.personality = personality;
     }
 
     addMessage(message: AIMessage) {

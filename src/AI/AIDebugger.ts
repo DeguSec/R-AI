@@ -20,7 +20,7 @@ export class AIDebugger {
 
     log(log: any) {
         if (this.debugMode)
-            console.trace(new Date(), log);
+            console.log(new Date(), log);
     }
 
     logResponse(res: AxiosResponse<CreateChatCompletionResponse, any>) {

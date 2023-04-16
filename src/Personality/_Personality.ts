@@ -2,42 +2,20 @@ import { ChatCompletionRequestMessage, ChatCompletionRequestMessageRoleEnum, Cre
 import { AIDebugger } from "../AI/AIDebugger";
 import { IPersonalitiesEntity, PersonalitiesModel } from "../Database/Models/Personalities.model";
 import { ChannelModel, IChannelEntity } from "../Database/Models/Channel.model";
-import { IMessageEntity, MessagesModel } from "../Database/Models/Messages.model";
+import { MessagesModel } from "../Database/Models/Messages.model";
 
 export const DEFAULT = "Rchan";
 
 export class Personality {
     messages: Array<ChatCompletionRequestMessage> = [];
     channel: string;
-
     protected initialSystemMessage: string;
     private _debug?: AIDebugger;
-    private ready: boolean = false;
-    private messageWaitingBuffer: Array<ChatCompletionRequestMessage> = [];
 
     constructor(initialSystemMessage: string, aiDebugger: AIDebugger, channel: string) {
         this.initialSystemMessage = initialSystemMessage;
         this.channel = channel;
         this.setDebugger(aiDebugger);
-
-        (async () => {
-            // search for messages
-            const messages: Array<IMessageEntity> | null = await MessagesModel.find({ channel }).exec() as any;
-
-            this.log(messages);
-
-            // there's no messages in the db
-            if (!messages || messages.length == 0) {
-                this.log("no messages so adding the initial system message");
-                await this.addSystemMessage(initialSystemMessage);
-                this.ready = true;
-                return;
-            }
-
-            // there are messages in the db
-            this.messages = messages.map(message => message.content);
-            this.processBacklog();
-        })()
     }
 
     private log(str: any) {
@@ -64,12 +42,7 @@ export class Personality {
 
     private async addMessage(role: ChatCompletionRequestMessageRoleEnum, content: string, name?: string) {
         const messageObject = { role, content, name };
-        if (!this.ready) {
-            this.messageWaitingBuffer.push(messageObject);
-            return;
-        }
-
-       await this.addMessageObject(messageObject);
+        await this.addMessageObject(messageObject);
     }
 
     private async addMessageObject(messageObject: ChatCompletionRequestMessage) {
@@ -91,10 +64,7 @@ export class Personality {
         this.log("Reset the personality");
         this.messages = [];
         // remove from db
-        this.ready = false;
-        await MessagesModel.deleteMany({channel: this.channel}).exec();
-        this.processBacklog();
-
+        await MessagesModel.deleteMany({ channel: this.channel }).exec();
         await this.addSystemMessage(this.initialSystemMessage);
     }
 
@@ -106,17 +76,6 @@ export class Personality {
 
     setDebugger(debug: AIDebugger) {
         this._debug = debug;
-    }
-
-    private async processBacklog() {
-        while(true) {
-            const message = this.messageWaitingBuffer.shift();
-            if(!message) break;
-
-            await this.addMessageObject(message);
-        }
-
-        this.ready = true;
     }
 }
 
