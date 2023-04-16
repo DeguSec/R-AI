@@ -2,11 +2,11 @@ import { CommonComponents, CommonComponentsPending } from "../CommonComponents";
 import { ChannelModel, IChannelEntity } from "../Database/Models/Channel.model";
 import { AIController } from "./AIController";
 
-export class AIPool extends Map<string, AIController> {
+export class AIPool {
     private cc: CommonComponents;
+    private pool: Map<string, AIController> = new Map();
 
     constructor(cc: CommonComponentsPending) {
-        super();
         this.cc = cc as CommonComponents;
         this.cc.ais = this;
     }
@@ -15,7 +15,7 @@ export class AIPool extends Map<string, AIController> {
         // Get all of the existing AIs
         const enabledChannels: Array<IChannelEntity> = await ChannelModel.find({}).exec() as any;
 
-        console.log(enabledChannels);
+        //console.log(enabledChannels);
 
         // Strap the AIs
         await Promise.all(enabledChannels.map(async enabledChannel => {
@@ -38,9 +38,19 @@ export class AIPool extends Map<string, AIController> {
         }));
     }
 
-    async enable(channel: string) {
+    async enable(channelID: string) {
         // add into memory and strap
+        try {
+            const channel = await this.cc.client.channels.fetch(channelID);
+            if(!channel)
+                return;
+            
+            const ai = new AIController(this.cc, channel);
+            await this.strap(ai);
 
+        } catch {
+            return;
+        }
     }
 
     async disable(channel: string) {
@@ -50,6 +60,10 @@ export class AIPool extends Map<string, AIController> {
 
     async strap(ai: AIController) {
         console.log(`Strapping: ${ai.channel.id}`);
+
+        // get all the messages if any
+
+        // add the messages to the ai
 
     }
 
