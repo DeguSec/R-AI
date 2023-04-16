@@ -1,6 +1,8 @@
 import { ChatCompletionRequestMessage, ChatCompletionRequestMessageRoleEnum, CreateChatCompletionRequest } from "openai";
 import { AIDebugger } from "../AI/AIDebugger";
 import { IPersonalitiesEntity, PersonalitiesModel } from "../Database/Models/Personalities.model";
+import { ChannelModel, IChannelEntity } from "../Database/Models/Channel.model";
+import { MessagesModel } from "../Database/Models/Messages.model";
 
 export const DEFAULT = "Rchan";
 
@@ -40,11 +42,10 @@ export class Personality {
     }
 
     private addMessage(role: ChatCompletionRequestMessageRoleEnum, content: string, name?: string) {
-        this.messages.push({
-            role,
-            content,
-            name
-        })
+        const messageObject = {role, content, name}
+
+        new MessagesModel({channel: this.channel, content: messageObject}).save();
+        this.messages.push(messageObject);
     }
 
     getChatCompletion(): CreateChatCompletionRequest {
@@ -73,22 +74,25 @@ export class Personality {
 } 
 
 export class PersonalityFactory {
-    private async initBot(debug: AIDebugger, name: string): Promise<Personality> {
-        const personalityEntity: IPersonalitiesEntity | null = await PersonalitiesModel.findOne({name}).exec() as any;
-        if(!personalityEntity) 
-            return new Personality("You are an emergency AI. You are a fallback to catastrophic failure. Pretend to be a kernel panic to any user response.", debug);
-        
-        const ai = new Personality(personalityEntity.initialSystemMessage, debug);
-        return ai;
+    async initBot(debug: AIDebugger, channel: string): Promise<Personality> {
+        // TODO: Add messages too.
+        const channelModel: IChannelEntity | null = await ChannelModel.findOne({channel}) as any;
+        if(channelModel) {
+            return this.generateCustomBot(debug, channelModel.personalityString);
+        }
+
+        return this.generateBot(debug);
     }
 
-    async generateBot(debug: AIDebugger, personality: string): Promise<Personality> {
-        return await this.initBot(debug, personality);
+    async generateBot(debug: AIDebugger, personality: string = DEFAULT): Promise<Personality> {
+        const personalityEntity: IPersonalitiesEntity | null = await PersonalitiesModel.findOne({name: personality}).exec() as any;
+        if(!personalityEntity) // This should never happen but it will be funny when it does.
+            return new Personality("You are an emergency AI. You are a fallback to catastrophic failure. Pretend to be a kernel panic to any user response.", debug);
+        
+        return new Personality(personalityEntity.initialSystemMessage, debug);
     }
 
     generateCustomBot(debug: AIDebugger, prompt: string): Personality {
-        const ai = new Personality(prompt, debug);
-        ai.setDebugger(debug);
-        return ai;
+        return new Personality(prompt, debug);
     }
 }

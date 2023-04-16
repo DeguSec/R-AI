@@ -1,13 +1,18 @@
-import mongoose, {Schema} from "mongoose";
+import mongoose, { Schema } from "mongoose";
+import { ChatCompletionRequestMessage } from "openai";
+
+const messageContentSchema: Schema = new Schema({
+    role: {type: String, required: true},
+    content: {type: String, required: true},
+    name: {type: String},
+});
 
 const messageSchema: Schema = new Schema({
-    _id: {type: Schema.Types.ObjectId, required: true, auto: true},
+    _id: { type: Schema.Types.ObjectId, required: true, auto: true },
 
-    message_id: {type: String, required: true, index: true}, // message ID
-    from: {type: String, required: true, index: true}, // user ID
-    in: {type: String, required: true, index: true}, // channel ID
-    content: {type: String, required: true}, // message content
-}, {timestamps: {createdAt: 'Created', updatedAt: 'LastUpdated'}});
+    channel: { type: String, required: true, index: true }, // channel ID
+    content: {type: messageContentSchema, required: true}
+}, { timestamps: { createdAt: 'Created', updatedAt: 'LastUpdated' } });
 
 export const MessagesModel = mongoose.model('Message', messageSchema);
 
@@ -16,10 +21,8 @@ export interface IMessage {
     Created?: Date | null;
     LastUpdated?: Date | null;
 
-    from: String, // user ID
-    in: String, // channel ID
-    content: String, // message content
-    message_id: String, // message ID
+    channel: String, // channel ID
+    content: ChatCompletionRequestMessage, // message content
 }
 
 export interface IMessageEntity extends Omit<IMessage, '_id'> {
