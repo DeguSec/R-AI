@@ -1,4 +1,4 @@
-import { Channel, Client, Message, TextChannel, Typing } from "discord.js";
+import { Channel, Message, TextChannel, Typing } from "discord.js";
 import { Configuration, OpenAIApi } from "openai";
 import { EnvSecrets } from "../EnvSecrets";
 import { CheckSelfInteract } from "../Functions/CheckSelfInteract";
@@ -6,6 +6,7 @@ import { SeparateMessages } from "../Functions/SeparateMessages";
 import { DEFAULT, Personality, PersonalityFactory } from "../Personality/_Personality";
 import { AIDebugger } from "./AIDebugger";
 import { CommonComponents } from "../CommonComponents";
+import { ChannelModel, IChannelEntity } from "../Database/Models/Channel.model";
 
 const configuration = new Configuration({
     apiKey: EnvSecrets.getSecretOrThrow<string>('API_KEY'),
@@ -162,13 +163,13 @@ export class AIController {
     }
 
     async changePersonality(personality: string) {
-        this.reset();
+        await this.reset();
         this.personality = await personalityFactory.generateBot(this._debug, personality);
     }
 
-    replacePrompt(newPrompt: string) {
-        this.reset();
-        this.personality = personalityFactory.generateCustomBot(this._debug, newPrompt);
+    async replacePrompt(newPrompt: string) {
+        await this.reset();
+        this.personality = personalityFactory.generateCustomBot(this._debug, this.channel.id, newPrompt);
         this.personality.setDebugger(this._debug);
     }
 
@@ -177,7 +178,7 @@ export class AIController {
             this.personality = await personalityFactory.generateBot(this._debug, DEFAULT);
         }
 
-        this.personality.reset();
+        await this.personality.reset();
 
         if (this.queuedRequest)
             clearTimeout(this.queuedRequest);
@@ -187,7 +188,7 @@ export class AIController {
      * toggles debug mode
      */
     toggleDebug() {
-        this._debug.toggleDebug()
+        this._debug.toggleDebug();
     }
 
     /**

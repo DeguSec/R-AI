@@ -2,7 +2,7 @@ import { ChatCompletionRequestMessage, ChatCompletionRequestMessageRoleEnum, Cre
 import { AIDebugger } from "../AI/AIDebugger";
 import { IPersonalitiesEntity, PersonalitiesModel } from "../Database/Models/Personalities.model";
 import { ChannelModel, IChannelEntity } from "../Database/Models/Channel.model";
-import { MessagesModel } from "../Database/Models/Messages.model";
+import { IMessageEntity, MessagesModel } from "../Database/Models/Messages.model";
 
 export const DEFAULT = "Rchan";
 
@@ -12,39 +12,66 @@ export class Personality {
 
     protected initialSystemMessage: string;
     private _debug?: AIDebugger;
+    private ready: boolean = false;
+    private messageWaitingBuffer: Array<ChatCompletionRequestMessage> = [];
 
-    constructor(initialSystemMessage: string, aiDebugger: AIDebugger) {
+    constructor(initialSystemMessage: string, aiDebugger: AIDebugger, channel: string) {
         this.initialSystemMessage = initialSystemMessage;
-        this.channel = "channel"; 
-
-        // search for messages
-        this.addSystemMessage(initialSystemMessage);
+        this.channel = channel;
         this.setDebugger(aiDebugger);
+
+        (async () => {
+            // search for messages
+            const messages: Array<IMessageEntity> | null = await MessagesModel.find({ channel }).exec() as any;
+
+            console.log(messages);
+
+            // there's no messages in the db
+            if (!messages || messages.length == 0) {
+                await this.addSystemMessage(initialSystemMessage);
+                this.ready = true;
+                return;
+            }
+
+            // there are messages in the db
+            this.messages = messages.map(message => message.content);
+            this.processBacklog();
+        })()
     }
 
     private log(str: any) {
-        if(this._debug)
+        if (this._debug)
             this._debug.log(str);
 
         else throw new Error("No debugger");
     }
 
-    addAssistantMessage(message: string): void {
-        this.addMessage(ChatCompletionRequestMessageRoleEnum.Assistant, message);
+    async addAssistantMessage(message: string) {
+        await this.addMessage(ChatCompletionRequestMessageRoleEnum.Assistant, message);
     }
 
-    addUserMessage(message: string, userId?: string): void {
-        this.addMessage(ChatCompletionRequestMessageRoleEnum.User, message, userId);
+    async addUserMessage(message: string, userId?: string) {
+        await this.addMessage(ChatCompletionRequestMessageRoleEnum.User, message, userId);
     }
 
-    protected addSystemMessage(message: string) {
-        this.addMessage(ChatCompletionRequestMessageRoleEnum.System, message);
+    protected async addSystemMessage(message: string) {
+        await this.addMessage(ChatCompletionRequestMessageRoleEnum.System, message);
     }
 
-    private addMessage(role: ChatCompletionRequestMessageRoleEnum, content: string, name?: string) {
-        const messageObject = {role, content, name}
+    private async addMessage(role: ChatCompletionRequestMessageRoleEnum, content: string, name?: string) {
+        const messageObject = { role, content, name };
+        if (!this.ready) {
+            this.messageWaitingBuffer.push(messageObject);
+            return;
+        }
 
-        new MessagesModel({channel: this.channel, content: messageObject}).save();
+       await this.addMessageObject(messageObject);
+    }
+
+    private async addMessageObject(messageObject: ChatCompletionRequestMessage) {
+        console.log("added object");
+        console.log(messageObject);
+        await new MessagesModel({ channel: this.channel, content: messageObject }).save();
         this.messages.push(messageObject);
     }
 
@@ -56,43 +83,59 @@ export class Personality {
         };
     }
 
-    reset() {
+    async reset() {
         this.log("Reset the personality");
         this.messages = [];
-        this.addSystemMessage(this.initialSystemMessage);
+        // remove from db
+        this.ready = false;
+        await MessagesModel.deleteMany({channel: this.channel}).exec();
+        this.processBacklog();
+
+        await this.addSystemMessage(this.initialSystemMessage);
     }
 
     countUserMessages() {
         return this.messages
-            .filter( (message) => message.role == ChatCompletionRequestMessageRoleEnum.User )
+            .filter((message) => message.role == ChatCompletionRequestMessageRoleEnum.User)
             .length
     }
 
     setDebugger(debug: AIDebugger) {
         this._debug = debug;
     }
-} 
+
+    private async processBacklog() {
+        while(true) {
+            const message = this.messageWaitingBuffer.pop();
+            if(!message) break;
+
+            await this.addMessageObject(message);
+        }
+
+        this.ready = true;
+    }
+}
 
 export class PersonalityFactory {
     async initBot(debug: AIDebugger, channel: string): Promise<Personality> {
         // TODO: Add messages too.
-        const channelModel: IChannelEntity | null = await ChannelModel.findOne({channel}) as any;
-        if(channelModel) {
-            return this.generateCustomBot(debug, channelModel.personalityString);
+        const channelModel: IChannelEntity | null = await ChannelModel.findOne({ channel }) as any;
+        if (channelModel) {
+            return this.generateCustomBot(debug, channel, channelModel.personalityString);
         }
 
-        return this.generateBot(debug);
+        return this.generateBot(debug, channel);
     }
 
-    async generateBot(debug: AIDebugger, personality: string = DEFAULT): Promise<Personality> {
-        const personalityEntity: IPersonalitiesEntity | null = await PersonalitiesModel.findOne({name: personality}).exec() as any;
-        if(!personalityEntity) // This should never happen but it will be funny when it does.
-            return new Personality("You are an emergency AI. You are a fallback to catastrophic failure. Pretend to be a kernel panic to any user response.", debug);
-        
-        return new Personality(personalityEntity.initialSystemMessage, debug);
+    async generateBot(debug: AIDebugger, channel: string, personality: string = DEFAULT): Promise<Personality> {
+        const personalityEntity: IPersonalitiesEntity | null = await PersonalitiesModel.findOne({ name: personality }).exec() as any;
+        if (!personalityEntity) // This should never happen but it will be funny when it does.
+            return new Personality("You are an emergency AI. You are a fallback to catastrophic failure. Pretend to be a kernel panic to any user response.", debug, channel);
+
+        return new Personality(personalityEntity.initialSystemMessage, debug, channel);
     }
 
-    generateCustomBot(debug: AIDebugger, prompt: string): Personality {
-        return new Personality(prompt, debug);
+    generateCustomBot(debug: AIDebugger, channel: string, prompt: string): Personality {
+        return new Personality(prompt, debug, channel);
     }
 }

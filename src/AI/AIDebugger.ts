@@ -50,4 +50,8 @@ export class AIDebugger {
     toggleDebug() {
         this.debugMode = !this.debugMode;
     }
+
+    setDebug(val: boolean) {
+        this.debugMode = val;
+    }
 }
