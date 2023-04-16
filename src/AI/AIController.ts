@@ -6,7 +6,6 @@ import { SeparateMessages } from "../Functions/SeparateMessages";
 import { DEFAULT, Personality, PersonalityFactory } from "./AIPersonality";
 import { AIDebugger } from "./AIDebugger";
 import { CommonComponents } from "../CommonComponents";
-import { ChannelModel, IChannelEntity } from "../Database/Models/Channel.model";
 
 const configuration = new Configuration({
     apiKey: EnvSecrets.getSecretOrThrow<string>('API_KEY'),
@@ -22,10 +21,13 @@ export interface AIMessage {
 }
 
 export class AIController {
-    private openai: OpenAIApi;
+    public readonly channel: TextChannel;
+    
+    private readonly cc: CommonComponents;
+    private readonly openai: OpenAIApi;
+
     private personality?: Personality;
-    private cc: CommonComponents;
-    private channel: TextChannel;
+    
     private userMessageDate: Date | undefined;
     private typingUsers: Map<string, NodeJS.Timeout> = new Map();
     private queuedRequest: NodeJS.Timeout | undefined;

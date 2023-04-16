@@ -29,6 +29,7 @@ export class AIPool extends Map<string, AIController> {
 
                 const ai = new AIController(this.cc, channel);
                 await this.strap(ai);
+
             } catch(error) {
                 console.log(`There was an error with: ${enabledChannel.channel}`);
                 //console.trace(error);
@@ -37,17 +38,18 @@ export class AIPool extends Map<string, AIController> {
         }));
     }
 
-    enable(channel: string) {
+    async enable(channel: string) {
         // add into memory and strap
 
     }
 
-    disable(channel: string) {
+    async disable(channel: string) {
         // delete the channel from db
-        
+        await ChannelModel.deleteOne({channel}).exec();
     }
 
     async strap(ai: AIController) {
+        console.log(`Strapping: ${ai.channel.id}`);
 
     }
 
