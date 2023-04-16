@@ -7,13 +7,13 @@ export class DbSeeder {
     public static async SeedDb(): Promise<void> {
         await this.UnSeedDb();
 
-        readdir("./src/Database/Seeding/Personalities/", (err, files) => {
+        readdir("./personalities/", (err, files) => {
             if(err)
                 throw err; // we don't want to load if there's issues...
 
             files.forEach(file => {
                 console.log(`Loading personality file: ${file}`);
-                readFile(`./src/Database/Seeding/Personalities/${file}`, (err: NodeJS.ErrnoException | null, data: Buffer) => {
+                readFile(`./personalities/${file}`, (err: NodeJS.ErrnoException | null, data: Buffer) => {
                     if(err)
                         throw err; // we don't want to load if there's issues...
                     

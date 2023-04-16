@@ -4,6 +4,7 @@ const channelSchema: Schema = new Schema({
     _id: {type: Schema.Types.ObjectId, required: true, auto: true},
 
     channel: {type: String, required: true, unique: true, index: true},
+    //personalityString: {type: String, required: true, default: }
 }, {timestamps: {createdAt: 'Created', updatedAt: 'LastUpdated'}});
 
 export const ChannelModel = mongoose.model('Channel', channelSchema);
