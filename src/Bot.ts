@@ -4,7 +4,7 @@ import { EnvSecrets } from "./EnvSecrets";
 import { StrapListeners } from "./Listeners/_Listeners";
 import { AIPool } from "./AI/AIPool";
 import { DbSeeder } from "./Database/Seeding/Seeder";
-import { CommonComponents } from "./CommonComponents";
+import { CommonComponents, CommonComponentsPending } from "./CommonComponents";
 
 
 async function main() {
@@ -25,12 +25,15 @@ async function main() {
     console.log("Seeding");
     await DbSeeder.SeedDb();
 
-    const ais: AIPool = new AIPool();
-    const cc: CommonComponents = { ais, client };
+    console.log("Populating components");
+    const cc: CommonComponentsPending = { client };
+    const ais: AIPool = new AIPool(cc);
+    await ais.populate();
+
 
     // Strap client with listeners 
     console.log("Strapping listeners");
-    StrapListeners(cc);
+    StrapListeners(cc as CommonComponents);
 
     await client.login(EnvSecrets.getSecretOrThrow<string>('TOKEN'));
     console.log("Connected to Discord");

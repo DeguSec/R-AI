@@ -1,10 +1,12 @@
 import { Client } from "discord.js";
-import { AIController } from "./AI/AIController";
 import { Connection } from "mongoose";
+import { AIPool } from "./AI/AIPool";
 
 export interface CommonComponents {
-    ais: Map<string, AIController>,
+    ais: AIPool,
     client: Client,
     db?: Connection,
     id?: string,
 }
+
+export type CommonComponentsPending = Omit<CommonComponents, "ais">;

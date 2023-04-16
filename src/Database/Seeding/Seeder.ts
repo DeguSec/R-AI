@@ -1,30 +1,11 @@
+import { readdirSync, readFileSync } from "fs";
 import { IPersonalitiesEntity, PersonalitiesModel } from "../Models/Personalities.model";
-import { readdir, readFile } from "fs";
-
 
 
 export class DbSeeder {
     public static async SeedDb(): Promise<void> {
         await this.UnSeedDb();
-
-        readdir("./personalities/", (err, files) => {
-            if(err)
-                throw err; // we don't want to load if there's issues...
-
-            files.forEach(file => {
-                console.log(`Loading personality file: ${file}`);
-                readFile(`./personalities/${file}`, (err: NodeJS.ErrnoException | null, data: Buffer) => {
-                    if(err)
-                        throw err; // we don't want to load if there's issues...
-                    
-                    const jPersonality: IPersonalitiesEntity = JSON.parse(data.toString());
-                    new PersonalitiesModel(jPersonality).save().finally(() => console.log(`Loaded ${file}`));
-                });
-
-            });
-
-        });
-        
+        await this.seedPersonalities();
     }
 
     public static async UnSeedDb(): Promise<void> {
@@ -33,5 +14,20 @@ export class DbSeeder {
         } catch {
             console.log("Didn't unseed Personalities. Maybe already dropped?");
         }
+    }
+
+    public static async seedPersonalities() {
+        const FOLDER_PATH = "./personalities/";
+        const folders = readdirSync(FOLDER_PATH);
+        await Promise.all(folders.map(async folder => {
+            const path = FOLDER_PATH + folder;
+            console.log(`Loading: ${path}`);
+
+            const data = readFileSync(path);
+            const jPersonality: IPersonalitiesEntity = JSON.parse(data.toString());
+            await new PersonalitiesModel(jPersonality).save();
+
+            console.log(`Loaded ${path}`);
+        }));
     }
 }
