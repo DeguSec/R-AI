@@ -1,5 +1,6 @@
 import { CommonComponents, CommonComponentsPending } from "../CommonComponents";
 import { ChannelModel, IChannelEntity } from "../Database/Models/Channel.model";
+import { IMessageEntity, MessagesModel } from "../Database/Models/Messages.model";
 import { AIController } from "./AIController";
 
 export class AIPool {
@@ -34,8 +35,6 @@ export class AIPool {
         // Get all of the existing AIs
         const enabledChannels: Array<IChannelEntity> = await ChannelModel.find({}).exec() as any;
 
-        //console.log(enabledChannels);
-
         // Strap the AIs
         await Promise.all(enabledChannels.map(async enabledChannel => 
             this.makeFromChannel(enabledChannel.channel)
@@ -66,9 +65,14 @@ export class AIPool {
         console.log(`Strapping: ${ai.channel.id}`);
 
         // get all the messages if any
+        const messages: Array<IMessageEntity> | null = await MessagesModel.find({channel: ai.channel.id}).exec() as any;
 
         // add the messages to the ai
+        if(messages) {
+            ai.restoreMessages(messages);
+        }
 
+        
     }
 
     /// Overriding methods

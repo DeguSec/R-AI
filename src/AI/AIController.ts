@@ -6,7 +6,7 @@ import { SeparateMessages } from "../Functions/SeparateMessages";
 import { DEFAULT, Personality, PersonalityFactory } from "./AIPersonality";
 import { AIDebugger } from "./AIDebugger";
 import { CommonComponents } from "../CommonComponents";
-import { IChannelEntity } from "../Database/Models/Channel.model";
+import { IMessageEntity } from "../Database/Models/Messages.model";
 
 const personalityFactory = new PersonalityFactory();
 const configuration = new Configuration({
@@ -56,11 +56,13 @@ export class AIController {
         this.personality = personality;
     }
 
-    restore(channel: IChannelEntity) {
+    restoreMessages(channel: Array<IMessageEntity>) {
         if(!this.personality)
             throw Error("Cannot restore without personality");
 
-        
+        console.log("Messages to restore: ");
+        console.log(channel);
+
     }
 
     finishStrapping() {
