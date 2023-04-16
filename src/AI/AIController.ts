@@ -7,11 +7,10 @@ import { DEFAULT, Personality, PersonalityFactory } from "./AIPersonality";
 import { AIDebugger } from "./AIDebugger";
 import { CommonComponents } from "../CommonComponents";
 
+const personalityFactory = new PersonalityFactory();
 const configuration = new Configuration({
     apiKey: EnvSecrets.getSecretOrThrow<string>('API_KEY'),
 });
-
-const personalityFactory = new PersonalityFactory();
 
 export interface AIMessage {
     message: string,
@@ -22,7 +21,7 @@ export interface AIMessage {
 
 export class AIController {
     public readonly channel: TextChannel;
-    
+
     private readonly cc: CommonComponents;
     private readonly openai: OpenAIApi;
 

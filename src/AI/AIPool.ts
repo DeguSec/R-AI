@@ -11,6 +11,25 @@ export class AIPool {
         this.cc.ais = this;
     }
 
+    private async makeFromChannel(enabledChannel: string) {
+        try {
+            const channel = await this.cc.client.channels.fetch(enabledChannel);
+            if (!channel) {
+                console.log(`The channel returned null: ${enabledChannel}`);
+                this.disable(enabledChannel);
+                return;
+            }
+
+            const ai = new AIController(this.cc, channel);
+            await this.strap(ai);
+
+        } catch(error) {
+            console.log(`There was an error with: ${enabledChannel}`);
+            //console.trace(error);
+            this.disable(enabledChannel);
+        }
+    }
+
     async populate() {
         // Get all of the existing AIs
         const enabledChannels: Array<IChannelEntity> = await ChannelModel.find({}).exec() as any;
@@ -18,24 +37,9 @@ export class AIPool {
         //console.log(enabledChannels);
 
         // Strap the AIs
-        await Promise.all(enabledChannels.map(async enabledChannel => {
-            try {
-                const channel = await this.cc.client.channels.fetch(enabledChannel.channel);
-                if (!channel) {
-                    console.log(`The channel returned null: ${enabledChannel.channel}`);
-                    this.disable(enabledChannel.channel);
-                    return;
-                }
-
-                const ai = new AIController(this.cc, channel);
-                await this.strap(ai);
-
-            } catch(error) {
-                console.log(`There was an error with: ${enabledChannel.channel}`);
-                //console.trace(error);
-                this.disable(enabledChannel.channel);
-            }
-        }));
+        await Promise.all(enabledChannels.map(async enabledChannel => 
+            this.makeFromChannel(enabledChannel.channel)
+        ));
     }
 
     async enable(channelID: string) {
@@ -69,13 +73,17 @@ export class AIPool {
 
     /// Overriding methods
 
-    get(channel: string): AIController {
-        throw "Error";
+    get(channel: string): AIController | undefined {
+        return this.pool.get(channel);
     }
 
-    set(key: string, value: AIController): this {
+    make(channel: string): this {
 
 
         return this;
+    }
+
+    has(channel: string): boolean {
+        return this.pool.has(channel);
     }
 }
