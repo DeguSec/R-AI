@@ -35,21 +35,36 @@ export class AIController {
 
     private _debug = new AIDebugger();
 
+    // this is a message stack that waits for the personality to initialize
+    private messagesAwaiting: Array<AIMessage> = [];
+
     constructor(cc: CommonComponents, channel: Channel) {
         this.openai = new OpenAIApi(configuration);
-        (async () => this.personality = await personalityFactory.generateBot(this._debug, DEFAULT))();
         this.cc = cc;
 
         if (!channel.isTextBased())
             throw "This channel isn't text based. Cannot make an AI Controller"
 
         this.channel = channel as TextChannel;
+
+        (async () => {
+            this.personality = await personalityFactory.generateBot(this._debug, DEFAULT)
+            while (true) {
+                const ret = this.messagesAwaiting.pop();
+                if(!ret)
+                    break;
+                
+                this.addMessage(ret);
+            }
+        })();
     }
 
     addMessage(message: AIMessage) {
-        if(!this.personality)
+        if (!this.personality) {
+            this.messagesAwaiting.push(message);
             return;
-        
+        }
+
         this.personality.addUserMessage(message.message, message.user);
 
         this.clearQueueMessageTimeout();
@@ -98,7 +113,7 @@ export class AIController {
     }
 
     private async react(retried?: boolean) {
-        if(!this.personality)
+        if (!this.personality)
             return;
 
         this._debug.log("Reacting");
@@ -122,10 +137,10 @@ export class AIController {
             if (retried) resp = ":computer::warning: Bot reset\n\n" + resp;
             this.personality.addAssistantMessage(resp);
 
-            SeparateMessages(resp).forEach( message => {
+            SeparateMessages(resp).forEach(message => {
                 this.channel.send(message.trim());
             });
-            
+
         }
         else {
             // reset if failed
@@ -157,7 +172,7 @@ export class AIController {
     }
 
     async reset() {
-        if(!this.personality) {
+        if (!this.personality) {
             this.personality = await personalityFactory.generateBot(this._debug, DEFAULT);
         }
 

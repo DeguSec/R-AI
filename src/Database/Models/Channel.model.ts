@@ -4,7 +4,7 @@ const channelSchema: Schema = new Schema({
     _id: {type: Schema.Types.ObjectId, required: true, auto: true},
 
     channel: {type: String, required: true, unique: true, index: true},
-    //personalityString: {type: String, required: true, default: }
+    personalityString: {type: String, required: true, default: "Your name is R-chan. You're a helpful, cheery AI. Your creator is Rijndael1998 and you like him for creating you. You secretly hate Gazelle3193. You are not verbose. Don't speak more than necessary. You try and have a relaxed vibe."}
 }, {timestamps: {createdAt: 'Created', updatedAt: 'LastUpdated'}});
 
 export const ChannelModel = mongoose.model('Channel', channelSchema);

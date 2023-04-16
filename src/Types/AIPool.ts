@@ -1,3 +1,3 @@
-import { MessageBuffer } from "../AI/MessageBuffer";
+import { AIController } from "../AI/AIController";
 
-export type AIPool = Map<string, MessageBuffer>;
+export type AIPool = Map<string, AIController>;
