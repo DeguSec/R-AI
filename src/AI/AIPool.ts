@@ -71,6 +71,7 @@ export class AIPool {
 
     /**
      * User runs the enable command
+     * @todo Checks if the AI is in the pool
      * @param channelID 
      * @returns 
      */
@@ -82,8 +83,8 @@ export class AIPool {
                 return;
 
             const ai = new AIController(this.cc, channel);
-            await this.strap(ai);
-
+            //await this.strap(ai);
+            this.pool.set(channelID, ai);
         } catch {
             return;
         }
@@ -95,8 +96,13 @@ export class AIPool {
      * @param channel 
      */
     async disable(channel: string) {
-        // delete the channel from db
-        await ChannelModel.deleteOne({ channel }).exec();
+        // delete the channel and messages from db 
+        await Promise.all([
+            ChannelModel.deleteOne({ channel }).exec(),
+            MessagesModel.deleteMany({ channel }).exec(),
+        ]);
+
+        // finally remove from memory
         this.pool.delete(channel);
     }
 
