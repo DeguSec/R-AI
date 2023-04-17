@@ -12,6 +12,11 @@ export class AIPool {
         this.cc.ais = this;
     }
 
+    /**
+     * Create AI from channel
+     * @param enabledChannel the string of the channel that has been enabled as found in a database
+     * @returns 
+     */
     private async makeFromChannel(enabledChannel: string) {
         try {
             const channel = await this.cc.client.channels.fetch(enabledChannel);
@@ -31,6 +36,9 @@ export class AIPool {
         }
     }
 
+    /**
+     * Get all of the existing AIs in the database
+     */
     async populate() {
         // Get all of the existing AIs
         const enabledChannels: Array<IChannelEntity> = await ChannelModel.find({}).exec() as any;
@@ -41,6 +49,11 @@ export class AIPool {
         ));
     }
 
+    /**
+     * User runs the enable command
+     * @param channelID 
+     * @returns 
+     */
     async enable(channelID: string) {
         // add into memory and strap
         try {
@@ -56,11 +69,21 @@ export class AIPool {
         }
     }
 
+
+    /**
+     * User runs the disable command
+     * @param channel 
+     */
     async disable(channel: string) {
         // delete the channel from db
         await ChannelModel.deleteOne({channel}).exec();
+        this.pool.delete(channel);
     }
 
+    /**
+     * Load messages into the AI
+     * @param ai 
+     */
     async strap(ai: AIController) {
         console.log(`Strapping: ${ai.channel.id}`);
 
@@ -75,19 +98,37 @@ export class AIPool {
         
     }
 
-    /// Overriding methods
-
+    /**
+     * Get an existing channel if it exists
+     * @param channel 
+     * @returns 
+     */
     get(channel: string): AIController | undefined {
         return this.pool.get(channel);
     }
 
-    make(channel: string): this {
+    // return a channel based on channel string
+    make(channel: string): AIController {
 
 
-        return this;
+        return ;
     }
 
+    /**
+     * check if a channel exits
+     * @param channel 
+     * @returns 
+     */
     has(channel: string): boolean {
         return this.pool.has(channel);
+    }
+
+    /**
+     * Create a channel if it doesn't exist
+     * @param channel 
+     * @returns 
+     */
+    makeOrGet(channel: string): AIController {
+        return this.get(channel) ?? this.make(channel);
     }
 }

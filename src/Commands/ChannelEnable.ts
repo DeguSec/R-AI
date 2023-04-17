@@ -15,7 +15,8 @@ export class ChannelEnable implements Command {
     }
 
     async commandRun(interaction: CommandInteraction, ai?: AIController) {
-        if(!ai) return;
+        console.log(ai);
+        console.log(interaction);
 
         if(!interaction.guildId) {
             interaction.reply("No need to do this in DMs");

@@ -3,6 +3,7 @@ import { AIController } from "../AI/AIController";
 import { CommonComponents } from "../CommonComponents";
 
 export const CheckAI = (cc: CommonComponents, channel: Channel): AIController => {
+    console.log("checking", channel.id);
     if (!cc.ais.has(channel.id))
         cc.ais.make(channel.id)
 
