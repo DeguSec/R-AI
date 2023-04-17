@@ -13,7 +13,22 @@ export class AIPool {
     }
 
     /**
-     * Create AI from channel
+     * Step 1. 
+     * Get all of the existing AIs in the database and run "makeFromChannel" command
+     */
+    async populate() {
+        // Get all of the existing AIs
+        const enabledChannels: Array<IChannelEntity> = await ChannelModel.find({}).exec() as any;
+
+        // Strap the AIs
+        await Promise.all(enabledChannels.map(async enabledChannel =>
+            this.makeFromChannel(enabledChannel.channel)
+        ));
+    }
+
+    /**
+     * Step 2.
+     * Create AI doing the very bare minimum to enable the AI. Expecting the AIController to populate the personality
      * @param enabledChannel the string of the channel that has been enabled as found in a database
      * @returns 
      */
@@ -29,7 +44,7 @@ export class AIPool {
             const ai = new AIController(this.cc, channel);
             await this.strap(ai);
 
-        } catch(error) {
+        } catch (error) {
             console.log(`There was an error with: ${enabledChannel}`);
             //console.trace(error);
             this.disable(enabledChannel);
@@ -37,16 +52,21 @@ export class AIPool {
     }
 
     /**
-     * Get all of the existing AIs in the database
+     * Step 3.
+     * Load messages into the AI
+     * @todo Load personality into the AI
+     * @param ai 
      */
-    async populate() {
-        // Get all of the existing AIs
-        const enabledChannels: Array<IChannelEntity> = await ChannelModel.find({}).exec() as any;
+    async strap(ai: AIController) {
+        console.log(`Strapping: ${ai.channel.id}`);
 
-        // Strap the AIs
-        await Promise.all(enabledChannels.map(async enabledChannel => 
-            this.makeFromChannel(enabledChannel.channel)
-        ));
+        // get all the messages if any
+        const messages: Array<IMessageEntity> | null = await MessagesModel.find({ channel: ai.channel.id }).exec() as any;
+
+        // add the messages to the ai
+        if (messages) {
+            ai.restoreMessages(messages);
+        }
     }
 
     /**
@@ -58,9 +78,9 @@ export class AIPool {
         // add into memory and strap
         try {
             const channel = await this.cc.client.channels.fetch(channelID);
-            if(!channel)
+            if (!channel)
                 return;
-            
+
             const ai = new AIController(this.cc, channel);
             await this.strap(ai);
 
@@ -76,26 +96,8 @@ export class AIPool {
      */
     async disable(channel: string) {
         // delete the channel from db
-        await ChannelModel.deleteOne({channel}).exec();
+        await ChannelModel.deleteOne({ channel }).exec();
         this.pool.delete(channel);
-    }
-
-    /**
-     * Load messages into the AI
-     * @param ai 
-     */
-    async strap(ai: AIController) {
-        console.log(`Strapping: ${ai.channel.id}`);
-
-        // get all the messages if any
-        const messages: Array<IMessageEntity> | null = await MessagesModel.find({channel: ai.channel.id}).exec() as any;
-
-        // add the messages to the ai
-        if(messages) {
-            ai.restoreMessages(messages);
-        }
-
-        
     }
 
     /**
@@ -111,7 +113,7 @@ export class AIPool {
     make(channel: string): AIController {
 
 
-        return ;
+        return;
     }
 
     /**
