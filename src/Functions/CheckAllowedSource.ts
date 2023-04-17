@@ -1,3 +1,4 @@
+import { CommonComponents } from "../CommonComponents";
 import { ChannelModel } from "../Database/Models/Channel.model";
 
 /**
@@ -9,7 +10,7 @@ import { ChannelModel } from "../Database/Models/Channel.model";
  * @param guild 
  * @returns 
  */
-export const CheckAllowedSource = async (channel?: string, guild?: string) => {
+export const CheckAllowedSource = async (cc: CommonComponents, channel?: string, guild?: string) => {
     // the source is... weird
     if (channel == null)
         return false;
@@ -19,7 +20,5 @@ export const CheckAllowedSource = async (channel?: string, guild?: string) => {
         return true;
 
     // find the channel in the database
-    const res = await ChannelModel.find({ 'channel': channel }).exec();
-
-    return res.length > 0;
+    return cc.ais.has(channel);
 }

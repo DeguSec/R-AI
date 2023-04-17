@@ -18,11 +18,6 @@ export class ChannelEnable implements Command {
         console.log(ai);
         console.log(interaction);
 
-        if(!interaction.guildId) {
-            interaction.reply("No need to do this in DMs");
-            return;
-        }
-
         const res = await ChannelModel.find({'channel': interaction.channelId}).exec();
         if(res.length) {
             interaction.reply("AI is already enabled in this channel");
