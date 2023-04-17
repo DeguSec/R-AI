@@ -188,7 +188,7 @@ export class AIController {
     }
 
     async changePersonality(personality: string) {
-        await this.reset();
+        await this.personality?.deleteDB();
         this.personality = await personalityFactory.generateBot(this._debug, personality);
     }
 
@@ -197,6 +197,10 @@ export class AIController {
         this.personality = await personalityFactory.generateCustomBot(this._debug, this.channel.id, newPrompt);
     }
 
+    /**
+     * Runs personality reset routine and clears timers
+     * @todo include other timers
+     */
     async reset() {
         if (this.personality) 
             await this.personality.reset();

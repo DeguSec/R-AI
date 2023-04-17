@@ -1,7 +1,6 @@
 import { ChatCompletionRequestMessage, ChatCompletionRequestMessageRoleEnum, CreateChatCompletionRequest } from "openai";
 import { AIDebugger } from "./AIDebugger";
 import { IPersonalitiesEntity, PersonalitiesModel } from "../Database/Models/Personalities.model";
-import { ChannelModel, IChannelEntity } from "../Database/Models/Channel.model";
 import { MessagesModel } from "../Database/Models/Messages.model";
 
 export const DEFAULT = "Rchan";
@@ -86,17 +85,23 @@ export class Personality {
     }
 }
 
+/**
+ * This class is responsible for creating personalities
+ * @todo make sure that the personalities created are in fact okay
+ */
 export class PersonalityFactory {
     async generateBot(debug: AIDebugger, channel: string, personality: string = DEFAULT): Promise<Personality> {
+        // find any existing personalities
         const personalityEntity: IPersonalitiesEntity | null = await PersonalitiesModel.findOne({ name: personality }).exec() as any;
         let personalityObject: Personality;
 
         if (!personalityEntity) // This should never happen but it will be funny when it does.
             personalityObject = new Personality("You are an emergency AI. You are a fallback to catastrophic failure. Pretend to be a kernel panic to any user response.", debug, channel);
-        else
+        else // assign the personality based on the existing personalities
             personalityObject = new Personality(personalityEntity.initialSystemMessage, debug, channel);
 
-        personalityObject.reset();
+        // kick into life
+        await personalityObject.reset();
         return personalityObject;
     }
 

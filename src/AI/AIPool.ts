@@ -93,8 +93,12 @@ export class AIPool {
 
             // set the new ai
             const ai = new AIController(this.cc, channel);
+            await ai.strapPersonality();
+
             //await this.strap(ai);
             this.pool.set(channelID, ai);
+
+
         } catch {
             return;
         }
@@ -125,13 +129,6 @@ export class AIPool {
         return this.pool.get(channel);
     }
 
-    
-    async make(channel: string): Promise<AIController> {
-
-
-        return;
-    }
-
     /**
      * check if a channel exits
      * @param channel 
@@ -139,14 +136,5 @@ export class AIPool {
      */
     has(channel: string): boolean {
         return this.pool.has(channel);
-    }
-
-    /**
-     * Create a channel if it doesn't exist
-     * @param channel 
-     * @returns 
-     */
-    async makeOrGet(channel: string): Promise<AIController> {
-        return this.get(channel) ?? await this.make(channel);
     }
 }
