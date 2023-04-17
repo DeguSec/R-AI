@@ -15,7 +15,7 @@ export class Personality {
     constructor(initialSystemMessage: string, aiDebugger: AIDebugger, channel: string) {
         this.initialSystemMessage = initialSystemMessage;
         this.channel = channel;
-        this.setDebugger(aiDebugger);
+        this._debug = aiDebugger;
     }
 
     private log(str: any) {
@@ -35,17 +35,17 @@ export class Personality {
         await this.addMessage(ChatCompletionRequestMessageRoleEnum.User, message, userId);
     }
 
-    protected async addSystemMessage(message: string) {
+    async addSystemMessage(message: string) {
         this.log("system message added");
         await this.addMessage(ChatCompletionRequestMessageRoleEnum.System, message);
     }
 
-    private async addMessage(role: ChatCompletionRequestMessageRoleEnum, content: string, name?: string) {
+    async addMessage(role: ChatCompletionRequestMessageRoleEnum, content: string, name?: string) {
         const messageObject = { role, content, name };
         await this.addMessageObject(messageObject);
     }
 
-    private async addMessageObject(messageObject: ChatCompletionRequestMessage) {
+    async addMessageObject(messageObject: ChatCompletionRequestMessage) {
         this.log("added object");
         this.log(messageObject);
         await new MessagesModel({ channel: this.channel, content: messageObject }).save();
@@ -60,12 +60,23 @@ export class Personality {
         };
     }
 
+    /**
+     * Clear the database
+     */
+    async deleteDB() {
+        await MessagesModel.deleteMany({ channel: this.channel }).exec();
+        await this.addSystemMessage(this.initialSystemMessage);
+    }
+
+    /**
+     * Must be ran before using the personality
+     */
     async reset() {
         this.log("Reset the personality");
         this.messages = [];
+
         // remove from db
-        await MessagesModel.deleteMany({ channel: this.channel }).exec();
-        await this.addSystemMessage(this.initialSystemMessage);
+        await this.deleteDB();
     }
 
     countUserMessages() {
@@ -73,32 +84,25 @@ export class Personality {
             .filter((message) => message.role == ChatCompletionRequestMessageRoleEnum.User)
             .length
     }
-
-    setDebugger(debug: AIDebugger) {
-        this._debug = debug;
-    }
 }
 
 export class PersonalityFactory {
-    async initBot(debug: AIDebugger, channel: string): Promise<Personality> {
-        // TODO: Add messages too.
-        const channelModel: IChannelEntity | null = await ChannelModel.findOne({ channel }) as any;
-        if (channelModel) {
-            return this.generateCustomBot(debug, channel, channelModel.personalityString);
-        }
-
-        return this.generateBot(debug, channel);
-    }
-
     async generateBot(debug: AIDebugger, channel: string, personality: string = DEFAULT): Promise<Personality> {
         const personalityEntity: IPersonalitiesEntity | null = await PersonalitiesModel.findOne({ name: personality }).exec() as any;
-        if (!personalityEntity) // This should never happen but it will be funny when it does.
-            return new Personality("You are an emergency AI. You are a fallback to catastrophic failure. Pretend to be a kernel panic to any user response.", debug, channel);
+        let personalityObject: Personality;
 
-        return new Personality(personalityEntity.initialSystemMessage, debug, channel);
+        if (!personalityEntity) // This should never happen but it will be funny when it does.
+            personalityObject = new Personality("You are an emergency AI. You are a fallback to catastrophic failure. Pretend to be a kernel panic to any user response.", debug, channel);
+        else
+            personalityObject = new Personality(personalityEntity.initialSystemMessage, debug, channel);
+
+        personalityObject.reset();
+        return personalityObject;
     }
 
-    generateCustomBot(debug: AIDebugger, channel: string, prompt: string): Personality {
-        return new Personality(prompt, debug, channel);
+    async generateCustomBot(debug: AIDebugger, channel: string, prompt: string): Promise<Personality> {
+        const personality = new Personality(prompt, debug, channel);
+        await personality.reset()
+        return personality;
     }
 }

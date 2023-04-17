@@ -7,6 +7,7 @@ import { DEFAULT, Personality, PersonalityFactory } from "./AIPersonality";
 import { AIDebugger } from "./AIDebugger";
 import { CommonComponents } from "../CommonComponents";
 import { IMessageEntity } from "../Database/Models/Messages.model";
+import { IChannelEntity } from "../Database/Models/Channel.model";
 
 const personalityFactory = new PersonalityFactory();
 const configuration = new Configuration({
@@ -52,10 +53,18 @@ export class AIController {
         this.channel = channel as TextChannel;
     }
 
-    strapPersonality(personality: Personality) {
-        this.personality = personality;
+    /**
+     * Required before use. Use this function to get a personality for the bot. 
+     * @param makeNew 
+     */
+    async strapPersonality() {
+        this.personality = await personalityFactory.generateBot(this._debug, this.channel.id);
     }
 
+    /**
+     * Load the external messages
+     * @param channel 
+     */
     restoreMessages(channel: Array<IMessageEntity>) {
         if(!this.personality)
             throw Error("Cannot restore without personality");
@@ -184,17 +193,13 @@ export class AIController {
     }
 
     async replacePrompt(newPrompt: string) {
-        await this.reset();
-        this.personality = personalityFactory.generateCustomBot(this._debug, this.channel.id, newPrompt);
-        this.personality.setDebugger(this._debug);
+        await this.personality?.deleteDB();
+        this.personality = await personalityFactory.generateCustomBot(this._debug, this.channel.id, newPrompt);
     }
 
     async reset() {
-        if (!this.personality) {
-            this.personality = await personalityFactory.generateBot(this._debug, DEFAULT);
-        }
-
-        await this.personality.reset();
+        if (this.personality) 
+            await this.personality.reset();
 
         if (this.queuedRequest)
             clearTimeout(this.queuedRequest);

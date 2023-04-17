@@ -13,7 +13,7 @@ export class AIPool {
     }
 
     /**
-     * Step 1. 
+     * Bootstrap Step 1. 
      * Get all of the existing AIs in the database and run "makeFromChannel" command
      */
     async populate() {
@@ -27,7 +27,7 @@ export class AIPool {
     }
 
     /**
-     * Step 2.
+     * Bootstrap Step 2.
      * Create AI doing the very bare minimum to enable the AI. Expecting the AIController to populate the personality
      * @param enabledChannel the string of the channel that has been enabled as found in a database
      * @returns 
@@ -37,22 +37,28 @@ export class AIPool {
             const channel = await this.cc.client.channels.fetch(enabledChannel);
             if (!channel) {
                 console.log(`The channel returned null: ${enabledChannel}`);
+                
+                // no such channel therefore no need to keep going
                 this.disable(enabledChannel);
                 return;
             }
 
             const ai = new AIController(this.cc, channel);
             await this.strap(ai);
+            this.pool.set(enabledChannel, ai);
 
         } catch (error) {
+            // basically give up
+
             console.log(`There was an error with: ${enabledChannel}`);
             //console.trace(error);
-            this.disable(enabledChannel);
+
+            await this.disable(enabledChannel);
         }
     }
 
     /**
-     * Step 3.
+     * Bootstrap Step 3.
      * Load messages into the AI
      * @todo Load personality into the AI
      * @param ai 
@@ -63,6 +69,8 @@ export class AIPool {
         // get all the messages if any
         const messages: Array<IMessageEntity> | null = await MessagesModel.find({ channel: ai.channel.id }).exec() as any;
 
+        await ai.strapPersonality();
+
         // add the messages to the ai
         if (messages) {
             ai.restoreMessages(messages);
@@ -70,7 +78,7 @@ export class AIPool {
     }
 
     /**
-     * User runs the enable command
+     * Enable Step 1.
      * @todo Checks if the AI is in the pool
      * @param channelID 
      * @returns 
@@ -78,10 +86,12 @@ export class AIPool {
     async enable(channelID: string) {
         // add into memory and strap
         try {
+            // find the channel
             const channel = await this.cc.client.channels.fetch(channelID);
             if (!channel)
                 return;
 
+            // set the new ai
             const ai = new AIController(this.cc, channel);
             //await this.strap(ai);
             this.pool.set(channelID, ai);
@@ -96,14 +106,14 @@ export class AIPool {
      * @param channel 
      */
     async disable(channel: string) {
+        // remove ai from memory first to stop messages
+        this.pool.delete(channel);
+
         // delete the channel and messages from db 
         await Promise.all([
             ChannelModel.deleteOne({ channel }).exec(),
             MessagesModel.deleteMany({ channel }).exec(),
         ]);
-
-        // finally remove from memory
-        this.pool.delete(channel);
     }
 
     /**
@@ -115,8 +125,8 @@ export class AIPool {
         return this.pool.get(channel);
     }
 
-    // return a channel based on channel string
-    make(channel: string): AIController {
+    
+    async make(channel: string): Promise<AIController> {
 
 
         return;
@@ -136,7 +146,7 @@ export class AIPool {
      * @param channel 
      * @returns 
      */
-    makeOrGet(channel: string): AIController {
-        return this.get(channel) ?? this.make(channel);
+    async makeOrGet(channel: string): Promise<AIController> {
+        return this.get(channel) ?? await this.make(channel);
     }
 }
