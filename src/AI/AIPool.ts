@@ -74,6 +74,9 @@ export class AIPool {
         // add the messages to the ai
         if (messages) {
             ai.restoreMessages(messages);
+        } else {
+            // If there are no messages, there's no reason not to reset
+            ai.reset();
         }
     }
 
@@ -94,6 +97,7 @@ export class AIPool {
             // set the new ai
             const ai = new AIController(this.cc, channel);
             await ai.strapPersonality();
+            ai.restoreMessages([]);
 
             //await this.strap(ai);
             this.pool.set(channelID, ai);

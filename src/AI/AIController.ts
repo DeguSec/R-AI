@@ -28,7 +28,7 @@ export class AIController {
     private readonly openai: OpenAIApi;
 
     private personality?: Personality;
-    
+
     private userMessageDate: Date | undefined;
     private typingUsers: Map<string, NodeJS.Timeout> = new Map();
     private queuedRequest: NodeJS.Timeout | undefined;
@@ -63,21 +63,34 @@ export class AIController {
 
     /**
      * Load the external messages
-     * @param channel 
+     * @param messages 
      */
-    restoreMessages(channel: Array<IMessageEntity>) {
-        if(!this.personality)
+    restoreMessages(messages: Array<IMessageEntity>) {
+        if (!this.personality)
             throw Error("Cannot restore without personality");
 
-        console.log("Messages to restore: ");
-        console.log(channel);
+        if (!messages) {
+            this._debug.log("There were no messages for the personality: " + this.channel.id);
+            this.personality.restoreSystemMessage();
+        }
 
+
+        console.log("Messages to restore: ");
+        console.log(messages);
+
+        this.personality.messages = messages.map((message) => {
+            return {
+                role: message.content.role,
+                content: message.content.content,
+                name: message.content.name
+            }
+        });
     }
 
     finishStrapping() {
         while (true) {
             const message = this.messagesAwaiting.shift();
-            if(!message)
+            if (!message)
                 break
 
             console.log("adding awaiting message", message);
@@ -202,7 +215,7 @@ export class AIController {
      * @todo include other timers
      */
     async reset() {
-        if (this.personality) 
+        if (this.personality)
             await this.personality.reset();
 
         if (this.queuedRequest)

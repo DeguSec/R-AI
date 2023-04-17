@@ -68,14 +68,19 @@ export class Personality {
     }
 
     /**
-     * Must be ran before using the personality
+     * Run this once ready and empty.
      */
+    async restoreSystemMessage() {
+        await this.addSystemMessage(this.initialSystemMessage);
+    }
+
     async reset() {
         this.log("Reset the personality");
         this.messages = [];
 
         // remove from db
         await this.deleteDB();
+        await this.restoreSystemMessage();
     }
 
     countUserMessages() {
@@ -90,6 +95,13 @@ export class Personality {
  * @todo make sure that the personalities created are in fact okay
  */
 export class PersonalityFactory {
+    /**
+     * WARNING: YOU MUST SET THE PROPER RESTORE MESSAGE YOURSELF
+     * @param debug 
+     * @param channel 
+     * @param personality 
+     * @returns 
+     */
     async generateBot(debug: AIDebugger, channel: string, personality: string = DEFAULT): Promise<Personality> {
         // find any existing personalities
         const personalityEntity: IPersonalitiesEntity | null = await PersonalitiesModel.findOne({ name: personality }).exec() as any;
@@ -101,13 +113,13 @@ export class PersonalityFactory {
             personalityObject = new Personality(personalityEntity.initialSystemMessage, debug, channel);
 
         // kick into life
-        await personalityObject.reset();
+        // await personalityObject.reset();
         return personalityObject;
     }
 
     async generateCustomBot(debug: AIDebugger, channel: string, prompt: string): Promise<Personality> {
         const personality = new Personality(prompt, debug, channel);
-        await personality.reset()
+        // await personality.reset()
         return personality;
     }
 }
