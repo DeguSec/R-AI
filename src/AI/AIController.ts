@@ -202,7 +202,7 @@ export class AIController {
 
     async changePersonality(personality: string) {
         await this.personality?.deleteDB();
-        this.personality = await personalityFactory.generateBot(this._debug, personality);
+        this.personality = await personalityFactory.generateBot(this._debug, this.channel.id, personality);
     }
 
     async replacePrompt(newPrompt: string) {

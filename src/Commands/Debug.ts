@@ -17,7 +17,10 @@ export class Debug implements Command {
 
     commandRun(interaction: CommandInteraction, cc: CommonComponents) {
         const ai = GetAI(cc, interaction.channel);
-        if(!ai) return;
+        if(!ai) {
+            interaction.reply("There is no AI to debug.")
+            return;
+        }
 
         ai.toggleDebug();
 
