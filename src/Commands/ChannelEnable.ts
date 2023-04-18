@@ -17,18 +17,21 @@ export class ChannelEnable implements Command {
     }
 
     async commandRun(interaction: CommandInteraction, cc: CommonComponents) {
-        const ai = GetAI(cc, interaction.channel);
+        if(!interaction.channel)
+            return;
+
         
+        const ai = GetAI(cc, interaction.channel);
+
         console.log(ai);
         console.log(interaction);
 
-        const res = await ChannelModel.find({'channel': interaction.channelId}).exec();
-        if(res.length) {
+        if(ai) {
             interaction.reply("AI is already enabled in this channel");
             return;
         }
 
-        await new ChannelModel({channel: interaction.channelId}).save();
+        await cc.ais.enable(interaction.channel?.id);
         interaction.reply("AI has been enabled");
     }
 }
