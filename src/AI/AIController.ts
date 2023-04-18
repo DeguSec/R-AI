@@ -95,6 +95,21 @@ export class AIController {
         });
     }
 
+    /**
+     * Puts the current personality into the database
+     */
+    async saveCurrentPersonality() {
+        if(!this.personality)
+            return;
+        
+        await ChannelModel.deleteOne({channel: this.channel.id}).exec();
+        await new ChannelModel({
+            channel: this.channel.id,
+            personalityString: this.personality.getInitialSystemMessage(),
+            debug: this._debug.debugMode,
+        }).save();
+    }
+
     finishStrapping() {
         while (true) {
             const message = this.messagesAwaiting.shift();
@@ -208,25 +223,16 @@ export class AIController {
         this.queuedRequest = undefined;
     }
 
-    async saveCurrentPersonality() {
-        await ChannelModel.deleteOne({channel: this.channel.id}).exec();
-        await new ChannelModel({
-            channel: this.channel.id,
-            personality: DEFAULT_PERSONALITY_STRING,
-            debug: this._debug.debugMode,
-        }).save();
-    }
-
     async changePersonality(personality: string) {
         await this.personality?.deleteDB();
         this.personality = await personalityFactory.generateBot(this._debug, this.channel.id, personality);
-        await this.saveCurrentPersonality();
+        await this.runAfterCreatingNewPersonality();
     }
 
     async replacePrompt(newPrompt: string) {
         await this.personality?.deleteDB();
         this.personality = await personalityFactory.generateCustomBot(this._debug, this.channel.id, newPrompt);
-        await this.saveCurrentPersonality();
+        await this.runAfterCreatingNewPersonality();
     }
 
     /**

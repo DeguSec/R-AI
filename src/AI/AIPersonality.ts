@@ -82,6 +82,10 @@ export class Personality {
         await this.restoreSystemMessage();
     }
 
+    getInitialSystemMessage() {
+        return this.initialSystemMessage;
+    }
+
     countUserMessages() {
         return this.messages
             .filter((message) => message.role == ChatCompletionRequestMessageRoleEnum.User)
