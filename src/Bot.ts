@@ -10,26 +10,36 @@ import { CommonComponents, CommonComponentsPending } from "./CommonComponents";
 async function main() {
     console.log("Bot is starting...");
 
+    const db = await mongoose.connect(EnvSecrets.getSecretOrThrow<string>('DB_CONNECTION_STRING'), {
+        dbName: EnvSecrets.getSecretOrThrow<string>('DB_NAME'),
+    });
+
+    if (!db.connection)
+        throw new Error("Database connection failed.");
+
+    if (process.argv.length == 3) {
+        if (process.argv[2] == "seed") {
+            console.log("Seeding");
+            await DbSeeder.SeedDb();
+            return 0;
+        }
+
+        if (process.argv[2] == "unseed") {
+            console.log("Unseeding");
+            await DbSeeder.UnSeedDb();
+            return 0;
+        }
+    }
+
     const client = new Client({
         partials: [Partials.Message, Partials.Channel, Partials.Reaction],
         intents: ['DirectMessages', 'MessageContent', 'DirectMessageReactions', 'GuildMessages', 'GuildMessageReactions', 'Guilds', 'GuildMessageTyping', 'DirectMessageTyping']
     });
 
-    const db = await mongoose.connect(EnvSecrets.getSecretOrThrow<string>('DB_CONNECTION_STRING'), {
-        dbName: EnvSecrets.getSecretOrThrow<string>('DB_NAME'),
-    });
-    
-    if(!db.connection) 
-        throw new Error("Database connection failed.");
-
-    console.log("Seeding");
-    await DbSeeder.SeedDb();
-
     console.log("Populating components");
     const cc: CommonComponentsPending = { client };
-    const ais: AIPool = new AIPool(cc);
+    new AIPool(cc);
     //await ais.populate();
-
 
     // Strap client with listeners 
     console.log("Strapping listeners");

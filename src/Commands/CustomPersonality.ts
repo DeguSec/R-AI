@@ -1,6 +1,8 @@
 import { CommandInteraction, SlashCommandBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ActionRowBuilder, CacheType, ModalSubmitInteraction } from "discord.js";
 import { AIController } from "../AI/AIController";
 import { ModalListener } from "./_Commands";
+import { CommonComponents } from "../CommonComponents";
+import { GetAI } from "../Functions/GetAI";
 
 export class CustomPersonality implements ModalListener {
     name = "custom-personality"
@@ -14,7 +16,13 @@ export class CustomPersonality implements ModalListener {
 
     }
     
-    commandRun(interaction: CommandInteraction, ai?: AIController) {
+    commandRun(interaction: CommandInteraction, cc: CommonComponents) {
+        const ai = GetAI(cc, interaction.channel);
+        if(!ai) {
+            interaction.reply("No AI has been assigned. Enable the AI first");
+            return;
+        }
+
         const modal = new ModalBuilder()
             .setCustomId(this.name)
             .setTitle("Modal Test")
@@ -34,9 +42,11 @@ export class CustomPersonality implements ModalListener {
         interaction.showModal(modal);
     }
 
-    modalRun(interaction: ModalSubmitInteraction, ai?: AIController) {
+    modalRun(interaction: ModalSubmitInteraction, cc: CommonComponents) {
+        const ai = GetAI(cc, interaction.channel);
+
         if(!ai) {
-            interaction.reply("Error");
+            interaction.reply("Error. No AI has been assigned. Enable the AI first.");
             return;
         }
 

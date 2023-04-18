@@ -1,6 +1,8 @@
 import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { AIController } from "../AI/AIController";
 import { Command } from "./_Commands";
+import { CommonComponents } from "../CommonComponents";
+import { GetAI } from "../Functions/GetAI";
 
 export class RemoveMemory implements Command {
     data: SlashCommandBuilder;
@@ -14,7 +16,9 @@ export class RemoveMemory implements Command {
             .setDescription(this.description)
     }
     
-    public async commandRun(interaction: CommandInteraction, ai?: AIController) {
+    public async commandRun(interaction: CommandInteraction, cc: CommonComponents) {
+        const ai = GetAI(cc, interaction.channel);
+        
         let content: string;
 
         if(ai) {

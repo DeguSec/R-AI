@@ -6,11 +6,12 @@ import { Debug } from "./Debug";
 import { RemoveMemory } from "./RemoveMemory";
 import { ChannelEnable } from "./ChannelEnable";
 import { ChannelDisable } from "./ChannelDisable";
+import { CommonComponents } from "../CommonComponents";
 
 export interface RunnableCommand {
     name: string;
-    commandRun: (interaction: CommandInteraction, ai?: AIController) => void;
-    modalRun?: (interaction: ModalSubmitInteraction, ai?: AIController) => void;
+    commandRun: (interaction: CommandInteraction, cc: CommonComponents) => void;
+    modalRun?: (interaction: ModalSubmitInteraction, cc: CommonComponents) => void;
 }
 
 export interface Command extends RunnableCommand {
@@ -22,7 +23,7 @@ export interface AsyncCommand extends RunnableCommand {
 }
 
 export interface ModalListener extends Command{
-    modalRun: (interaction: ModalSubmitInteraction, ai?: AIController) => void;
+    modalRun: (interaction: ModalSubmitInteraction, cc: CommonComponents) => void;
 }
 
 export const syncCommands: Array<Command> = [

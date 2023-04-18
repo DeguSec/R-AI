@@ -12,6 +12,8 @@
     "typescript": "^5.0.4"
   },
   "scripts": {
-    "start": "ts-node src/Bot.ts"
+    "start": "ts-node src/Bot.ts",
+    "seed": "ts-node src/Bot.ts seed",
+    "unseed": "ts-node src/Bot.ts unseed"
   }
 }

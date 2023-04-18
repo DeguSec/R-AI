@@ -11,7 +11,6 @@ export const ModalSubmitInteractionFunction = (args: ModalSubmitInteraction, cc:
         return;
     }
 
-    const ai = GetAI(cc, args.channel);
     const command = commands.filter((command) => command.name == args.customId)[0];
 
     if (!command || !command.modalRun) {
@@ -19,5 +18,5 @@ export const ModalSubmitInteractionFunction = (args: ModalSubmitInteraction, cc:
         return;
     }
 
-    command.modalRun(args, ai)
+    command.modalRun(args, cc)
 }

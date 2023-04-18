@@ -1,7 +1,8 @@
 import { CommandInteraction, SlashCommandBuilder } from "discord.js";
-import { AIController } from "../AI/AIController";
 import { Command } from "./_Commands";
 import { ChannelModel } from "../Database/Models/Channel.model";
+import { CommonComponents } from "../CommonComponents";
+import { GetAI } from "../Functions/GetAI";
 
 export class ChannelDisable implements Command {
     name: string = "disable";
@@ -14,21 +15,18 @@ export class ChannelDisable implements Command {
         this.data.setDescription(this.description);
     }
 
-    async commandRun(interaction: CommandInteraction, ai?: AIController) {
-        if(!ai) return;
-
-        if(!interaction.guildId) {
-            interaction.reply("No need to do this in DMs");
+    async commandRun(interaction: CommandInteraction, cc: CommonComponents) {
+        if (!interaction.channel)
             return;
-        }
 
-        const res = await ChannelModel.find({'channel': interaction.channelId}).exec();
-        if(!res.length) {
+        const ai = GetAI(cc, interaction.channel);
+
+        if (!ai) {
             interaction.reply("AI is already disabled in this channel");
             return;
         }
 
-        res[0].deleteOne();
-        interaction.reply("AI has been disabled");
+        await cc.ais.disable(interaction.channel.id);
+        await interaction.reply("AI has been disabled");
     }
 }

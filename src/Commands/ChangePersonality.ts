@@ -2,6 +2,8 @@ import { APIApplicationCommandOptionChoice, CommandInteraction, SlashCommandBuil
 import { AIController } from "../AI/AIController";
 import { AsyncCommand } from "./_Commands";
 import { IPersonalitiesEntity, PersonalitiesModel } from "../Database/Models/Personalities.model";
+import { CommonComponents } from "../CommonComponents";
+import { GetAI } from "../Functions/GetAI";
 
 export class ChangePersonality implements AsyncCommand {
     name = "change-personality";
@@ -32,9 +34,11 @@ export class ChangePersonality implements AsyncCommand {
         return data;
     }
 
-    public async commandRun(interaction: CommandInteraction, ai?: AIController) {
+    public async commandRun(interaction: CommandInteraction, cc: CommonComponents) {
+        const ai = GetAI(cc, interaction.channel);
+
         if (!ai) {
-            interaction.reply(":computer::warning: You're not assigned an AI slot. Talk and an AI Slot will be made for you.");
+            interaction.reply(":computer::warning: You're not assigned an AI slot. Enable the AI.");
             return;
         }
 

@@ -64,7 +64,7 @@ export class Personality {
      */
     async deleteDB() {
         await MessagesModel.deleteMany({ channel: this.channel }).exec();
-        await this.addSystemMessage(this.initialSystemMessage);
+        this.messages = [];
     }
 
     /**
@@ -75,8 +75,7 @@ export class Personality {
     }
 
     async reset() {
-        this.log("Reset the personality");
-        this.messages = [];
+        this.log("Resetting the personality");
 
         // remove from db
         await this.deleteDB();

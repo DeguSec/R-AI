@@ -16,5 +16,5 @@ export const ChatInputCommandInteractionFunction = async (args: ChatInputCommand
 
     const command = commands.filter((command) => command.name == args.commandName)[0];
 
-    command.commandRun(args, GetAI(cc, args.channel));
+    command.commandRun(args, cc);
 }

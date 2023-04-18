@@ -2,6 +2,8 @@ import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { AIController } from "../AI/AIController";
 import { Command } from "./_Commands";
 import { ChannelModel } from "../Database/Models/Channel.model";
+import { CommonComponents } from "../CommonComponents";
+import { GetAI } from "../Functions/GetAI";
 
 export class ChannelEnable implements Command {
     name: string = "enable";
@@ -14,7 +16,9 @@ export class ChannelEnable implements Command {
         this.data.setDescription(this.description);
     }
 
-    async commandRun(interaction: CommandInteraction, ai?: AIController) {
+    async commandRun(interaction: CommandInteraction, cc: CommonComponents) {
+        const ai = GetAI(cc, interaction.channel);
+        
         console.log(ai);
         console.log(interaction);
 

@@ -1,6 +1,8 @@
 import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { AIController } from "../AI/AIController";
 import { Command } from "./_Commands";
+import { CommonComponents } from "../CommonComponents";
+import { GetAI } from "../Functions/GetAI";
 
 export class Debug implements Command {
     name: string = "debug";
@@ -13,7 +15,8 @@ export class Debug implements Command {
         this.data.setDescription(this.description);
     }
 
-    commandRun(interaction: CommandInteraction, ai?: AIController) {
+    commandRun(interaction: CommandInteraction, cc: CommonComponents) {
+        const ai = GetAI(cc, interaction.channel);
         if(!ai) return;
 
         ai.toggleDebug();
