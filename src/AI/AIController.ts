@@ -54,11 +54,17 @@ export class AIController {
     }
 
     /**
-     * Required before use. Use this function to get a personality for the bot. 
-     * @param makeNew 
+     * Required before use! Use this function to get a personality for the bot.  
      */
     async strapPersonality() {
         this.personality = await personalityFactory.generateBot(this._debug, this.channel.id);
+    }
+
+    /**
+     * Check if required! This adds the first message to the message list.
+     */
+    async restorePersonalitySystemMessage() {
+        this.personality?.restoreSystemMessage();
     }
 
     /**
