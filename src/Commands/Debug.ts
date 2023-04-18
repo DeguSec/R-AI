@@ -20,7 +20,7 @@ export class Debug implements Command {
         const ai = GetAI(cc, interaction.channel);
         const allowed = CheckAllowedSource(cc, interaction.channel?.id, interaction.guild?.id);
         
-        if(!ai || allowed) {
+        if(!ai || !allowed) {
             interaction.reply("There is no AI to debug.")
             return;
         }

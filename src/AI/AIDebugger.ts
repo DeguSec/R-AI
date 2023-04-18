@@ -10,7 +10,7 @@ const calculateChatCost = (tokens: number) => {
 
 
 export class AIDebugger {
-    debugMode = true;
+    debugMode = false;
 
     tokens = {
         prompt: 0,
