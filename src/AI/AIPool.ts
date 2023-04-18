@@ -22,7 +22,7 @@ export class AIPool {
 
         // Strap the AIs
         await Promise.all(enabledChannels.map(async enabledChannel =>
-            this.makeFromChannel(enabledChannel.channel)
+            this.makeFromChannel(enabledChannel)
         ));
     }
 
@@ -32,20 +32,20 @@ export class AIPool {
      * @param enabledChannel the string of the channel that has been enabled as found in a database
      * @returns 
      */
-    private async makeFromChannel(enabledChannel: string) {
+    private async makeFromChannel(enabledChannel: IChannelEntity) {
         try {
-            const channel = await this.cc.client.channels.fetch(enabledChannel);
+            const channel = await this.cc.client.channels.fetch(enabledChannel.channel);
             if (!channel) {
                 console.log(`The channel returned null: ${enabledChannel}`);
                 
                 // no such channel therefore no need to keep going
-                this.disable(enabledChannel);
+                this.disable(enabledChannel.channel);
                 return;
             }
 
             const ai = new AIController(this.cc, channel);
-            await this.strap(ai);
-            this.pool.set(enabledChannel, ai);
+            await this.strap(ai, enabledChannel.personalityString);
+            this.pool.set(enabledChannel.channel, ai);
 
         } catch (error) {
             // basically give up
@@ -53,7 +53,7 @@ export class AIPool {
             console.log(`There was an error with: ${enabledChannel}`);
             //console.trace(error);
 
-            await this.disable(enabledChannel);
+            await this.disable(enabledChannel.channel);
         }
     }
 
@@ -63,13 +63,13 @@ export class AIPool {
      * @todo Load personality into the AI
      * @param ai 
      */
-    async strap(ai: AIController) {
+    async strap(ai: AIController, personalityString?: string) {
         console.log(`Strapping: ${ai.channel.id}`);
 
         // get all the messages if any
         const messages: Array<IMessageEntity> | null = await MessagesModel.find({ channel: ai.channel.id }).exec() as any;
 
-        await ai.strapPersonality();
+        await ai.strapPersonality(personalityString);
 
         // add the messages to the ai
         if (messages) {

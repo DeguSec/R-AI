@@ -57,8 +57,11 @@ export class AIController {
     /**
      * Required before use! Use this function to get a personality for the bot.  
      */
-    async strapPersonality() {
-        this.personality = await personalityFactory.generateBot(this._debug, this.channel.id);
+    async strapPersonality(personalityString?: string) {
+        if(!personalityString)
+            this.personality = await personalityFactory.generateBot(this._debug, this.channel.id);
+        else
+            this.personality = await personalityFactory.generateCustomBot(this._debug, this.channel.id, personalityString);
     }
 
     /**
