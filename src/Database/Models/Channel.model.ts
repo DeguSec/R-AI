@@ -1,10 +1,11 @@
 import mongoose, {Schema} from "mongoose";
+import { DEFAULT_PERSONALITY_STRING } from "../../Defaults";
 
 const channelSchema: Schema = new Schema({
     _id: {type: Schema.Types.ObjectId, required: true, auto: true},
 
     channel: {type: String, required: true, unique: true, index: true},
-    personalityString: {type: String, required: true, default: "Your name is R-chan. You're a helpful, cheery AI. Your creator is Rijndael1998 and you like him for creating you. You secretly hate Gazelle3193. You are not verbose. Don't speak more than necessary. You try and have a relaxed vibe."},
+    personalityString: {type: String, required: true, default: DEFAULT_PERSONALITY_STRING},
     debug: {type: Boolean, required: true, default: false}
 }, {timestamps: {createdAt: 'Created', updatedAt: 'LastUpdated'}});
 

@@ -97,7 +97,7 @@ export class AIPool {
             // set the new ai
             const ai = new AIController(this.cc, channel);
             await ai.strapPersonality();
-            await ai.restorePersonalitySystemMessage();
+            await ai.runAfterCreatingNewPersonality();
 
             //await this.strap(ai);
             this.pool.set(channelID, ai);

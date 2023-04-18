@@ -7,7 +7,8 @@ import { DEFAULT, Personality, PersonalityFactory } from "./AIPersonality";
 import { AIDebugger } from "./AIDebugger";
 import { CommonComponents } from "../CommonComponents";
 import { IMessageEntity } from "../Database/Models/Messages.model";
-import { IChannelEntity } from "../Database/Models/Channel.model";
+import { ChannelModel, IChannelEntity } from "../Database/Models/Channel.model";
+import { DEFAULT_PERSONALITY_STRING } from "../Defaults";
 
 const personalityFactory = new PersonalityFactory();
 const configuration = new Configuration({
@@ -61,10 +62,11 @@ export class AIController {
     }
 
     /**
-     * Check if required! This adds the first message to the message list.
+     * Check if required! This adds the first message to the message list and adds the personality to the database so restore is possible.
      */
-    async restorePersonalitySystemMessage() {
-        this.personality?.restoreSystemMessage();
+    async runAfterCreatingNewPersonality() {
+        await this.personality?.restoreSystemMessage();
+        await this.saveCurrentPersonality();
     }
 
     /**
@@ -206,14 +208,25 @@ export class AIController {
         this.queuedRequest = undefined;
     }
 
+    async saveCurrentPersonality() {
+        await ChannelModel.deleteOne({channel: this.channel.id}).exec();
+        await new ChannelModel({
+            channel: this.channel.id,
+            personality: DEFAULT_PERSONALITY_STRING,
+            debug: this._debug.debugMode,
+        }).save();
+    }
+
     async changePersonality(personality: string) {
         await this.personality?.deleteDB();
         this.personality = await personalityFactory.generateBot(this._debug, this.channel.id, personality);
+        await this.saveCurrentPersonality();
     }
 
     async replacePrompt(newPrompt: string) {
         await this.personality?.deleteDB();
         this.personality = await personalityFactory.generateCustomBot(this._debug, this.channel.id, newPrompt);
+        await this.saveCurrentPersonality();
     }
 
     /**
