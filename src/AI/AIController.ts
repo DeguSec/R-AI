@@ -44,7 +44,6 @@ export class AIController {
     private messagesAwaiting: Array<AIMessage> = [];
 
     constructor(cc: CommonComponents, channel: Channel) {
-        console.log("Made new AI for ", channel.id);
         this.openai = new OpenAIApi(configuration);
         this.cc = cc;
 
@@ -85,10 +84,6 @@ export class AIController {
             this.personality.restoreSystemMessage();
         }
 
-
-        console.log("Messages to restore: ");
-        console.log(messages);
-
         this.personality.messages = messages.map((message) => {
             return {
                 role: message.content.role,
@@ -119,14 +114,12 @@ export class AIController {
             if (!message)
                 break
 
-            console.log("adding awaiting message", message);
             this.addMessage(message);
         }
     }
 
     addMessage(message: AIMessage) {
         if (!this.personality) {
-            console.log("pushed awaiting message", this.messagesAwaiting);
             this.messagesAwaiting.push(message);
             return;
         }

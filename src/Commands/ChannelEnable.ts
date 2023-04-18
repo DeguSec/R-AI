@@ -23,9 +23,6 @@ export class ChannelEnable implements Command {
         
         const ai = GetAI(cc, interaction.channel);
 
-        console.log(ai);
-        console.log(interaction);
-
         if(ai) {
             interaction.reply("AI is already enabled in this channel");
             return;
