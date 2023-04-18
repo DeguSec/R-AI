@@ -3,6 +3,7 @@ import { AIController } from "../AI/AIController";
 import { ModalListener } from "./_Commands";
 import { CommonComponents } from "../CommonComponents";
 import { GetAI } from "../Functions/GetAI";
+import { CheckAllowedSource } from "../Functions/CheckAllowedSource";
 
 export class CustomPersonality implements ModalListener {
     name = "custom-personality"
@@ -18,7 +19,9 @@ export class CustomPersonality implements ModalListener {
     
     commandRun(interaction: CommandInteraction, cc: CommonComponents) {
         const ai = GetAI(cc, interaction.channel);
-        if(!ai) {
+        const allowed = CheckAllowedSource(cc, interaction.channel?.id, interaction.guild?.id);
+
+        if(!ai || !allowed) {
             interaction.reply("No AI has been assigned. Enable the AI first");
             return;
         }
@@ -44,8 +47,9 @@ export class CustomPersonality implements ModalListener {
 
     modalRun(interaction: ModalSubmitInteraction, cc: CommonComponents) {
         const ai = GetAI(cc, interaction.channel);
+        const allowed = CheckAllowedSource(cc, interaction.channel?.id, interaction.guild?.id);
 
-        if(!ai) {
+        if(!ai || !allowed) {
             interaction.reply("Error. No AI has been assigned. Enable the AI first.");
             return;
         }

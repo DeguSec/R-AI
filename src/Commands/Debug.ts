@@ -3,6 +3,7 @@ import { AIController } from "../AI/AIController";
 import { Command } from "./_Commands";
 import { CommonComponents } from "../CommonComponents";
 import { GetAI } from "../Functions/GetAI";
+import { CheckAllowedSource } from "../Functions/CheckAllowedSource";
 
 export class Debug implements Command {
     name: string = "debug";
@@ -17,7 +18,9 @@ export class Debug implements Command {
 
     commandRun(interaction: CommandInteraction, cc: CommonComponents) {
         const ai = GetAI(cc, interaction.channel);
-        if(!ai) {
+        const allowed = CheckAllowedSource(cc, interaction.channel?.id, interaction.guild?.id);
+        
+        if(!ai || allowed) {
             interaction.reply("There is no AI to debug.")
             return;
         }

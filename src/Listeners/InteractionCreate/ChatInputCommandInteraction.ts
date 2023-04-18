@@ -10,10 +10,6 @@ export const ChatInputCommandInteractionFunction = async (args: ChatInputCommand
     if (!args.commandType || !args.channel)
         return;
 
-    const ai = await CheckAllowedSource(cc, args.channel.id, args.guild?.id);
-    if (!ai)
-        return;
-
     const command = commands.filter((command) => command.name == args.commandName)[0];
 
     command.commandRun(args, cc);

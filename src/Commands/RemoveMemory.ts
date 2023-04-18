@@ -3,6 +3,7 @@ import { AIController } from "../AI/AIController";
 import { Command } from "./_Commands";
 import { CommonComponents } from "../CommonComponents";
 import { GetAI } from "../Functions/GetAI";
+import { CheckAllowedSource } from "../Functions/CheckAllowedSource";
 
 export class RemoveMemory implements Command {
     data: SlashCommandBuilder;
@@ -18,10 +19,11 @@ export class RemoveMemory implements Command {
     
     public async commandRun(interaction: CommandInteraction, cc: CommonComponents) {
         const ai = GetAI(cc, interaction.channel);
+        const allowed = CheckAllowedSource(cc, interaction.channel?.id, interaction.guild?.id);
         
         let content: string;
 
-        if(ai) {
+        if(ai && allowed) {
             ai.reset();
             content = ":computer: Reset successful.";
         } else {
@@ -31,7 +33,6 @@ export class RemoveMemory implements Command {
         await interaction.deferReply();
 
         await interaction.followUp({
-            ephemeral: true,
             content
         });
     }

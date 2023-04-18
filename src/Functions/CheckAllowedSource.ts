@@ -10,7 +10,7 @@ import { ChannelModel } from "../Database/Models/Channel.model";
  * @param guild 
  * @returns 
  */
-export const CheckAllowedSource = async (cc: CommonComponents, channel?: string, guild?: string) => {
+export const CheckAllowedSource = (cc: CommonComponents, channel?: string, guild?: string): boolean => {
     // the source is... weird
     if (channel == null)
         return false;
