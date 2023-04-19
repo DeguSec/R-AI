@@ -171,6 +171,11 @@ export class AIController {
         this.queuedRequest = setTimeout(() => this.react(), delta);
     }
 
+    private sendTyping() {
+        this._debug.log("Sending typing...");
+        this.channel.sendTyping();
+    }
+
     private async react(retried?: boolean) {
         if (!this.personality)
             return;
@@ -179,17 +184,21 @@ export class AIController {
 
         // received message
         this.messageSinceReaction = false;
-
-        this.channel.sendTyping();
+        this.sendTyping();
+        const requestTyping = setInterval(() => {this.sendTyping()}, 7000);
 
         let resp;
         try {
+            // call the API
             const req = await openai.createChatCompletion(this.personality.getChatCompletion());
+
             this._debug.logResponse(req);
             resp = req.data.choices[0].message?.content;
         } catch (e) {
             // TODO: Log this.
             this._debug.log(e);
+        } finally {
+            clearInterval(requestTyping);
         }
 
         if (resp) {
