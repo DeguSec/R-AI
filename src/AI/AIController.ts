@@ -3,17 +3,18 @@ import { Configuration, OpenAIApi } from "openai";
 import { EnvSecrets } from "../EnvSecrets";
 import { CheckSelfInteract } from "../Functions/CheckSelfInteract";
 import { SeparateMessages } from "../Functions/SeparateMessages";
-import { DEFAULT, Personality, PersonalityFactory } from "./AIPersonality";
+import { Personality, PersonalityFactory } from "./AIPersonality";
 import { AIDebugger } from "./AIDebugger";
 import { CommonComponents } from "../CommonComponents";
 import { IMessageEntity } from "../Database/Models/Messages.model";
-import { ChannelModel, IChannelEntity } from "../Database/Models/Channel.model";
-import { DEFAULT_PERSONALITY_STRING } from "../Defaults";
+import { ChannelModel } from "../Database/Models/Channel.model";
 
 const personalityFactory = new PersonalityFactory();
 const configuration = new Configuration({
     apiKey: EnvSecrets.getSecretOrThrow<string>('API_KEY'),
 });
+
+const openai = new OpenAIApi(configuration);
 
 export interface AIMessage {
     message: string,
@@ -26,7 +27,6 @@ export class AIController {
     public readonly channel: TextChannel;
 
     private readonly cc: CommonComponents;
-    private readonly openai: OpenAIApi;
 
     private personality?: Personality;
 
@@ -44,7 +44,7 @@ export class AIController {
     private messagesAwaiting: Array<AIMessage> = [];
 
     constructor(cc: CommonComponents, channel: Channel) {
-        this.openai = new OpenAIApi(configuration);
+        
         this.cc = cc;
 
         if (!channel.isTextBased())
@@ -184,7 +184,7 @@ export class AIController {
 
         let resp;
         try {
-            const req = await this.openai.createChatCompletion(this.personality.getChatCompletion());
+            const req = await openai.createChatCompletion(this.personality.getChatCompletion());
             this._debug.logResponse(req);
             resp = req.data.choices[0].message?.content;
         } catch (e) {
