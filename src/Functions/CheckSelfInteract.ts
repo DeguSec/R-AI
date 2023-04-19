@@ -1,4 +1,4 @@
-import { CommonComponents } from "../Listeners/_Listeners";
+import { CommonComponents } from "../CommonComponents";
 
 /**
  * Will return true if self interacts or id is not ready.

@@ -1,20 +1,24 @@
-const channels = new Set<string>([
-    //"1083495067966242986",
-    "1084614270806929469",
-]);
+import { CommonComponents } from "../CommonComponents";
+import { ChannelModel } from "../Database/Models/Channel.model";
 
 /**
  * Will return true if the source is allowed
+ * 
+ * This is based on the data stored in the database
+ * 
  * @param channel 
  * @param guild 
  * @returns 
  */
-export const CheckAllowedSource = (channel?: string, guild?: string) => {
-    if(channel == null)
+export const CheckAllowedSource = (cc: CommonComponents, channel?: string, guild?: string): boolean => {
+    // the source is... weird
+    if (channel == null)
         return false;
 
-    if(guild == null)
+    // the source is a DM
+    if (guild == null)
         return true;
-        
-    return channels.has(channel);
+
+    // find the channel in the database
+    return cc.ais.has(channel);
 }

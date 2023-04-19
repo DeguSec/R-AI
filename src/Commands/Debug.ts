@@ -1,6 +1,9 @@
-import { CommandInteraction, CacheType, SlashCommandBuilder, ModalSubmitInteraction } from "discord.js";
+import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { AIController } from "../AI/AIController";
 import { Command } from "./_Commands";
+import { CommonComponents } from "../CommonComponents";
+import { GetAI } from "../Functions/GetAI";
+import { CheckAllowedSource } from "../Functions/CheckAllowedSource";
 
 export class Debug implements Command {
     name: string = "debug";
@@ -13,8 +16,14 @@ export class Debug implements Command {
         this.data.setDescription(this.description);
     }
 
-    commandRun(interaction: CommandInteraction, ai?: AIController) {
-        if(!ai) return;
+    commandRun(interaction: CommandInteraction, cc: CommonComponents) {
+        const ai = GetAI(cc, interaction.channel);
+        const allowed = CheckAllowedSource(cc, interaction.channel?.id, interaction.guild?.id);
+        
+        if(!ai || !allowed) {
+            interaction.reply("There is no AI to debug.")
+            return;
+        }
 
         ai.toggleDebug();
 

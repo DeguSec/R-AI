@@ -1,7 +1,7 @@
 import { ModalSubmitInteraction } from "discord.js";
 import { commands } from "../../Commands/_Commands";
-import { CheckAI } from "../../Functions/CheckAI";
-import { CommonComponents } from "../_Listeners";
+import { GetAI } from "../../Functions/GetAI";
+import { CommonComponents } from "../../CommonComponents";
 
 export const ModalSubmitInteractionFunction = (args: ModalSubmitInteraction, cc: CommonComponents) => {
     if (!args.isModalSubmit() || !args.channel) return;
@@ -11,7 +11,6 @@ export const ModalSubmitInteractionFunction = (args: ModalSubmitInteraction, cc:
         return;
     }
 
-    const ai = CheckAI(cc, args.channel);
     const command = commands.filter((command) => command.name == args.customId)[0];
 
     if (!command || !command.modalRun) {
@@ -19,5 +18,5 @@ export const ModalSubmitInteractionFunction = (args: ModalSubmitInteraction, cc:
         return;
     }
 
-    command.modalRun(args, ai)
+    command.modalRun(args, cc)
 }
