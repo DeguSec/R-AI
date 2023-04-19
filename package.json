@@ -15,5 +15,6 @@
     "start": "ts-node src/Bot.ts",
     "seed": "ts-node src/Bot.ts seed",
     "unseed": "ts-node src/Bot.ts unseed"
-  }
+  },
+  "license": "CC-BY-SA-4.0"
 }
