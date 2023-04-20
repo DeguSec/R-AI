@@ -1,10 +1,12 @@
 import { Log } from "./AIDebugger";
+import { GPTModel } from "./AIModel";
 
 interface Request {
     date: Date,
     prompt_tokens: number;
     completion_tokens: number;
     total_tokens: number;
+    model: GPTModel;
 }
 
 export type RequestIngress = Omit<Request, "date">; 

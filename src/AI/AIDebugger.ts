@@ -1,11 +1,12 @@
 import { CreateChatCompletionResponse } from "openai";
 import { AxiosResponse } from "axios";
 import { CommonComponents } from "../CommonComponents";
+import { GPTModel } from "./AIModel";
 
 // token ration: 0.002 / 1000
 const ratio = {cost: 2, per: 1000000}
 
-const calculateChatCost = (tokens: number) => {
+const calculateChatCost = (tokens: number, model: GPTModel) => {
     return (tokens * ratio.cost / ratio.per);
 }
 
@@ -33,7 +34,7 @@ export class AIDebugger {
             Log(log);
     }
 
-    logResponse(res: AxiosResponse<CreateChatCompletionResponse, any>) {
+    logResponse(res: AxiosResponse<CreateChatCompletionResponse, any>, model: GPTModel) {
         // log tokens
         const data = res.data.usage;
         
@@ -44,13 +45,14 @@ export class AIDebugger {
             prompt_tokens: data.prompt_tokens,
             completion_tokens: data.completion_tokens,
             total_tokens: data.total_tokens,
+            model,
         });
 
         this.log(`Tokens for request:`);
         this.log(`\tPrompt   ${data.prompt_tokens}`);
         this.log(`\tComplete ${data.completion_tokens}`);
         this.log(`\tTotal    ${data.total_tokens}`);
-        this.log(`\tCost:    $${calculateChatCost(data.total_tokens)}`);
+        this.log(`\tCost:    $${calculateChatCost(data.total_tokens, model)}`);
 
         this.tokens.completion += data.completion_tokens;
         this.tokens.prompt += data.prompt_tokens;
@@ -60,7 +62,7 @@ export class AIDebugger {
         this.log(`\tPrompt   ${this.tokens.prompt}`);
         this.log(`\tComplete ${this.tokens.completion}`);
         this.log(`\tTotal    ${this.tokens.total}`);
-        this.log(`\tCost:    $${calculateChatCost(this.tokens.total)}`);
+        this.log(`\tCost:    $${calculateChatCost(this.tokens.total, model)}`);
     }
 
     toggleDebug() {

@@ -192,7 +192,7 @@ export class AIController {
             // call the API
             const req = await openai.createChatCompletion(this.personality.getChatCompletion());
 
-            this._debug.logResponse(req);
+            this._debug.logResponse(req, this.personality.model);
             resp = req.data.choices[0].message?.content;
         } catch (e) {
             // TODO: Log this.

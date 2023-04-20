@@ -2,12 +2,15 @@ import { ChatCompletionRequestMessage, ChatCompletionRequestMessageRoleEnum, Cre
 import { AIDebugger } from "./AIDebugger";
 import { IPersonalitiesEntity, PersonalitiesModel } from "../Database/Models/Personalities.model";
 import { MessagesModel } from "../Database/Models/Messages.model";
+import { GPTModel } from "./AIModel";
+import { DEFAULT_MODEL } from "../Defaults";
 
 export const DEFAULT = "Rchan";
 
 export class Personality {
     messages: Array<ChatCompletionRequestMessage> = [];
     channel: string;
+    model: GPTModel = DEFAULT_MODEL;
     protected initialSystemMessage: string;
     private _debug?: AIDebugger;
 
@@ -90,6 +93,10 @@ export class Personality {
         return this.messages
             .filter((message) => message.role == ChatCompletionRequestMessageRoleEnum.User)
             .length
+    }
+
+    setModel(model: GPTModel) {
+        throw new Error("Not implemented");
     }
 }
 
