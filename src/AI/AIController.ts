@@ -38,13 +38,13 @@ export class AIController {
     private typingTimeout = 10000;
     private messageDelay = 4000;
 
-    private _debug = new AIDebugger();
+    private _debug : AIDebugger;
 
     // this is a message stack that waits for the personality to initialize
     private messagesAwaiting: Array<AIMessage> = [];
 
     constructor(cc: CommonComponents, channel: Channel) {
-        
+        this._debug = new AIDebugger(cc);
         this.cc = cc;
 
         if (!channel.isTextBased())

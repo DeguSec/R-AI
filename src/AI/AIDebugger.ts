@@ -1,5 +1,6 @@
 import { CreateChatCompletionResponse } from "openai";
 import { AxiosResponse } from "axios";
+import { CommonComponents } from "../CommonComponents";
 
 // token ration: 0.002 / 1000
 const ratio = {cost: 2, per: 1000000}
@@ -8,8 +9,17 @@ const calculateChatCost = (tokens: number) => {
     return (tokens * ratio.cost / ratio.per);
 }
 
+export const Log = (log: any) => {
+    console.log(new Date(), log);
+}
 
 export class AIDebugger {
+    cc: CommonComponents;
+
+    constructor(cc: CommonComponents) {
+        this.cc = cc;
+    }
+
     debugMode = false;
 
     tokens = {
@@ -20,7 +30,7 @@ export class AIDebugger {
 
     log(log: any) {
         if (this.debugMode)
-            console.log(new Date(), log);
+            Log(log);
     }
 
     logResponse(res: AxiosResponse<CreateChatCompletionResponse, any>) {
@@ -29,6 +39,12 @@ export class AIDebugger {
         
         if(!data) 
             return
+
+        this.cc.tokenCounter.processRequest({
+            prompt_tokens: data.prompt_tokens,
+            completion_tokens: data.completion_tokens,
+            total_tokens: data.total_tokens,
+        });
 
         this.log(`Tokens for request:`);
         this.log(`\tPrompt   ${data.prompt_tokens}`);
