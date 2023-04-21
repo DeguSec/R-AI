@@ -9,6 +9,8 @@ import { CommonComponents } from "../CommonComponents";
 
 
 export function StrapListeners(cc: CommonComponents) {
+	let hasRanShutdownEvent = false;
+
     // on ready
     cc.client.addListener(Events.ClientReady, async () => await ClientReady(cc));
 
@@ -23,7 +25,18 @@ export function StrapListeners(cc: CommonComponents) {
     cc.client.addListener(Events.TypingStart, (args) => TypingStartFunction(args, cc));
 
     // Shutdown event listeners
-    process.on('SIGINT', () => ShutdownFunction(cc));  // CTRL+C
-    process.on('SIGQUIT', () => ShutdownFunction(cc)); // Keyboard quit
-    process.on('SIGTERM', () => ShutdownFunction(cc)); // `kill` command
+    // process.on('SIGINT', async () => { hasRanShutdownEvent = await ShutdownFunction(cc); });  // CTRL+C
+    // process.on('SIGQUIT', async () => { hasRanShutdownEvent = await ShutdownFunction(cc); }); // Keyboard quit
+    // process.on('SIGTERM', async () => { hasRanShutdownEvent = await ShutdownFunction(cc); }); // `kill` command
+	// process.on('beforeExit', async () => { hasRanShutdownEvent = await ShutdownFunction(cc); });
+	// process.on('exit', async () => { hasRanShutdownEvent = await ShutdownFunction(cc); });
+
+	['SIGHUP', 'SIGINT', 'SIGQUIT', 'SIGILL', 'SIGTRAP', 'SIGABRT', 'beforeExit',
+    'SIGBUS', 'SIGFPE', 'SIGUSR1', 'SIGSEGV', 'SIGUSR2', 'SIGTERM', 'exit'].forEach(function (sig) {
+		process.on(sig, async () => {
+			hasRanShutdownEvent = await ShutdownFunction(cc);
+			console.log(`signal: ${sig}`);
+			process.exit(0);
+		});
+	});
 }
