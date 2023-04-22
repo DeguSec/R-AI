@@ -6,10 +6,10 @@ export const ShutdownFunction = async (cc: CommonComponents): Promise<boolean> =
         //await DbSeeder.UnSeedDb();
 		console.log('ran');
         cc.client.destroy();
-        await cc.db?.close(true);
-		return true;
+        cc.db?.destroy(true);
+		process.exit(0);
     } catch (err) {
         console.error(err);
-		return false;
+		process.exit(0);
     }
 }
