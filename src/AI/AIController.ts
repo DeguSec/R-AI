@@ -8,6 +8,7 @@ import { AIDebugger } from "./AIDebugger";
 import { CommonComponents } from "../CommonComponents";
 import { IMessageEntity } from "../Database/Models/Messages.model";
 import { ChannelModel } from "../Database/Models/Channel.model";
+import { AIProxy } from "./AIProxy";
 
 const personalityFactory = new PersonalityFactory();
 const configuration = new Configuration({
@@ -15,6 +16,7 @@ const configuration = new Configuration({
 });
 
 const openai = new OpenAIApi(configuration);
+const proxy = new AIProxy();
 
 export interface AIMessage {
     message: string,
@@ -38,7 +40,7 @@ export class AIController {
     private typingTimeout = 10000;
     private messageDelay = 4000;
 
-    private _debug : AIDebugger;
+    private _debug: AIDebugger;
 
     // this is a message stack that waits for the personality to initialize
     private messagesAwaiting: Array<AIMessage> = [];
@@ -57,7 +59,7 @@ export class AIController {
      * Required before use! Use this function to get a personality for the bot.  
      */
     async strapPersonality(personalityString?: string) {
-        if(!personalityString)
+        if (!personalityString)
             this.personality = await personalityFactory.generateBot(this._debug, this.channel.id);
         else
             this.personality = await personalityFactory.generateCustomBot(this._debug, this.channel.id, personalityString);
@@ -97,10 +99,10 @@ export class AIController {
      * Puts the current personality into the database
      */
     async saveCurrentPersonality() {
-        if(!this.personality)
+        if (!this.personality)
             return;
-        
-        await ChannelModel.deleteOne({channel: this.channel.id}).exec();
+
+        await ChannelModel.deleteOne({ channel: this.channel.id }).exec();
         await new ChannelModel({
             channel: this.channel.id,
             personalityString: this.personality.getInitialSystemMessage(),
@@ -184,38 +186,41 @@ export class AIController {
 
         // received message
         this.messageSinceReaction = false;
-        this.sendTyping();
-        const requestTyping = setInterval(() => {this.sendTyping()}, 7000);
+        
+        //this.sendTyping();
+        //const requestTyping = setInterval(() => { this.sendTyping() }, 7000);
 
-        let resp;
-        try {
-            // call the API
-            const req = await openai.createChatCompletion(this.personality.getChatCompletion());
+        proxy.send(this.personality.getChatCompletion());
 
-            this._debug.logResponse(req);
-            resp = req.data.choices[0].message?.content;
-        } catch (e) {
-            // TODO: Log this.
-            this._debug.log(e);
-        } finally {
-            clearInterval(requestTyping);
-        }
+        // let resp;
+        // try {
+        //     // call the API
+        //     const req = await openai.createChatCompletion(this.personality.getChatCompletion());
 
-        if (resp) {
-            if (retried) resp = ":computer::warning: Bot reset\n\n" + resp;
-            this.personality.addAssistantMessage(resp);
+        //     this._debug.logResponse(req);
+        //     resp = req.data.choices[0].message?.content;
+        // } catch (e) {
+        //     // TODO: Log this.
+        //     this._debug.log(e);
+        // } finally {
+        //     clearInterval(requestTyping);
+        // }
 
-            SeparateMessages(resp).forEach(message => {
-                this.channel.send(message.trim());
-            });
+        // if (resp) {
+        //     if (retried) resp = ":computer::warning: Bot reset\n\n" + resp;
+        //     this.personality.addAssistantMessage(resp);
 
-        }
-        else {
-            // reset if failed
-            this.personality.reset();
-            if (!retried) this.react(true);
-            else return;
-        }
+        //     SeparateMessages(resp).forEach(message => {
+        //         this.channel.send(message.trim());
+        //     });
+
+        // }
+        // else {
+        //     // reset if failed
+        //     this.personality.reset();
+        //     if (!retried) this.react(true);
+        //     else return;
+        // }
 
     }
 
