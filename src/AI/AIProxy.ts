@@ -1,8 +1,9 @@
-import { Configuration, OpenAIApi, CreateChatCompletionRequest } from "openai";
-import { EnvSecrets } from "../EnvSecrets";
-import { ChatCompletionModel, IChatCompletionEntity } from "../Database/Models/AIProxy/ChatCompletion.model";
-import { sleep } from "../Functions/Sleep";
+import { AxiosResponse } from "axios";
 import { Document } from "mongoose";
+import { Configuration, CreateChatCompletionRequest, CreateChatCompletionResponse, OpenAIApi } from "openai";
+import { ChatCompletionModel, IChatCompletionEntity } from "../Database/Models/AIProxy/ChatCompletion.model";
+import { EnvSecrets } from "../EnvSecrets";
+import { sleep } from "../Functions/Sleep";
 
 const configuration = new Configuration({
     apiKey: EnvSecrets.getSecretOrThrow<string>('API_KEY'),
@@ -10,26 +11,38 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
+/**
+ * Database (IChatCompletionEntity) Object
+ */
 export type DBO = (Document<unknown, {}, { [x: string]: any; }> & Omit<{ [x: string]: any; } & Required<{ _id: unknown; }>, never>) & IChatCompletionEntity;
 
 const MAX_RETRIES = 7;
 const waitingFunction = (x: number) => x ** 2;
 
-const fakeCall = async (_: any) => {
-    console.log(new Date(), "Called", _.count);
-    await sleep(1);
-    console.log(new Date(), "Returned");
-    return {
-        success: false,
-        content: ""
-    };
+type chatCompletionType = AxiosResponse<CreateChatCompletionResponse, any>;
+
+const openAICall = async (dbo: DBO): Promise<{ success: boolean, content?: chatCompletionType, error?: any }> => {
+    const unstring: CreateChatCompletionRequest = JSON.parse(dbo.content);
+
+    try {
+        const req = await openai.createChatCompletion(unstring);
+        return {
+            success: true,
+            content: req,
+        };
+    } catch (e) {
+        return {
+            success: false,
+            error: e,
+        };
+    }
 };
 
 export interface AIProxyPromiseResponse {
     success: boolean;
     reason?: string;
     bubble?: boolean;
-    response?: any;
+    response?: chatCompletionType;
 };
 
 export interface AIProxyResponse {
@@ -47,7 +60,7 @@ export class AIProxy {
             await sleep(waitingFunction(res.count));
 
             // request was cancelled for external factors
-            if(res.status == "Cancelled") {
+            if (res.status == "Cancelled") {
                 await res.save();
                 return {
                     success: false,
@@ -56,12 +69,30 @@ export class AIProxy {
             }
 
             // make the call
-            const call = await fakeCall(res);
+            const call = await openAICall(res);
+
+            // if either cancelled before return or completed successfully, populate the token schema
+            if (call.content?.data.usage)
+                res.chatCompletionTokenSchema = {
+                    prompt_tokens: call.content.data.usage.prompt_tokens,
+                    completion_tokens: call.content.data.usage.completion_tokens,
+                };
+
+            // check if it was cancelled after calls if the call took a long time
+            if ((res as DBO).status == "Cancelled") {
+                await res.save();
+                return {
+                    success: false,
+                    reason: "Request was cancelled after api call (tokens lost)",
+                };
+            }
+
             res.count = res.count + 1;
 
             // call is a success
             if (call.success) {
                 res.status = "Completed";
+                res.content = "{}"; // clear content for privacy
                 await res.save();
                 return {
                     success: true,
@@ -87,8 +118,6 @@ export class AIProxy {
 
 
     async send(completion: CreateChatCompletionRequest): Promise<AIProxyResponse> {
-        //console.log(completion);
-
         const res = await new ChatCompletionModel({
             status: "Pending",
             content: JSON.stringify(completion),

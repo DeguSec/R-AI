@@ -208,7 +208,7 @@ export class AIController {
         this.channel.sendTyping();
     }
 
-    private async react(retried?: boolean) {
+    private async react() {
         if (!this.personality)
             return;
 
@@ -231,8 +231,6 @@ export class AIController {
 
         const res = await promise.response;
 
-        console.log(res);
-
         clearInterval(requestTyping);
 
         if (!res.success) {
@@ -245,38 +243,18 @@ export class AIController {
         if (!res.response)
             return;
 
-        
+        this._debug.logResponse(res.response);
+        // get the content from request
+        const resContent = res.response.data.choices[0].message?.content;
+        if (!resContent)
+            return;
 
-        // let resp;
-        // try {
-        //     // call the API
-        //     const req = await openai.createChatCompletion(this.personality.getChatCompletion());
+        this.personality?.addAssistantMessage(resContent);
 
-        //     this._debug.logResponse(req);
-        //     resp = req.data.choices[0].message?.content;
-        // } catch (e) {
-        //     // TODO: Log this.
-        //     this._debug.log(e);
-        // } finally {
-        //     clearInterval(requestTyping);
-        // }
-
-        // if (resp) {
-        //     if (retried) resp = ":computer::warning: Bot reset\n\n" + resp;
-        //     this.personality.addAssistantMessage(resp);
-
-        //     SeparateMessages(resp).forEach(message => {
-        //         this.channel.send(message.trim());
-        //     });
-
-        // }
-        // else {
-        //     // reset if failed
-        //     this.personality.reset();
-        //     if (!retried) this.react(true);
-        //     else return;
-        // }
-
+        SeparateMessages(resContent).forEach(message => {
+            const trimmedMessage = message.trim()
+            this.channel.send(trimmedMessage);
+        });
     }
 
     private clearQueueMessageTimeout() {
