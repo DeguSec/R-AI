@@ -212,8 +212,8 @@ export class AIController {
         if (!this.personality)
             return;
 
-        if(this.currentDBO) {
-            console.log("Current object exists");
+        if (this.currentDBO) {
+            this._debug.log("Had to cancel previous request.");
             this.currentDBO.status = "Cancelled";
             await this.currentDBO.save();
         }
@@ -226,13 +226,26 @@ export class AIController {
         this.sendTyping();
 
         const requestTyping = setInterval(() => { this.sendTyping() }, 5000);
-        const res = await proxy.send(this.personality.getChatCompletion());
-        this.currentDBO = res.dbObject;
+        const promise = await proxy.send(this.personality.getChatCompletion());
+        this.currentDBO = promise.dbObject;
+
+        const res = await promise.response;
 
         console.log(res);
-        console.log(await res.response);
 
         clearInterval(requestTyping);
+
+        if (!res.success) {
+            if (res.bubble && res.reason)
+                this.channel.send(res.reason);
+
+            return;
+        }
+
+        if (!res.response)
+            return;
+
+        
 
         // let resp;
         // try {

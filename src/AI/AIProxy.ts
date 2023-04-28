@@ -12,11 +12,11 @@ const openai = new OpenAIApi(configuration);
 
 export type DBO = (Document<unknown, {}, { [x: string]: any; }> & Omit<{ [x: string]: any; } & Required<{ _id: unknown; }>, never>) & IChatCompletionEntity;
 
-const MAX_RETRIES = 8;
+const MAX_RETRIES = 7;
 const waitingFunction = (x: number) => x ** 2;
 
 const fakeCall = async (_: any) => {
-    console.log(new Date(), "Called");
+    console.log(new Date(), "Called", _.count);
     await sleep(1);
     console.log(new Date(), "Returned");
     return {
