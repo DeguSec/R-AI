@@ -2,10 +2,10 @@ import mongoose, { Schema } from "mongoose";
 import { IChatCompletionTokenEntity, chatCompletionTokenSchema } from "./ChatCompletionToken.model";
 
 export const chatCompletionSchema: Schema = new Schema({
-    status: {type: String, required: true},
-    content: {type: String, required: true},
-    count: {type: Number, required: true},
-    chatCompletionTokenSchema: {type: chatCompletionTokenSchema},
+    status: { type: String, required: true },
+    content: { type: String, required: true },
+    count: { type: Number, required: true },
+    chatCompletionTokenSchema: { type: chatCompletionTokenSchema },
 
 }, { timestamps: { createdAt: 'Created', updatedAt: 'LastUpdated' } });
 
@@ -14,7 +14,7 @@ export const ChatCompletionModel = mongoose.model('ChatCompletion', chatCompleti
 export interface IChatCompletionModel {
     _id?: string | null;
     status: "Completed" | "Pending" | "Cancelled" | "Failed";
-    content: String;
+    content: string;
     count: number;
     chatCompletionTokenSchema?: IChatCompletionTokenEntity;
 }

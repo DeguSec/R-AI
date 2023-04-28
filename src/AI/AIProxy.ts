@@ -1,5 +1,6 @@
+import { AxiosResponse } from "axios";
 import { Document } from "mongoose";
-import { Configuration, CreateChatCompletionRequest, OpenAIApi } from "openai";
+import { Configuration, CreateChatCompletionRequest, CreateChatCompletionResponse, OpenAIApi } from "openai";
 import { ChatCompletionModel, IChatCompletionEntity } from "../Database/Models/AIProxy/ChatCompletion.model";
 import { EnvSecrets } from "../EnvSecrets";
 import { sleep } from "../Functions/Sleep";
@@ -10,26 +11,41 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
+/**
+ * Database (IChatCompletionEntity) Object
+ */
 export type DBO = (Document<unknown, {}, { [x: string]: any; }> & Omit<{ [x: string]: any; } & Required<{ _id: unknown; }>, never>) & IChatCompletionEntity;
 
 const MAX_RETRIES = 7;
 const waitingFunction = (x: number) => x ** 2;
 
-const fakeCall = async (_: any) => {
-    console.log(new Date(), "Called", _.count);
-    await sleep(10);
-    console.log(new Date(), "Returned");
-    return {
-        success: false,
-        content: ""
-    };
+type chatCompletionType = AxiosResponse<CreateChatCompletionResponse, any>;
+
+const openAICall = async (dbo: DBO): Promise<{ success: boolean, content?: chatCompletionType, error?: any }> => {
+    console.log(new Date(), "Called", dbo);
+    const unstring: CreateChatCompletionRequest = JSON.parse(dbo.content);
+
+    try {
+        const req = await openai.createChatCompletion(unstring);
+
+        console.log(new Date(), "Returned", req);
+        return {
+            success: true,
+            content: req,
+        };
+    } catch (e) {
+        return {
+            success: false,
+            error: e,
+        };
+    }
 };
 
 export interface AIProxyPromiseResponse {
     success: boolean;
     reason?: string;
     bubble?: boolean;
-    response?: any;
+    response?: chatCompletionType;
 };
 
 export interface AIProxyResponse {
@@ -56,7 +72,7 @@ export class AIProxy {
             }
 
             // make the call
-            const call = await fakeCall(res);
+            const call = await openAICall(res);
 
             // check if it was cancelled after calls if the call took a long time
             if ((res as DBO).status == "Cancelled") {
