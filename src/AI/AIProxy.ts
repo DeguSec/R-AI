@@ -1,8 +1,8 @@
-import { Configuration, OpenAIApi, CreateChatCompletionRequest } from "openai";
-import { EnvSecrets } from "../EnvSecrets";
-import { ChatCompletionModel, IChatCompletionEntity } from "../Database/Models/AIProxy/ChatCompletion.model";
-import { sleep } from "../Functions/Sleep";
 import { Document } from "mongoose";
+import { Configuration, CreateChatCompletionRequest, OpenAIApi } from "openai";
+import { ChatCompletionModel, IChatCompletionEntity } from "../Database/Models/AIProxy/ChatCompletion.model";
+import { EnvSecrets } from "../EnvSecrets";
+import { sleep } from "../Functions/Sleep";
 
 const configuration = new Configuration({
     apiKey: EnvSecrets.getSecretOrThrow<string>('API_KEY'),
@@ -47,7 +47,7 @@ export class AIProxy {
             await sleep(waitingFunction(res.count));
 
             // request was cancelled for external factors
-            if(res.status == "Cancelled") {
+            if (res.status == "Cancelled") {
                 await res.save();
                 return {
                     success: false,
