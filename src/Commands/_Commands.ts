@@ -7,6 +7,7 @@ import { RemoveMemory } from "./RemoveMemory";
 import { ChannelEnable } from "./ChannelEnable";
 import { ChannelDisable } from "./ChannelDisable";
 import { CommonComponents } from "../CommonComponents";
+import { React } from "./React";
 
 export interface RunnableCommand {
     name: string;
@@ -32,6 +33,7 @@ export const syncCommands: Array<Command> = [
     new Debug(),
     new ChannelEnable(),
     new ChannelDisable(),
+    new React(),
 ];
 
 export const asyncCommands: Array<AsyncCommand> = [

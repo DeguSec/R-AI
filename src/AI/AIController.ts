@@ -215,6 +215,11 @@ export class AIController {
         this.channel.sendTyping();
     }
 
+    public async externalReact() {
+        this._debug.log("externally reacted");
+        return await this.react();
+    }
+
     private async react() {
         if (!this.personality)
             return;
