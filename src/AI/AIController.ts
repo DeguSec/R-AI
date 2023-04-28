@@ -9,6 +9,7 @@ import { CommonComponents } from "../CommonComponents";
 import { IMessageEntity } from "../Database/Models/Messages.model";
 import { ChannelModel } from "../Database/Models/Channel.model";
 import { AIProxy, DBO } from "./AIProxy";
+import { convertUserForBot } from "../Functions/UserFunctions";
 
 const personalityFactory = new PersonalityFactory();
 const configuration = new Configuration({
@@ -249,7 +250,7 @@ export class AIController {
         if (!resContent)
             return;
 
-        this.personality?.addAssistantMessage(resContent);
+        this.personality?.addAssistantMessage(resContent, this.cc.client.user ? convertUserForBot(this.cc.client.user) : undefined);
 
         SeparateMessages(resContent).forEach(message => {
             const trimmedMessage = message.trim()
