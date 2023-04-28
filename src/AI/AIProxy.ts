@@ -48,7 +48,7 @@ export class AIProxy {
 
             // request was cancelled for external factors
             if(res.status == "Cancelled") {
-                res.save();
+                await res.save();
                 return {
                     success: false,
                     reason: "Request was cancelled",
@@ -62,7 +62,7 @@ export class AIProxy {
             // call is a success
             if (call.success) {
                 res.status = "Completed";
-                res.save();
+                await res.save();
                 return {
                     success: true,
                     response: call.content,
@@ -72,9 +72,10 @@ export class AIProxy {
             // call had too many tries
             else if (res.count >= MAX_RETRIES) {
                 res.status = "Failed";
-                res.save();
+                await res.save();
                 return {
                     success: false,
+                    bubble: true,
                     reason: "Exponential retry limit reached. Your request might be corrupted or the server might be at capacity. Try removing the memory or try again later.",
                 };
             }

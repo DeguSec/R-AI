@@ -212,6 +212,12 @@ export class AIController {
         if (!this.personality)
             return;
 
+        if(this.currentDBO) {
+            console.log("Current object exists");
+            this.currentDBO.status = "Cancelled";
+            await this.currentDBO.save();
+        }
+
         this._debug.log("Reacting");
 
         // received message
@@ -221,6 +227,7 @@ export class AIController {
 
         const requestTyping = setInterval(() => { this.sendTyping() }, 5000);
         const res = await proxy.send(this.personality.getChatCompletion());
+        this.currentDBO = res.dbObject;
 
         console.log(res);
         console.log(await res.response);
