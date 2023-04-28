@@ -22,13 +22,10 @@ const waitingFunction = (x: number) => x ** 2;
 type chatCompletionType = AxiosResponse<CreateChatCompletionResponse, any>;
 
 const openAICall = async (dbo: DBO): Promise<{ success: boolean, content?: chatCompletionType, error?: any }> => {
-    console.log(new Date(), "Called", dbo);
     const unstring: CreateChatCompletionRequest = JSON.parse(dbo.content);
 
     try {
         const req = await openai.createChatCompletion(unstring);
-
-        console.log(new Date(), "Returned", req);
         return {
             success: true,
             content: req,
@@ -74,6 +71,13 @@ export class AIProxy {
             // make the call
             const call = await openAICall(res);
 
+            // if either cancelled before return or completed successfully, populate the token schema
+            if (call.content?.data.usage)
+                res.chatCompletionTokenSchema = {
+                    prompt_tokens: call.content.data.usage.prompt_tokens,
+                    completion_tokens: call.content.data.usage.completion_tokens,
+                };
+
             // check if it was cancelled after calls if the call took a long time
             if ((res as DBO).status == "Cancelled") {
                 await res.save();
@@ -88,6 +92,7 @@ export class AIProxy {
             // call is a success
             if (call.success) {
                 res.status = "Completed";
+                res.content = "{}"; // clear content for privacy
                 await res.save();
                 return {
                     success: true,
@@ -113,8 +118,6 @@ export class AIProxy {
 
 
     async send(completion: CreateChatCompletionRequest): Promise<AIProxyResponse> {
-        //console.log(completion);
-
         const res = await new ChatCompletionModel({
             status: "Pending",
             content: JSON.stringify(completion),

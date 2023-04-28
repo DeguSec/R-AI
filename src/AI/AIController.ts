@@ -231,8 +231,6 @@ export class AIController {
 
         const res = await promise.response;
 
-        console.log(res);
-
         clearInterval(requestTyping);
 
         if (!res.success) {
@@ -245,6 +243,7 @@ export class AIController {
         if (!res.response)
             return;
 
+        this._debug.logResponse(res.response);
         // get the content from request
         const resContent = res.response.data.choices[0].message?.content;
         if (!resContent)
