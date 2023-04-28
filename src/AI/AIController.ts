@@ -10,6 +10,8 @@ import { IMessageEntity } from "../Database/Models/Messages.model";
 import { ChannelModel } from "../Database/Models/Channel.model";
 import { AIProxy, DBO } from "./AIProxy";
 import { convertUserForBot } from "../Functions/UserFunctions";
+import { DEFAULT_IGNORE_STRING } from "../Defaults";
+
 
 const personalityFactory = new PersonalityFactory();
 const configuration = new Configuration({
@@ -156,6 +158,10 @@ export class AIController {
             this.messagesAwaiting.push(message);
             return;
         }
+
+        // ignore if the message starts with that string
+        if (message.message.indexOf(DEFAULT_IGNORE_STRING) == 0)
+            return;
 
         this.personality.addUserMessage(message.message, message.user);
 
