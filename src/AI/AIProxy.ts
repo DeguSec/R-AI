@@ -17,7 +17,7 @@ const waitingFunction = (x: number) => x ** 2;
 
 const fakeCall = async (_: any) => {
     console.log(new Date(), "Called", _.count);
-    await sleep(1);
+    await sleep(10);
     console.log(new Date(), "Returned");
     return {
         success: false,
@@ -57,6 +57,16 @@ export class AIProxy {
 
             // make the call
             const call = await fakeCall(res);
+
+            // check if it was cancelled after calls if the call took a long time
+            if ((res as DBO).status == "Cancelled") {
+                await res.save();
+                return {
+                    success: false,
+                    reason: "Request was cancelled after api call (tokens lost)",
+                };
+            }
+
             res.count = res.count + 1;
 
             // call is a success
