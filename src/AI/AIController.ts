@@ -8,7 +8,7 @@ import { AIDebugger } from "./AIDebugger";
 import { CommonComponents } from "../CommonComponents";
 import { IMessageEntity } from "../Database/Models/Messages.model";
 import { ChannelModel } from "../Database/Models/Channel.model";
-import { AIProxy } from "./AIProxy";
+import { AIProxy, DBO } from "./AIProxy";
 
 const personalityFactory = new PersonalityFactory();
 const configuration = new Configuration({
@@ -26,19 +26,49 @@ export interface AIMessage {
 }
 
 export class AIController {
+    /**
+     * The TextChannel used by the bot
+     */
     public readonly channel: TextChannel;
 
     private readonly cc: CommonComponents;
 
     private personality?: Personality;
 
+    /**
+     * Date object to calculate delta with
+     */
     private userMessageDate: Date | undefined;
+
+    /**
+     * All of the users that have sent a typing request
+     */
     private typingUsers: Map<string, NodeJS.Timeout> = new Map();
+
+    /** 
+     * The reaction timer.
+     */
     private queuedRequest: NodeJS.Timeout | undefined;
+
+    /**
+     * Sees to see if messages have been sent by users
+     */
     private messageSinceReaction: boolean = false;
 
+    /**
+     * Time to give users between typing requests
+     */
     private typingTimeout = 10000;
+
+    /**
+     * Time to give users to start typing
+     */
     private messageDelay = 4000;
+
+    /**
+     * Possible existing call
+     */
+    private currentDBO?: DBO;
 
     private _debug: AIDebugger;
 
@@ -186,11 +216,16 @@ export class AIController {
 
         // received message
         this.messageSinceReaction = false;
-        
-        //this.sendTyping();
-        //const requestTyping = setInterval(() => { this.sendTyping() }, 7000);
 
-        proxy.send(this.personality.getChatCompletion());
+        this.sendTyping();
+
+        const requestTyping = setInterval(() => { this.sendTyping() }, 5000);
+        const res = await proxy.send(this.personality.getChatCompletion());
+
+        console.log(res);
+        console.log(await res.response);
+
+        clearInterval(requestTyping);
 
         // let resp;
         // try {
