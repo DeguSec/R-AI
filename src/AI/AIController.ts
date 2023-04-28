@@ -8,6 +8,7 @@ import { AIDebugger } from "./AIDebugger";
 import { CommonComponents } from "../CommonComponents";
 import { IMessageEntity } from "../Database/Models/Messages.model";
 import { ChannelModel } from "../Database/Models/Channel.model";
+import { AIProxy, DBO } from "./AIProxy";
 
 const personalityFactory = new PersonalityFactory();
 const configuration = new Configuration({
@@ -15,6 +16,7 @@ const configuration = new Configuration({
 });
 
 const openai = new OpenAIApi(configuration);
+const proxy = new AIProxy();
 
 export interface AIMessage {
     message: string,
@@ -24,27 +26,57 @@ export interface AIMessage {
 }
 
 export class AIController {
+    /**
+     * The TextChannel used by the bot
+     */
     public readonly channel: TextChannel;
 
     private readonly cc: CommonComponents;
 
     private personality?: Personality;
 
+    /**
+     * Date object to calculate delta with
+     */
     private userMessageDate: Date | undefined;
+
+    /**
+     * All of the users that have sent a typing request
+     */
     private typingUsers: Map<string, NodeJS.Timeout> = new Map();
+
+    /** 
+     * The reaction timer.
+     */
     private queuedRequest: NodeJS.Timeout | undefined;
+
+    /**
+     * Sees to see if messages have been sent by users
+     */
     private messageSinceReaction: boolean = false;
 
+    /**
+     * Time to give users between typing requests
+     */
     private typingTimeout = 10000;
+
+    /**
+     * Time to give users to start typing
+     */
     private messageDelay = 4000;
 
-    private _debug = new AIDebugger();
+    /**
+     * Possible existing call
+     */
+    private currentDBO?: DBO;
+
+    private _debug: AIDebugger;
 
     // this is a message stack that waits for the personality to initialize
     private messagesAwaiting: Array<AIMessage> = [];
 
     constructor(cc: CommonComponents, channel: Channel) {
-        
+        this._debug = new AIDebugger(cc);
         this.cc = cc;
 
         if (!channel.isTextBased())
@@ -57,7 +89,7 @@ export class AIController {
      * Required before use! Use this function to get a personality for the bot.  
      */
     async strapPersonality(personalityString?: string) {
-        if(!personalityString)
+        if (!personalityString)
             this.personality = await personalityFactory.generateBot(this._debug, this.channel.id);
         else
             this.personality = await personalityFactory.generateCustomBot(this._debug, this.channel.id, personalityString);
@@ -97,10 +129,10 @@ export class AIController {
      * Puts the current personality into the database
      */
     async saveCurrentPersonality() {
-        if(!this.personality)
+        if (!this.personality)
             return;
-        
-        await ChannelModel.deleteOne({channel: this.channel.id}).exec();
+
+        await ChannelModel.deleteOne({ channel: this.channel.id }).exec();
         await new ChannelModel({
             channel: this.channel.id,
             personalityString: this.personality.getInitialSystemMessage(),
@@ -176,47 +208,53 @@ export class AIController {
         this.channel.sendTyping();
     }
 
-    private async react(retried?: boolean) {
+    private async react() {
         if (!this.personality)
             return;
+
+        if (this.currentDBO) {
+            this._debug.log("Had to cancel previous request.");
+            this.currentDBO.status = "Cancelled";
+            await this.currentDBO.save();
+        }
 
         this._debug.log("Reacting");
 
         // received message
         this.messageSinceReaction = false;
+
         this.sendTyping();
-        const requestTyping = setInterval(() => {this.sendTyping()}, 7000);
 
-        let resp;
-        try {
-            // call the API
-            const req = await openai.createChatCompletion(this.personality.getChatCompletion());
+        const requestTyping = setInterval(() => { this.sendTyping() }, 5000);
+        const promise = await proxy.send(this.personality.getChatCompletion());
+        this.currentDBO = promise.dbObject;
 
-            this._debug.logResponse(req);
-            resp = req.data.choices[0].message?.content;
-        } catch (e) {
-            // TODO: Log this.
-            this._debug.log(e);
-        } finally {
-            clearInterval(requestTyping);
+        const res = await promise.response;
+
+        clearInterval(requestTyping);
+
+        if (!res.success) {
+            if (res.bubble && res.reason)
+                this.channel.send(res.reason);
+
+            return;
         }
 
-        if (resp) {
-            if (retried) resp = ":computer::warning: Bot reset\n\n" + resp;
-            this.personality.addAssistantMessage(resp);
+        if (!res.response)
+            return;
 
-            SeparateMessages(resp).forEach(message => {
-                this.channel.send(message.trim());
-            });
+        this._debug.logResponse(res.response);
+        // get the content from request
+        const resContent = res.response.data.choices[0].message?.content;
+        if (!resContent)
+            return;
 
-        }
-        else {
-            // reset if failed
-            this.personality.reset();
-            if (!retried) this.react(true);
-            else return;
-        }
+        this.personality?.addAssistantMessage(resContent);
 
+        SeparateMessages(resContent).forEach(message => {
+            const trimmedMessage = message.trim()
+            this.channel.send(trimmedMessage);
+        });
     }
 
     private clearQueueMessageTimeout() {

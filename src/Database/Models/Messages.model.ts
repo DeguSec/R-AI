@@ -1,11 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { ChatCompletionRequestMessage } from "openai";
-
-const messageContentSchema: Schema = new Schema({
-    role: {type: String, required: true},
-    content: {type: String, required: true},
-    name: {type: String},
-});
+import { messageContentSchema } from "./MessageContent.model";
 
 const messageSchema: Schema = new Schema({
     _id: { type: Schema.Types.ObjectId, required: true, auto: true },
