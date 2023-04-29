@@ -27,4 +27,6 @@ export const ClientReady = async (cc: CommonComponents) => {
     console.log("All listeners strapped");
 
     await cc.client.application?.commands.set(slashCommands);
+
+    console.log("All commands strapped");
 }

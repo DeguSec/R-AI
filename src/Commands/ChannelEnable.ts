@@ -24,11 +24,11 @@ export class ChannelEnable implements Command {
         const ai = GetAI(cc, interaction.channel);
 
         if(ai) {
-            interaction.reply("AI is already enabled in this channel");
+            interaction.reply(":computer::warning: AI is already enabled in this channel");
             return;
         }
 
         await cc.ais.enable(interaction.channel?.id);
-        interaction.reply("AI has been enabled");
+        interaction.reply(":computer: AI has been enabled");
     }
 }

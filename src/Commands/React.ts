@@ -19,10 +19,10 @@ export class React implements Command {
 
         if(ai) {
             await ai.externalReact();
-            interaction.reply({ content: 'Prompting now', ephemeral: true });
+            interaction.reply({ content: ':computer: Prompting now', ephemeral: true });
             return;
         }
 
-        interaction.reply({ content: 'Something went wrong. Not prompting.', ephemeral: true });
+        interaction.reply({ content: ':computer::octagonal_sign: Something went wrong. Not prompting.', ephemeral: true });
     }
 }
