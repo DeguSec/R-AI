@@ -1,5 +1,6 @@
 import mongoose, {Schema} from "mongoose";
 import { DEFAULT_PERSONALITY_STRING } from "../../Defaults";
+import { DBO } from "../DBO.type";
 
 const channelSchema: Schema = new Schema({
     _id: {type: Schema.Types.ObjectId, required: true, auto: true},
@@ -14,8 +15,11 @@ export const ChannelModel = mongoose.model('Channel', channelSchema);
 export interface IChannel {
     _id?: string | null;
     channel: string;
-    personalityString: string
-    debug: boolean
+    personalityString: string;
+    debug: boolean;
 }
 
-export type IChannelEntity = Omit<IChannel, '_id'>
+export interface IChannelEntity extends Omit<IChannel, '_id'> {
+}
+
+export type IChannelEntityDBO = DBO & IChannelEntity;

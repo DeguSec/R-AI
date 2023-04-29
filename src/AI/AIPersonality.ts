@@ -24,9 +24,9 @@ export class Personality {
         else throw new Error("No debugger");
     }
 
-    async addAssistantMessage(message: string) {
+    async addAssistantMessage(message: string, name?: string) {
         this.log("assistant message added");
-        await this.addMessage(ChatCompletionRequestMessageRoleEnum.Assistant, message);
+        await this.addMessage(ChatCompletionRequestMessageRoleEnum.Assistant, message, name);
     }
 
     async addUserMessage(message: string, userId?: string) {

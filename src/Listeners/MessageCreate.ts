@@ -3,9 +3,7 @@ import { GetAI } from "../Functions/GetAI";
 import { CheckAllowedSource } from "../Functions/CheckAllowedSource";
 import { CheckSelfInteract } from "../Functions/CheckSelfInteract";
 import { CommonComponents } from "../CommonComponents";
-
-const stripBad = (text: string) => text.replace(/[^A-Z|a-z|0-9]/g, "");
-const convertUserForBot = (user: User) => `${stripBad(user.username)}${user.discriminator}`;
+import { convertUserForBot } from "../Functions/UserFunctions";
 
 export const MessageCreateFunction = async (message: Message, cc: CommonComponents) => {
     // prevent bot from sending itself stuff

@@ -5,6 +5,7 @@ import { StrapListeners } from "./Listeners/_Listeners";
 import { AIPool } from "./AI/AIPool";
 import { DbSeeder } from "./Database/Seeding/Seeder";
 import { CommonComponents, CommonComponentsPending } from "./CommonComponents";
+import { AITokenCounter } from "./AI/AITokenCounter";
 
 
 async function main() {
@@ -46,7 +47,7 @@ async function main() {
     });
 
     console.log("Populating components");
-    const cc: CommonComponentsPending = { client };
+    const cc: CommonComponentsPending = { client, tokenCounter: new AITokenCounter() };
     new AIPool(cc);
     //await ais.populate();
 
