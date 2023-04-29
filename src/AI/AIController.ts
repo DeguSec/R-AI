@@ -11,7 +11,7 @@ import { ChannelModel } from "../Database/Models/Channel.model";
 import { AIProxy } from "./AIProxy";
 import { convertUserForBot } from "../Functions/UserFunctions";
 import { DEFAULT_IGNORE_STRING } from "../Defaults";
-import { DBO } from "../Types/DBO.type";
+import { DBO } from "../Database/DBO.type";
 
 
 const personalityFactory = new PersonalityFactory();

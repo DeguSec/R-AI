@@ -4,7 +4,7 @@ import { Configuration, CreateChatCompletionRequest, CreateChatCompletionRespons
 import { ChatCompletionModel, IChatCompletionEntity } from "../Database/Models/AIProxy/ChatCompletion.model";
 import { EnvSecrets } from "../EnvSecrets";
 import { sleep } from "../Functions/Sleep";
-import { DBO } from "../Types/DBO.type";
+import { DBO } from "../Database/DBO.type";
 
 const configuration = new Configuration({
     apiKey: EnvSecrets.getSecretOrThrow<string>('API_KEY'),

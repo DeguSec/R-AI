@@ -1,5 +1,5 @@
 import { Document } from "mongoose";
-import { IChatCompletionEntity } from "../Database/Models/AIProxy/ChatCompletion.model";
+import { IChatCompletionEntity } from "./Models/AIProxy/ChatCompletion.model";
 
 /**
  * Database (IChatCompletionEntity) Object
