@@ -1,6 +1,4 @@
 import { Channel, Message, TextChannel, Typing } from "discord.js";
-import { Configuration, OpenAIApi } from "openai";
-import { EnvSecrets } from "../EnvSecrets";
 import { CheckSelfInteract } from "../Functions/CheckSelfInteract";
 import { SeparateMessages } from "../Functions/SeparateMessages";
 import { Personality, PersonalityFactory } from "./AIPersonality";
@@ -14,11 +12,6 @@ import { DEFAULT_IGNORE_STRING } from "../Defaults";
 import { IChatCompletionEntityDBO } from "../Database/Models/AIProxy/ChatCompletion.model";
 
 const personalityFactory = new PersonalityFactory();
-const configuration = new Configuration({
-    apiKey: EnvSecrets.getSecretOrThrow<string>('API_KEY'),
-});
-
-const openai = new OpenAIApi(configuration);
 const proxy = new AIProxy();
 
 export interface AIMessage {
