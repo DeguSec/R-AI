@@ -1,6 +1,4 @@
 import { Channel, Message, TextChannel, Typing } from "discord.js";
-import { Configuration, OpenAIApi } from "openai";
-import { EnvSecrets } from "../EnvSecrets";
 import { CheckSelfInteract } from "../Functions/CheckSelfInteract";
 import { SeparateMessages } from "../Functions/SeparateMessages";
 import { Personality, PersonalityFactory } from "./AIPersonality";
@@ -8,17 +6,12 @@ import { AIDebugger } from "./AIDebugger";
 import { CommonComponents } from "../CommonComponents";
 import { IMessageEntity } from "../Database/Models/Messages.model";
 import { ChannelModel } from "../Database/Models/Channel.model";
-import { AIProxy, DBO } from "./AIProxy";
+import { AIProxy } from "./AIProxy";
 import { convertUserForBot } from "../Functions/UserFunctions";
 import { DEFAULT_IGNORE_STRING } from "../Defaults";
-
+import { IChatCompletionEntityDBO } from "../Database/Models/AIProxy/ChatCompletion.model";
 
 const personalityFactory = new PersonalityFactory();
-const configuration = new Configuration({
-    apiKey: EnvSecrets.getSecretOrThrow<string>('API_KEY'),
-});
-
-const openai = new OpenAIApi(configuration);
 const proxy = new AIProxy();
 
 export interface AIMessage {
@@ -71,15 +64,18 @@ export class AIController {
     /**
      * Possible existing call
      */
-    private currentDBO?: DBO;
+    private currentDBO?: IChatCompletionEntityDBO;
 
-    private _debug: AIDebugger;
+    /**
+     * The debugger for AI
+     */
+    public aiDebugger: AIDebugger;
 
     // this is a message stack that waits for the personality to initialize
     private messagesAwaiting: Array<AIMessage> = [];
 
     constructor(cc: CommonComponents, channel: Channel) {
-        this._debug = new AIDebugger(cc);
+        this.aiDebugger = new AIDebugger(cc);
         this.cc = cc;
 
         if (!channel.isTextBased())
@@ -93,9 +89,9 @@ export class AIController {
      */
     async strapPersonality(personalityString?: string) {
         if (!personalityString)
-            this.personality = await personalityFactory.generateBot(this._debug, this.channel.id);
+            this.personality = await personalityFactory.generateBot(this.aiDebugger, this.channel.id);
         else
-            this.personality = await personalityFactory.generateCustomBot(this._debug, this.channel.id, personalityString);
+            this.personality = await personalityFactory.generateCustomBot(this.aiDebugger, this.channel.id, personalityString);
     }
 
     /**
@@ -115,7 +111,7 @@ export class AIController {
             throw Error("Cannot restore without personality");
 
         if (!messages) {
-            this._debug.log("There were no messages for the personality: " + this.channel.id);
+            this.aiDebugger.log("There were no messages for the personality: " + this.channel.id);
             this.personality.restoreSystemMessage();
         }
 
@@ -139,7 +135,7 @@ export class AIController {
         await new ChannelModel({
             channel: this.channel.id,
             personalityString: this.personality.getInitialSystemMessage(),
-            debug: this._debug.debugMode,
+            debug: this.aiDebugger.debugMode,
         }).save();
     }
 
@@ -173,7 +169,7 @@ export class AIController {
     }
 
     typing(typing: Typing) {
-        this._debug.log(`Typing: ${typing.user.id}`);
+        this.aiDebugger.log(`Typing: ${typing.user.id}`);
 
         if (CheckSelfInteract(typing.user.id, this.cc))
             return;
@@ -197,13 +193,13 @@ export class AIController {
     }
 
     private typingFinished() {
-        this._debug.log("Assuming everyone finished typing");
+        this.aiDebugger.log("Assuming everyone finished typing");
 
         if (!this.messageSinceReaction)
             return;
 
         const delta = (this.userMessageDate ? this.userMessageDate : new Date(0)).getMilliseconds() - new Date().getMilliseconds() + this.messageDelay;
-        this._debug.log(`${delta}s delta`);
+        this.aiDebugger.log(`${delta}s delta`);
 
 
         // fire messages
@@ -211,12 +207,12 @@ export class AIController {
     }
 
     private sendTyping() {
-        this._debug.log("Sending typing...");
+        this.aiDebugger.log("Sending typing...");
         this.channel.sendTyping();
     }
 
     public async externalReact() {
-        this._debug.log("externally reacted");
+        this.aiDebugger.log("externally reacted");
         return await this.react();
     }
 
@@ -225,12 +221,12 @@ export class AIController {
             return;
 
         if (this.currentDBO) {
-            this._debug.log("Had to cancel previous request.");
+            this.aiDebugger.log("Had to cancel previous request.");
             this.currentDBO.status = "Cancelled";
             await this.currentDBO.save();
         }
 
-        this._debug.log("Reacting");
+        this.aiDebugger.log("Reacting");
 
         // received message
         this.messageSinceReaction = false;
@@ -255,7 +251,7 @@ export class AIController {
         if (!res.response)
             return;
 
-        this._debug.logResponse(res.response);
+        this.aiDebugger.logResponse(res.response);
         // get the content from request
         const resContent = res.response.data.choices[0].message?.content;
         if (!resContent)
@@ -270,7 +266,7 @@ export class AIController {
     }
 
     private clearQueueMessageTimeout() {
-        this._debug.log("Cleared queue");
+        this.aiDebugger.log("Cleared queue");
 
         if (this.queuedRequest)
             clearTimeout(this.queuedRequest);
@@ -280,13 +276,13 @@ export class AIController {
 
     async changePersonality(personality: string) {
         await this.personality?.deleteDB();
-        this.personality = await personalityFactory.generateBot(this._debug, this.channel.id, personality);
+        this.personality = await personalityFactory.generateBot(this.aiDebugger, this.channel.id, personality);
         await this.runAfterCreatingNewPersonality();
     }
 
     async replacePrompt(newPrompt: string) {
         await this.personality?.deleteDB();
-        this.personality = await personalityFactory.generateCustomBot(this._debug, this.channel.id, newPrompt);
+        this.personality = await personalityFactory.generateCustomBot(this.aiDebugger, this.channel.id, newPrompt);
         await this.runAfterCreatingNewPersonality();
     }
 
@@ -306,13 +302,14 @@ export class AIController {
      * toggles debug mode
      */
     toggleDebug() {
-        this._debug.toggleDebug();
+        this.aiDebugger.toggleDebug();
+        this.saveCurrentPersonality();
     }
 
     /**
      * Readonly debug param
      */
     get debug() {
-        return this._debug.debugMode;
+        return this.aiDebugger.debugMode;
     }
 }

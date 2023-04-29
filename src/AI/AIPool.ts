@@ -1,5 +1,5 @@
 import { CommonComponents, CommonComponentsPending } from "../CommonComponents";
-import { ChannelModel, IChannelEntity } from "../Database/Models/Channel.model";
+import { ChannelModel, IChannelEntityDBO } from "../Database/Models/Channel.model";
 import { IMessageEntity, MessagesModel } from "../Database/Models/Messages.model";
 import { AIController } from "./AIController";
 
@@ -18,12 +18,12 @@ export class AIPool {
      */
     async populate() {
         // Get all of the existing AIs
-        const enabledChannels: Array<IChannelEntity> = await ChannelModel.find({}).exec() as any;
+        const enabledChannels: Array<IChannelEntityDBO> = await ChannelModel.find({}).exec() as any;
 
         // Strap the AIs
-        await Promise.all(enabledChannels.map(async enabledChannel =>
-            this.makeFromChannel(enabledChannel)
-        ));
+        await Promise.all(enabledChannels.map(async (enabledChannel) => {
+            return this.makeFromChannel(enabledChannel);
+        }));
     }
 
     /**
@@ -32,18 +32,19 @@ export class AIPool {
      * @param enabledChannel the string of the channel that has been enabled as found in a database
      * @returns 
      */
-    private async makeFromChannel(enabledChannel: IChannelEntity) {
+    private async makeFromChannel(enabledChannel: IChannelEntityDBO) {
         try {
             const channel = await this.cc.client.channels.fetch(enabledChannel.channel);
             if (!channel) {
                 console.log(`The channel returned null: ${enabledChannel}`);
-                
+
                 // no such channel therefore no need to keep going
                 this.disable(enabledChannel.channel);
                 return;
             }
 
             const ai = new AIController(this.cc, channel);
+            ai.aiDebugger.setDebug(enabledChannel.debug);
             await this.strap(ai, enabledChannel.personalityString);
             this.pool.set(enabledChannel.channel, ai);
 
