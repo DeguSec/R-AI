@@ -14,8 +14,8 @@ export const ChannelModel = mongoose.model('Channel', channelSchema);
 export interface IChannel {
     _id?: string | null;
     channel: string;
-    personalityString: string
-    debug: boolean
+    personalityString: string;
+    debug: boolean;
 }
 
 export interface IChannelEntity extends Omit<IChannel, '_id'> {

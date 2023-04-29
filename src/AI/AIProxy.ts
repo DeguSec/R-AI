@@ -1,9 +1,10 @@
 import { AxiosResponse } from "axios";
-import { Document } from "mongoose";
+
 import { Configuration, CreateChatCompletionRequest, CreateChatCompletionResponse, OpenAIApi } from "openai";
 import { ChatCompletionModel, IChatCompletionEntity } from "../Database/Models/AIProxy/ChatCompletion.model";
 import { EnvSecrets } from "../EnvSecrets";
 import { sleep } from "../Functions/Sleep";
+import { DBO } from "../Types/DBO.type";
 
 const configuration = new Configuration({
     apiKey: EnvSecrets.getSecretOrThrow<string>('API_KEY'),
@@ -11,10 +12,6 @@ const configuration = new Configuration({
 
 const openai = new OpenAIApi(configuration);
 
-/**
- * Database (IChatCompletionEntity) Object
- */
-export type DBO = (Document<unknown, {}, { [x: string]: any; }> & Omit<{ [x: string]: any; } & Required<{ _id: unknown; }>, never>) & IChatCompletionEntity;
 
 const MAX_RETRIES = 7;
 const waitingFunction = (x: number) => x ** 2;
