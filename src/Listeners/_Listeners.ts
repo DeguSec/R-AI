@@ -23,7 +23,7 @@ export function StrapListeners(cc: CommonComponents) {
     cc.client.addListener(Events.TypingStart, (args) => TypingStartFunction(args, cc));
 
     // Shutdown event listeners
-    process.on('SIGINT', () => ShutdownFunction(cc));  // CTRL+C
-    process.on('SIGQUIT', () => ShutdownFunction(cc)); // Keyboard quit
-    process.on('SIGTERM', () => ShutdownFunction(cc)); // `kill` command
+    //process.on('SIGINT', () => ShutdownFunction(cc));  // CTRL+C
+    //process.on('SIGQUIT', () => ShutdownFunction(cc)); // Keyboard quit
+    //process.on('SIGTERM', () => ShutdownFunction(cc)); // `kill` command
 }
