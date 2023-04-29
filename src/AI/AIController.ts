@@ -243,7 +243,7 @@ export class AIController {
 
         if (!res.success) {
             if (res.bubble && res.reason)
-                this.channel.send(res.reason);
+                this.channel.send(`:computer::octagonal_sign: ${res.reason}`);
 
             return;
         }

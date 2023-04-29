@@ -21,13 +21,13 @@ export class Debug implements Command {
         const allowed = CheckAllowedSource(cc, interaction.channel?.id, interaction.guild?.id);
         
         if(!ai || !allowed) {
-            interaction.reply("There is no AI to debug.")
+            interaction.reply(":computer::warning: There is no AI to debug.")
             return;
         }
 
         ai.toggleDebug();
 
-        const res = `Debug ${ai.debug ? "enabled" : "disabled"}`;
+        const res = `:computer: Debug ${ai.debug ? "enabled" : "disabled"}`;
         interaction.reply(res);
     }
 }

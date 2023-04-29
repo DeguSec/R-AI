@@ -22,7 +22,7 @@ export class CustomPersonality implements ModalListener {
         const allowed = CheckAllowedSource(cc, interaction.channel?.id, interaction.guild?.id);
 
         if(!ai || !allowed) {
-            interaction.reply("No AI has been assigned. Enable the AI first");
+            interaction.reply(":computer::warning: No AI has been assigned. Enable the AI first");
             return;
         }
 
@@ -50,13 +50,13 @@ export class CustomPersonality implements ModalListener {
         const allowed = CheckAllowedSource(cc, interaction.channel?.id, interaction.guild?.id);
 
         if(!ai || !allowed) {
-            interaction.reply("Error. No AI has been assigned. Enable the AI first.");
+            interaction.reply(":computer::warning: Error. No AI has been assigned. Enable the AI first (/enable).");
             return;
         }
 
         const newPrompt = interaction.fields.getTextInputValue("prompt");
         ai.replacePrompt(newPrompt);
 
-        interaction.reply("Set new prompt: \n" + newPrompt);
+        interaction.reply(":computer: Set new prompt: \n" + newPrompt);
     }
 }

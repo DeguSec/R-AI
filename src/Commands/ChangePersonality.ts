@@ -47,9 +47,9 @@ export class ChangePersonality implements AsyncCommand {
         try {
             const personality = interaction.options.get("personality", true).value as string;
             ai.changePersonality(personality);
-            interaction.reply(`:computer: Personality Changed: ${personality}`);
+            interaction.reply(`:computer: Personality changed to ${personality}`);
         } catch (e) {
-            interaction.reply(":computer::warning: Faulty Request");
+            interaction.reply(":computer::octagonal_sign: Faulty request");
         }
     }
 }

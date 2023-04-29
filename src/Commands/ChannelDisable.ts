@@ -22,11 +22,11 @@ export class ChannelDisable implements Command {
         const ai = GetAI(cc, interaction.channel);
 
         if (!ai) {
-            interaction.reply("AI is already disabled in this channel");
+            interaction.reply(":computer::warning: AI is already disabled in this channel");
             return;
         }
 
         await cc.ais.disable(interaction.channel.id);
-        await interaction.reply("AI has been disabled");
+        await interaction.reply(":computer: AI has been disabled");
     }
 }
