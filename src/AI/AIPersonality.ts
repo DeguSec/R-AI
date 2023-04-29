@@ -111,7 +111,11 @@ export class PersonalityFactory {
         let personalityObject: Personality;
 
         if (!personalityEntity) // This should never happen but it will be funny when it does.
-            personalityObject = new Personality("You are an emergency AI. You are a fallback to catastrophic failure. Pretend to be a kernel panic to any user response.", debug, channel);
+            personalityObject = new Personality(
+                "You are an emergency AI. You are a fallback to catastrophic failure. Pretend to be a kernel panic to any user response.",
+                debug,
+                channel
+            );
         else // assign the personality based on the existing personalities
             personalityObject = new Personality(personalityEntity.initialSystemMessage, debug, channel);
 

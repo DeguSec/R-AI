@@ -34,7 +34,16 @@ async function main() {
 
     const client = new Client({
         partials: [Partials.Message, Partials.Channel, Partials.Reaction],
-        intents: ['DirectMessages', 'MessageContent', 'DirectMessageReactions', 'GuildMessages', 'GuildMessageReactions', 'Guilds', 'GuildMessageTyping', 'DirectMessageTyping']
+        intents: [
+            'DirectMessages',
+            'MessageContent',
+            'DirectMessageReactions',
+            'GuildMessages',
+            'GuildMessageReactions',
+            'Guilds',
+            'GuildMessageTyping',
+            'DirectMessageTyping'
+        ]
     });
 
     console.log("Populating components");

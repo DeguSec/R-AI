@@ -6,7 +6,7 @@ import { GetAI } from "../Functions/GetAI";
 import { CheckAllowedSource } from "../Functions/CheckAllowedSource";
 
 export class Debug implements Command {
-    name: string = "debug";
+    name = "debug";
     private description = "Toggle debug mode on the current AI";
     public data: SlashCommandBuilder;
 

@@ -17,5 +17,4 @@ export interface IPersonality {
     initialSystemMessage: string;
 }
 
-export interface IPersonalitiesEntity extends Omit<IPersonality, '_id'> {
-}
+export type IPersonalitiesEntity = Omit<IPersonality, '_id'>

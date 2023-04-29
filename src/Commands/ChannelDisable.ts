@@ -5,7 +5,7 @@ import { CommonComponents } from "../CommonComponents";
 import { GetAI } from "../Functions/GetAI";
 
 export class ChannelDisable implements Command {
-    name: string = "disable";
+    name = "disable";
     private description = "Disallow the AI to interact to process and interact with this channel.";
     public data: SlashCommandBuilder;
 

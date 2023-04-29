@@ -1,4 +1,4 @@
 export interface ISeeding {
-	Seed(): Promise<void>;
-	UnSeed(): Promise<void>;
+    Seed(): Promise<void>;
+    UnSeed(): Promise<void>;
 }

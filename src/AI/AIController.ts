@@ -140,6 +140,8 @@ export class AIController {
     }
 
     finishStrapping() {
+        // TODO: SORT THIS UNDEFINED CONSTANT OUT PLEASE FOR THE LOVE OF GOD
+        // eslint-disable-next-line no-constant-condition
         while (true) {
             const message = this.messagesAwaiting.shift();
             if (!message)
@@ -200,7 +202,6 @@ export class AIController {
 
         const delta = (this.userMessageDate ? this.userMessageDate : new Date(0)).getMilliseconds() - new Date().getMilliseconds() + this.messageDelay;
         this.aiDebugger.log(`${delta}s delta`);
-
 
         // fire messages
         this.queuedRequest = setTimeout(() => this.react(), delta);
