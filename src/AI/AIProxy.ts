@@ -1,10 +1,8 @@
 import { AxiosResponse } from "axios";
-
 import { Configuration, CreateChatCompletionRequest, CreateChatCompletionResponse, OpenAIApi } from "openai";
-import { ChatCompletionModel, IChatCompletionEntity } from "../Database/Models/AIProxy/ChatCompletion.model";
+import { ChatCompletionModel, IChatCompletionEntity, IChatCompletionEntityDBO } from "../Database/Models/AIProxy/ChatCompletion.model";
 import { EnvSecrets } from "../EnvSecrets";
 import { sleep } from "../Functions/Sleep";
-import { DBO } from "../Database/DBO.type";
 
 const configuration = new Configuration({
     apiKey: EnvSecrets.getSecretOrThrow<string>('API_KEY'),
@@ -18,7 +16,7 @@ const waitingFunction = (x: number) => x ** 2;
 
 type chatCompletionType = AxiosResponse<CreateChatCompletionResponse, any>;
 
-const openAICall = async (dbo: DBO): Promise<{ success: boolean, content?: chatCompletionType, error?: any }> => {
+const openAICall = async (dbo: IChatCompletionEntityDBO): Promise<{ success: boolean, content?: chatCompletionType, error?: any }> => {
     const unstring: CreateChatCompletionRequest = JSON.parse(dbo.content);
 
     try {
@@ -43,7 +41,7 @@ export interface AIProxyPromiseResponse {
 };
 
 export interface AIProxyResponse {
-    dbObject: DBO,
+    dbObject: IChatCompletionEntityDBO,
     response: Promise<AIProxyPromiseResponse>,
 }
 
@@ -51,7 +49,7 @@ export interface AIProxyResponse {
  * This class is responsible for scheduling and running messages
  */
 export class AIProxy {
-    private async proxyPromise(res: DBO): Promise<AIProxyPromiseResponse> {
+    private async proxyPromise(res: IChatCompletionEntityDBO): Promise<AIProxyPromiseResponse> {
         while (true) {
             // wait the required time
             await sleep(waitingFunction(res.count));
@@ -76,7 +74,7 @@ export class AIProxy {
                 };
 
             // check if it was cancelled after calls if the call took a long time
-            if ((res as DBO).status == "Cancelled") {
+            if ((res as IChatCompletionEntityDBO).status == "Cancelled") {
                 await res.save();
                 return {
                     success: false,
@@ -119,7 +117,7 @@ export class AIProxy {
             status: "Pending",
             content: JSON.stringify(completion),
             count: 0,
-        } as IChatCompletionEntity).save() as DBO;
+        } as IChatCompletionEntity).save() as IChatCompletionEntityDBO;
 
         return {
             dbObject: res,

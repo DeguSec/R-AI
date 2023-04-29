@@ -1,5 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 import { IChatCompletionTokenEntity, chatCompletionTokenSchema } from "./ChatCompletionToken.model";
+import { DBO } from "../../DBO.type";
 
 export const chatCompletionSchema: Schema = new Schema({
     status: { type: String, required: true },
@@ -21,3 +22,5 @@ export interface IChatCompletionModel {
 
 export interface IChatCompletionEntity extends Omit<IChatCompletionModel, '_id'> {
 }
+
+export type IChatCompletionEntityDBO = DBO & IChatCompletionEntity;

@@ -11,8 +11,7 @@ import { ChannelModel } from "../Database/Models/Channel.model";
 import { AIProxy } from "./AIProxy";
 import { convertUserForBot } from "../Functions/UserFunctions";
 import { DEFAULT_IGNORE_STRING } from "../Defaults";
-import { DBO } from "../Database/DBO.type";
-
+import { IChatCompletionEntityDBO } from "../Database/Models/AIProxy/ChatCompletion.model";
 
 const personalityFactory = new PersonalityFactory();
 const configuration = new Configuration({
@@ -72,7 +71,7 @@ export class AIController {
     /**
      * Possible existing call
      */
-    private currentDBO?: DBO;
+    private currentDBO?: IChatCompletionEntityDBO;
 
 
 
