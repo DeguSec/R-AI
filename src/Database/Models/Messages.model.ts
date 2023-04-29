@@ -21,9 +21,8 @@ export interface IMessage {
     Created?: Date | null;
     LastUpdated?: Date | null;
 
-    channel: String, // channel ID
+    channel: string, // channel ID
     content: ChatCompletionRequestMessage, // message content
 }
 
-export interface IMessageEntity extends Omit<IMessage, '_id'> {
-}
+export type IMessageEntity = Omit<IMessage, '_id'>

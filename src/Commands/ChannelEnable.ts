@@ -6,7 +6,7 @@ import { CommonComponents } from "../CommonComponents";
 import { GetAI } from "../Functions/GetAI";
 
 export class ChannelEnable implements Command {
-    name: string = "enable";
+    name = "enable";
     private description = "Allow the AI to interact to process and interact with this channel.";
     public data: SlashCommandBuilder;
 

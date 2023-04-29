@@ -4,13 +4,10 @@ import {ChatInputCommandInteractionFunction} from "./InteractionCreate/ChatInput
 import {ModalSubmitInteractionFunction} from "./InteractionCreate/ModalSubmitInteraction";
 import {MessageCreateFunction} from "./MessageCreate";
 import {TypingStartFunction} from "./TypingStart";
-import {ShutdownFunction} from "./Shutdown";
 import { CommonComponents } from "../CommonComponents";
 
 
 export function StrapListeners(cc: CommonComponents) {
-	let hasRanShutdownEvent = false;
-
     // on ready
     cc.client.addListener(Events.ClientReady, async () => await ClientReady(cc));
 
@@ -23,11 +20,4 @@ export function StrapListeners(cc: CommonComponents) {
 
     // typing listener
     cc.client.addListener(Events.TypingStart, (args) => TypingStartFunction(args, cc));
-
-    // Shutdown event listeners
-    process.on('SIGINT', () => ShutdownFunction(cc));  // CTRL+C
-    process.on('SIGQUIT', () => ShutdownFunction(cc)); // Keyboard quit
-    process.on('SIGTERM', () => ShutdownFunction(cc)); // `kill` command
-	process.on('beforeExit', () => ShutdownFunction(cc));
-	process.on('exit', () => ShutdownFunction(cc));
 }

@@ -11,7 +11,7 @@ export const MessageCreateFunction = async (message: Message, cc: CommonComponen
     // prevent bot from sending itself stuff
     if (CheckSelfInteract(message.author.id, cc) || ! await CheckAllowedSource(cc, message.channel.id, message.guild?.id)) return;
     
-    let ai = GetAI(cc, message.channel);
+    const ai = GetAI(cc, message.channel);
     if(!ai)
         return;
 

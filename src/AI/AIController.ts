@@ -33,7 +33,7 @@ export class AIController {
     private userMessageDate: Date | undefined;
     private typingUsers: Map<string, NodeJS.Timeout> = new Map();
     private queuedRequest: NodeJS.Timeout | undefined;
-    private messageSinceReaction: boolean = false;
+    private messageSinceReaction = false;
 
     private typingTimeout = 10000;
     private messageDelay = 4000;
@@ -109,6 +109,8 @@ export class AIController {
     }
 
     finishStrapping() {
+        // TODO: SORT THIS UNDEFINED CONSTANT OUT PLEASE FOR THE LOVE OF GOD
+        // eslint-disable-next-line no-constant-condition
         while (true) {
             const message = this.messagesAwaiting.shift();
             if (!message)
@@ -163,7 +165,8 @@ export class AIController {
         if (!this.messageSinceReaction)
             return;
 
-        const delta = (this.userMessageDate ? this.userMessageDate : new Date(0)).getMilliseconds() - new Date().getMilliseconds() + this.messageDelay;
+        const delta = (this.userMessageDate ? this.userMessageDate : 
+            new Date(0)).getMilliseconds() - new Date().getMilliseconds() + this.messageDelay;
         this._debug.log(`${delta}s delta`);
 
 

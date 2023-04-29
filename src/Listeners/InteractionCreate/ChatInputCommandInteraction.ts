@@ -5,7 +5,8 @@ import { CommonComponents } from "../../CommonComponents";
 import { CheckAllowedSource } from "../../Functions/CheckAllowedSource";
 
 export const ChatInputCommandInteractionFunction = async (args: ChatInputCommandInteraction, cc: CommonComponents) => {
-    //TODO: Command type in text based only (and thus ok). I'm not sure so i'm leaving this comment here just in case. I can feel my future self curse me
+    //TODO: Command type in text based only (and thus ok). 
+    //I'm not sure so i'm leaving this comment here just in case. I can feel my future self curse me
 
     if (!args.commandType || !args.channel)
         return;
