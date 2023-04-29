@@ -303,6 +303,7 @@ export class AIController {
      */
     toggleDebug() {
         this.aiDebugger.toggleDebug();
+        this.saveCurrentPersonality();
     }
 
     /**
