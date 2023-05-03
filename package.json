@@ -22,7 +22,7 @@
     "unseed": "ts-node src/Bot.ts unseed",
     "lint": "./node_modules/.bin/eslint . --ext .ts,.tsx",
     "lint:fix": "./node_modules/.bin/eslint . --ext .ts,.tsx --fix",
-    "prepare": "husky install"
+    "prepare": "husky install; chmod +x .husky/*"
   },
   "license": "CC-BY-SA-4.0",
   "lint-staged": {

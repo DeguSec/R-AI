@@ -38,7 +38,7 @@ export interface AIProxyPromiseResponse {
     reason?: string;
     bubble?: boolean;
     response?: chatCompletionType;
-};
+}
 
 export interface AIProxyResponse {
     dbObject: IChatCompletionEntityDBO,
@@ -50,6 +50,7 @@ export interface AIProxyResponse {
  */
 export class AIProxy {
     private async proxyPromise(res: IChatCompletionEntityDBO): Promise<AIProxyPromiseResponse> {
+        // eslint-disable-next-line no-constant-condition
         while (true) {
             // wait the required time
             await sleep(waitingFunction(res.count));

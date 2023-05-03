@@ -19,7 +19,6 @@ export interface IChannel {
     debug: boolean;
 }
 
-export interface IChannelEntity extends Omit<IChannel, '_id'> {
-}
+export type IChannelEntity = Omit<IChannel, '_id'>
 
 export type IChannelEntityDBO = DBO & IChannelEntity;

@@ -11,5 +11,4 @@ export interface IChatCompletionToken {
     completion_tokens: number;
 }
 
-export interface IChatCompletionTokenEntity extends Omit<IChatCompletionToken, "_id"> {
-}
+export type IChatCompletionTokenEntity = Omit<IChatCompletionToken, "_id">
