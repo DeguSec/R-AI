@@ -14,8 +14,10 @@ const openai = new OpenAIApi(configuration);
 const MAX_RETRIES = 7;
 const waitingFunction = (x: number) => x ** 2;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type chatCompletionType = AxiosResponse<CreateChatCompletionResponse, any>;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const openAICall = async (dbo: IChatCompletionEntityDBO): Promise<{ success: boolean, content?: chatCompletionType, error?: any }> => {
     const unstring: CreateChatCompletionRequest = JSON.parse(dbo.content);
 

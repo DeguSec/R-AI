@@ -3,7 +3,8 @@ module.exports = {
     root: true,
     parser: "@typescript-eslint/parser",
     plugins: [
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "unused-imports",
     ],
     extends: [
         "eslint:recommended",
@@ -12,6 +13,7 @@ module.exports = {
     ],
     rules: {
         'arrow-parens': 'off',
+        "unused-imports/no-unused-imports": "warn",
         indent: [
             'error',
             4,

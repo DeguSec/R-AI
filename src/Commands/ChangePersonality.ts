@@ -1,7 +1,6 @@
 import { APIApplicationCommandOptionChoice, CommandInteraction, SlashCommandBuilder } from "discord.js";
-import { AIController } from "../AI/AIController";
 import { AsyncCommand } from "./_Commands";
-import { IPersonalitiesEntity, PersonalitiesModel } from "../Database/Models/Personalities.model";
+import { IPersonalitiesEntity, IPersonalitiesEntityDBO, PersonalitiesModel } from "../Database/Models/Personalities.model";
 import { CommonComponents } from "../CommonComponents";
 import { GetAI } from "../Functions/GetAI";
 import { CheckAllowedSource } from "../Functions/CheckAllowedSource";
@@ -16,7 +15,7 @@ export class ChangePersonality implements AsyncCommand {
             .setDescription(this.description)
 
         const personalities: APIApplicationCommandOptionChoice<string>[] = [];
-        (await PersonalitiesModel.find({}).exec() as Array<any>).forEach((personality: IPersonalitiesEntity) => {
+        (await PersonalitiesModel.find({}).exec() as Array<IPersonalitiesEntityDBO>).forEach((personality: IPersonalitiesEntity) => {
             personalities.push(
                 {
                     name: personality.name,

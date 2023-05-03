@@ -1,4 +1,4 @@
-import { Message, User } from "discord.js";
+import { Message } from "discord.js";
 import { GetAI } from "../Functions/GetAI";
 import { CheckAllowedSource } from "../Functions/CheckAllowedSource";
 import { CheckSelfInteract } from "../Functions/CheckSelfInteract";

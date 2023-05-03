@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import { ChatCompletionRequestMessage } from "openai";
 import { messageContentSchema } from "./MessageContent.model";
+import { DBO } from "../DBO.type";
 
 const messageSchema: Schema = new Schema({
     _id: { type: Schema.Types.ObjectId, required: true, auto: true },
@@ -21,3 +22,6 @@ export interface IMessage {
 }
 
 export type IMessageEntity = Omit<IMessage, '_id'>
+
+export type IMessageEntityDBO = DBO & IMessageEntity;
+

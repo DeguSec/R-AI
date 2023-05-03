@@ -1,4 +1,5 @@
 import mongoose, {Schema} from "mongoose";
+import { DBO } from "../DBO.type";
 
 const personalitySchema: Schema = new Schema({
     _id: {type: Schema.Types.ObjectId, required: true, auto: true},
@@ -18,3 +19,6 @@ export interface IPersonality {
 }
 
 export type IPersonalitiesEntity = Omit<IPersonality, '_id'>
+
+export type IPersonalitiesEntityDBO = DBO & IPersonalitiesEntity;
+

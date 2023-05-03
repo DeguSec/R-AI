@@ -17,6 +17,7 @@ export class Personality {
         this._debug = aiDebugger;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     private log(str: any) {
         if (this._debug)
             this._debug.log(str);
@@ -107,7 +108,7 @@ export class PersonalityFactory {
      */
     async generateBot(debug: AIDebugger, channel: string, personality: string = DEFAULT): Promise<Personality> {
         // find any existing personalities
-        const personalityEntity: IPersonalitiesEntity | null = await PersonalitiesModel.findOne({ name: personality }).exec() as any;
+        const personalityEntity = await PersonalitiesModel.findOne({ name: personality }).exec() as IPersonalitiesEntity | null;
         let personalityObject: Personality;
 
         if (!personalityEntity) // This should never happen but it will be funny when it does.

@@ -9,6 +9,7 @@ const calculateChatCost = (tokens: number) => {
     return (tokens * ratio.cost / ratio.per);
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const Log = (log: any) => {
     console.log(new Date(), log);
 }
@@ -28,11 +29,13 @@ export class AIDebugger {
         total: 0,
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     log(log: any) {
         if (this.debugMode)
             Log(log);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     logResponse(res: AxiosResponse<CreateChatCompletionResponse, any>) {
         // log tokens
         const data = res.data.usage;
