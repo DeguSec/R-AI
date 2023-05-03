@@ -1,6 +1,5 @@
 import { CommandInteraction, SlashCommandBuilder } from "discord.js";
 import { Command } from "./_Commands";
-import { ChannelModel } from "../Database/Models/Channel.model";
 import { CommonComponents } from "../CommonComponents";
 import { GetAI } from "../Functions/GetAI";
 

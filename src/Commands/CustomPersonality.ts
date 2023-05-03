@@ -5,10 +5,8 @@ import {
     TextInputBuilder,
     TextInputStyle,
     ActionRowBuilder,
-    CacheType,
     ModalSubmitInteraction
 } from "discord.js";
-import { AIController } from "../AI/AIController";
 import { ModalListener } from "./_Commands";
 import { CommonComponents } from "../CommonComponents";
 import { GetAI } from "../Functions/GetAI";
@@ -49,6 +47,8 @@ export class CustomPersonality implements ModalListener {
         const row = new ActionRowBuilder();
         row.addComponents(prompt);
 
+        // this works but needs to be refactored
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         modal.addComponents(row as any);
 
         interaction.showModal(modal);

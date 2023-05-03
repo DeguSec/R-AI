@@ -1,6 +1,6 @@
 import { CommonComponents, CommonComponentsPending } from "../CommonComponents";
 import { ChannelModel, IChannelEntityDBO } from "../Database/Models/Channel.model";
-import { IMessageEntity, MessagesModel } from "../Database/Models/Messages.model";
+import { IMessageEntityDBO, MessagesModel } from "../Database/Models/Messages.model";
 import { AIController } from "./AIController";
 
 export class AIPool {
@@ -18,7 +18,7 @@ export class AIPool {
      */
     async populate() {
         // Get all of the existing AIs
-        const enabledChannels: Array<IChannelEntityDBO> = await ChannelModel.find({}).exec() as any;
+        const enabledChannels= await ChannelModel.find({}).exec() as Array<IChannelEntityDBO> ;
 
         // Strap the AIs
         await Promise.all(enabledChannels.map(async (enabledChannel) => {
@@ -68,7 +68,7 @@ export class AIPool {
         console.log(`Strapping: ${ai.channel.id}`);
 
         // get all the messages if any
-        const messages: Array<IMessageEntity> | null = await MessagesModel.find({ channel: ai.channel.id }).exec() as any;
+        const messages = await MessagesModel.find({ channel: ai.channel.id }).exec() as Array<IMessageEntityDBO> | null;
 
         await ai.strapPersonality(personalityString);
 
