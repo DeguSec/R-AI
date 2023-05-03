@@ -1,3 +1,4 @@
+/* eslint-disable */
 module.exports = {
     root: true,
     parser: "@typescript-eslint/parser",
@@ -26,7 +27,7 @@ module.exports = {
         'max-len': [
             'error',
             {
-                code: 144,
+                code: 80,
             },
         ],
     },
