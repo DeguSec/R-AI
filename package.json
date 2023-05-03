@@ -7,13 +7,13 @@
     "openai": "^3.2.1"
   },
   "devDependencies": {
-    "@types/node": "^18.15.11",
+    "@types/node": "^18.16.3",
     "@typescript-eslint/eslint-plugin": "^5.59.1",
     "@typescript-eslint/parser": "^5.59.1",
     "eslint": "^8.39.0",
+    "eslint-plugin-unused-imports": "^2.0.0",
     "husky": "^8.0.0",
     "lint-staged": "^13.2.2",
-    "@types/node": "^18.16.3",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
   },
@@ -21,8 +21,9 @@
     "start": "ts-node src/Bot.ts",
     "seed": "ts-node src/Bot.ts seed",
     "unseed": "ts-node src/Bot.ts unseed",
-    "lint": "eslint ./src --ext .ts --fix",
-    "prepare": "husky install"
+    "lint": "./node_modules/.bin/eslint . --ext .ts,.tsx",
+    "lint:fix": "./node_modules/.bin/eslint . --ext .ts,.tsx --fix",
+    "prepare": "husky install; chmod +x .husky/*"
   },
   "license": "CC-BY-SA-4.0",
   "lint-staged": {

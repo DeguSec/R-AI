@@ -14,8 +14,10 @@ const openai = new OpenAIApi(configuration);
 const MAX_RETRIES = 7;
 const waitingFunction = (x: number) => x ** 2;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type chatCompletionType = AxiosResponse<CreateChatCompletionResponse, any>;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const openAICall = async (dbo: IChatCompletionEntityDBO): Promise<{ success: boolean, content?: chatCompletionType, error?: any }> => {
     const unstring: CreateChatCompletionRequest = JSON.parse(dbo.content);
 
@@ -38,7 +40,7 @@ export interface AIProxyPromiseResponse {
     reason?: string;
     bubble?: boolean;
     response?: chatCompletionType;
-};
+}
 
 export interface AIProxyResponse {
     dbObject: IChatCompletionEntityDBO,
@@ -50,6 +52,7 @@ export interface AIProxyResponse {
  */
 export class AIProxy {
     private async proxyPromise(res: IChatCompletionEntityDBO): Promise<AIProxyPromiseResponse> {
+        // eslint-disable-next-line no-constant-condition
         while (true) {
             // wait the required time
             await sleep(waitingFunction(res.count));

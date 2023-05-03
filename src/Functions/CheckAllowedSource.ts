@@ -1,5 +1,4 @@
 import { CommonComponents } from "../CommonComponents";
-import { ChannelModel } from "../Database/Models/Channel.model";
 
 /**
  * Will return true if the source is allowed
