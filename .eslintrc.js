@@ -1,8 +1,10 @@
+/* eslint-disable */
 module.exports = {
     root: true,
     parser: "@typescript-eslint/parser",
     plugins: [
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "unused-imports",
     ],
     extends: [
         "eslint:recommended",
@@ -11,6 +13,7 @@ module.exports = {
     ],
     rules: {
         'arrow-parens': 'off',
+        "unused-imports/no-unused-imports": "warn",
         indent: [
             'error',
             4,
@@ -21,12 +24,6 @@ module.exports = {
             4,
             {
                 'SwitchCase': 1
-            },
-        ],
-        'max-len': [
-            'error',
-            {
-                code: 144,
             },
         ],
     },

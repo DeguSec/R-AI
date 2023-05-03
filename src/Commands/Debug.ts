@@ -1,5 +1,4 @@
 import { CommandInteraction, SlashCommandBuilder } from "discord.js";
-import { AIController } from "../AI/AIController";
 import { Command } from "./_Commands";
 import { CommonComponents } from "../CommonComponents";
 import { GetAI } from "../Functions/GetAI";

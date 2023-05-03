@@ -20,7 +20,6 @@ export interface IChatCompletionModel {
     chatCompletionTokenSchema?: IChatCompletionTokenEntity;
 }
 
-export interface IChatCompletionEntity extends Omit<IChatCompletionModel, '_id'> {
-}
+export type IChatCompletionEntity = Omit<IChatCompletionModel, '_id'>
 
 export type IChatCompletionEntityDBO = DBO & IChatCompletionEntity;

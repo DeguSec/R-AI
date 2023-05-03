@@ -49,7 +49,7 @@ export class AIController {
     /**
      * Sees to see if messages have been sent by users
      */
-    private messageSinceReaction: boolean = false;
+    private messageSinceReaction = false;
 
     /**
      * Time to give users between typing requests
