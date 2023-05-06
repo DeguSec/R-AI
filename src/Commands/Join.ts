@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, CommandInteraction, CacheType, Collection, NonThreadGuildBasedChannel } from "discord.js";
+import { CacheType, Collection, CommandInteraction, SlashCommandBuilder, VoiceBasedChannel } from "discord.js";
 import { CommonComponents } from "../CommonComponents";
 import { Command } from "./_Commands";
 
@@ -35,15 +35,35 @@ export class Join implements Command {
             return;
         }
 
-        let response: string = "";
+        // Narrow down the channels to voice channels only
         const filteredChannels = channels.filter((channel) => {
             return channel ? channel.isVoiceBased() : false;
-        }) as Collection<string, NonThreadGuildBasedChannel>;
+        }) as Collection<string, VoiceBasedChannel>;
 
-        filteredChannels.forEach((channel, key) => {
-            response += `${key}: ${channel.name}\n`;
-        });
+        let channel: VoiceBasedChannel | undefined;
+        const allVoiceChannelsSet = filteredChannels.values();
+        
+        // eslint-disable-next-line no-constant-condition
+        while(true) {
+            const nextChannel = allVoiceChannelsSet.next();
+            if(nextChannel.done)
+                break;
 
-        interaction.editReply(response);
+            if(nextChannel.value.members.has(interaction.user.id)) {
+                channel = nextChannel.value;
+                break;
+            }
+            
+        } 
+
+        // no channel was found here
+        if(!channel) {
+            interaction.editReply(":computer: Can't find user in a voice channel");
+            return;
+        }
+
+
+        // prep and join vc
+        interaction.editReply(":computer: Joining voice channel");
     }
 }
