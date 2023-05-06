@@ -42,7 +42,8 @@ async function main() {
             'GuildMessageReactions',
             'Guilds',
             'GuildMessageTyping',
-            'DirectMessageTyping'
+            'DirectMessageTyping',
+            'GuildVoiceStates',
         ]
     });
 
