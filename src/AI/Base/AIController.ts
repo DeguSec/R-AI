@@ -1,15 +1,15 @@
 import { Channel, Message, TextChannel, Typing } from "discord.js";
-import { CheckSelfInteract } from "../Functions/CheckSelfInteract";
-import { SeparateMessages } from "../Functions/SeparateMessages";
+import { CheckSelfInteract } from "../../Functions/CheckSelfInteract";
+import { SeparateMessages } from "../../Functions/SeparateMessages";
 import { Personality, PersonalityFactory } from "./AIPersonality";
 import { AIDebugger } from "./AIDebugger";
-import { CommonComponents } from "../CommonComponents";
-import { IMessageEntity } from "../Database/Models/Messages.model";
-import { ChannelModel } from "../Database/Models/Channel.model";
+import { CommonComponents } from "../../CommonComponents";
+import { IMessageEntity } from "../../Database/Models/Messages.model";
+import { ChannelModel } from "../../Database/Models/Channel.model";
 import { AIProxy } from "./AIProxy";
-import { convertUserForBot } from "../Functions/UserFunctions";
-import { DEFAULT_IGNORE_STRING } from "../Defaults";
-import { IChatCompletionEntityDBO } from "../Database/Models/AIProxy/ChatCompletion.model";
+import { convertUserForBot } from "../../Functions/UserFunctions";
+import { DEFAULT_IGNORE_STRING } from "../../Defaults";
+import { IChatCompletionEntityDBO } from "../../Database/Models/AIProxy/ChatCompletion.model";
 
 const personalityFactory = new PersonalityFactory();
 const proxy = new AIProxy();

@@ -1,6 +1,6 @@
-import { CommonComponents, CommonComponentsPending } from "../CommonComponents";
-import { ChannelModel, IChannelEntityDBO } from "../Database/Models/Channel.model";
-import { IMessageEntityDBO, MessagesModel } from "../Database/Models/Messages.model";
+import { CommonComponents, CommonComponentsPending } from "../../CommonComponents";
+import { ChannelModel, IChannelEntityDBO } from "../../Database/Models/Channel.model";
+import { IMessageEntityDBO, MessagesModel } from "../../Database/Models/Messages.model";
 import { AIController } from "./AIController";
 
 export class AIPool {

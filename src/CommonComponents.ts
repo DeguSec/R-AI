@@ -1,6 +1,6 @@
 import { Client } from "discord.js";
 import { Connection } from "mongoose";
-import { AIPool } from "./AI/AIPool";
+import { AIPool } from "./AI/Base/AIPool";
 import { AITokenCounter } from "./AI/AITokenCounter";
 
 export interface CommonComponents {

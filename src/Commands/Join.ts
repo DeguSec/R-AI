@@ -62,8 +62,9 @@ export class Join implements Command {
             return;
         }
 
-
         // prep and join vc
         interaction.editReply(":computer: Joining voice channel");
+
+        
     }
 }
