@@ -8,7 +8,9 @@ export class AIVoice {
         this.voiceConnection = joinVoiceChannel({
             channelId: channel.id,
             guildId: guild.id,
-            adapterCreator: guild.voiceAdapterCreator
+            adapterCreator: guild.voiceAdapterCreator,
+            selfDeaf: false,
+            selfMute: false,
         });
     }
 }
