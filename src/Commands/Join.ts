@@ -1,4 +1,4 @@
-import { CacheType, Collection, CommandInteraction, SlashCommandBuilder, VoiceBasedChannel } from "discord.js";
+import { CacheType, Collection, CommandInteraction, SlashCommandBuilder, VoiceBasedChannel, VoiceChannel } from "discord.js";
 import { CommonComponents } from "../CommonComponents";
 import { Command } from "./_Commands";
 
@@ -65,6 +65,6 @@ export class Join implements Command {
         // prep and join vc
         interaction.editReply(":computer: Joining voice channel");
 
-        cc.vAis.join(channel, guild);
+        cc.vAis.join(channel as VoiceChannel, guild, cc);
     }
 }
