@@ -1,7 +1,7 @@
 import { ChatCompletionRequestMessage, ChatCompletionRequestMessageRoleEnum, CreateChatCompletionRequest } from "openai";
 import { AIDebugger } from "./AIDebugger";
-import { IPersonalitiesEntity, PersonalitiesModel } from "../Database/Models/Personalities.model";
-import { MessagesModel } from "../Database/Models/Messages.model";
+import { IPersonalitiesEntity, PersonalitiesModel } from "../../Database/Models/Personalities.model";
+import { MessagesModel } from "../../Database/Models/Messages.model";
 
 export const DEFAULT = "Rchan";
 

@@ -1,6 +1,6 @@
 import { CreateChatCompletionResponse } from "openai";
 import { AxiosResponse } from "axios";
-import { CommonComponents } from "../CommonComponents";
+import { CommonComponents } from "../../CommonComponents";
 
 // token ration: 0.002 / 1000
 const ratio = {cost: 2, per: 1000000}

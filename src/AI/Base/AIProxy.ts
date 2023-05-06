@@ -1,8 +1,8 @@
 import { AxiosResponse } from "axios";
 import { Configuration, CreateChatCompletionRequest, CreateChatCompletionResponse, OpenAIApi } from "openai";
-import { ChatCompletionModel, IChatCompletionEntity, IChatCompletionEntityDBO } from "../Database/Models/AIProxy/ChatCompletion.model";
-import { EnvSecrets } from "../EnvSecrets";
-import { sleep } from "../Functions/Sleep";
+import { ChatCompletionModel, IChatCompletionEntity, IChatCompletionEntityDBO } from "../../Database/Models/AIProxy/ChatCompletion.model";
+import { EnvSecrets } from "../../EnvSecrets";
+import { sleep } from "../../Functions/Sleep";
 
 const configuration = new Configuration({
     apiKey: EnvSecrets.getSecretOrThrow<string>('API_KEY'),
