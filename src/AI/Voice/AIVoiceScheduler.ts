@@ -1,8 +1,11 @@
 import { OpusEncoder } from "@discordjs/opus";
 import { GuildMember } from "discord.js";
+import Ffmpeg from "fluent-ffmpeg";
 import { writeFile } from "fs/promises";
+import { Readable } from "stream";
 
-const opusEncoder = new OpusEncoder(48000, 2);
+const bitRate = 48000
+const opusEncoder = new OpusEncoder(bitRate, 2);
 const GapTime = 1_000;
 const MaxMumbleTime = 28_000; // for the sake of not going over Open AI
 
@@ -51,6 +54,14 @@ class VoiceUser {
         console.log(Buffer.concat(data));
 
         await writeFile("./rec/0", data);
+
+        const ff = Ffmpeg({source: Readable.from(data)})
+            .inputFormat("s16le")
+            .inputOption("-ar", `${bitRate}`)
+            .inputOption("-ac", `${2}`)
+            .saveToFile("./rec/0.mp3");
+        
+
     }
 }
 
