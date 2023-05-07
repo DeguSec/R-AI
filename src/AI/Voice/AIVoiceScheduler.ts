@@ -4,7 +4,7 @@ import { writeFile } from "fs/promises";
 
 const opusEncoder = new OpusEncoder(48000, 2);
 const GapTime = 1_000;
-const MaxMumbleTime = 30_000
+const MaxMumbleTime = 28_000; // for the sake of not going over Open AI
 
 class VoiceUser {
     // converted opus data
