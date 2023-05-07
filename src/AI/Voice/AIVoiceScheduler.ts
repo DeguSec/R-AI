@@ -1,11 +1,13 @@
 import { OpusEncoder } from "@discordjs/opus";
 import { GuildMember } from "discord.js";
+import { writeFile } from "fs/promises";
 
 const opusEncoder = new OpusEncoder(48000, 2);
 const GapTime = 1_000;
 const MaxMumbleTime = 30_000
 
 class VoiceUser {
+    // converted opus data
     awaitingData: Array<Buffer> = [];
     user: GuildMember;
     dispatchTimer?: NodeJS.Timer;
@@ -17,6 +19,7 @@ class VoiceUser {
 
     addData(data: Buffer) {
         const decodedOpus = opusEncoder.decode(data);
+        //const decodedOpus = data;
         this.awaitingData.push(decodedOpus);
 
         //console.log("added data for:", this.user.id);
@@ -29,7 +32,7 @@ class VoiceUser {
         this.dispatchTimer = setTimeout(() => this.convert(), GapTime);
     }
 
-    convert() {
+    async convert() {
         console.log("Dispatching convert.");
 
         const data = this.awaitingData;
@@ -45,6 +48,9 @@ class VoiceUser {
 
         // convert
         console.log(data);
+        console.log(Buffer.concat(data));
+
+        await writeFile("./rec/0", data);
     }
 }
 
