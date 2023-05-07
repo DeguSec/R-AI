@@ -1,10 +1,9 @@
 import { AudioReceiveStream, VoiceConnection, joinVoiceChannel } from "@discordjs/voice";
 import { Guild, GuildMember, VoiceChannel } from "discord.js";
 import { CommonComponents } from "../../CommonComponents";
-import { OpusEncoder } from "@discordjs/opus";
 import { CheckSelfInteract } from "../../Functions/CheckSelfInteract";
+import { VoiceScheduler } from "./AIVoiceScheduler";
 
-const opusEncoder = new OpusEncoder(48000, 2);
 const seekTime = 1000;
 
 export class AIVoice {
@@ -13,6 +12,7 @@ export class AIVoice {
     cc: CommonComponents
     vcUsers: Map<string, AudioReceiveStream> = new Map();
     checkForUsersInterval: NodeJS.Timer;
+    aiVoiceScheduler = new VoiceScheduler();
 
     constructor(channel: VoiceChannel, guild: Guild, cc: CommonComponents) {
         if(!cc.client.user)
@@ -53,9 +53,7 @@ export class AIVoice {
     }
 
     async onUserData(data: Buffer, user: GuildMember)  {
-        const decodedOpus = opusEncoder.decode(data);
-        //await writeFile(`./rec/0`, decodedOpus);
-        ///console.log(user.id);
+        this.aiVoiceScheduler.addData(user, data);
     }
 
     private checkForUsers() {
