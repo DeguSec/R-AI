@@ -2,16 +2,17 @@ import { AudioReceiveStream, VoiceConnection, joinVoiceChannel } from "@discordj
 import { Guild, GuildMember, VoiceChannel } from "discord.js";
 import { CommonComponents } from "../../CommonComponents";
 import { OpusEncoder } from "@discordjs/opus";
-import { writeFile } from "fs/promises";
 import { CheckSelfInteract } from "../../Functions/CheckSelfInteract";
 
 const opusEncoder = new OpusEncoder(48000, 2);
+const seekTime = 1000;
 
 export class AIVoice {
     channel: VoiceChannel;
     voiceConnection: VoiceConnection;
     cc: CommonComponents
     vcUsers: Map<string, AudioReceiveStream> = new Map();
+    checkForUsersInterval: NodeJS.Timer;
 
     constructor(channel: VoiceChannel, guild: Guild, cc: CommonComponents) {
         if(!cc.client.user)
@@ -28,6 +29,7 @@ export class AIVoice {
             selfMute: false,
         });
 
+        this.checkForUsersInterval = setInterval(() => this.checkForUsers(), seekTime);
         this.subscribeAll();
     }
 
@@ -52,9 +54,16 @@ export class AIVoice {
 
     async onUserData(data: Buffer, user: GuildMember)  {
         const decodedOpus = opusEncoder.decode(data);
-        await writeFile(`./rec/0`, decodedOpus);
-        console.log(user.id);
+        //await writeFile(`./rec/0`, decodedOpus);
+        ///console.log(user.id);
     }
 
-
+    private checkForUsers() {
+        if(this.channel.members.size == 1) {
+            this.voiceConnection.disconnect();
+            this.voiceConnection.destroy();
+            clearInterval(this.checkForUsersInterval);
+            this.cc.vAis.disconnected(this.channel.id);
+        }
+    }
 }
