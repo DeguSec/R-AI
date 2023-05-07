@@ -28,22 +28,26 @@ export class AIVoice {
             selfMute: false,
         });
 
-        this.subscribe();
+        this.subscribeAll();
     }
 
     /**
      * Subscribe everyone in vc
      */
-    subscribe() {
+    subscribeAll() {
         this.channel.members.forEach(member => {
-            if(CheckSelfInteract(member.id, this.cc))
-                return;
-
-            const sub = this.voiceConnection.receiver.subscribe(member.id);
-            sub.on("data", async (data) => this.onUserData(data, member));
-
-            this.vcUsers.set(member.id, sub);
+            this.subscribeNew(member);
         })
+    }
+
+    subscribeNew(member: GuildMember) {
+        if(CheckSelfInteract(member.id, this.cc))
+            return;
+
+        const sub = this.voiceConnection.receiver.subscribe(member.id);
+        sub.on("data", async (data) => this.onUserData(data, member));
+
+        this.vcUsers.set(member.id, sub);
     }
 
     async onUserData(data: Buffer, user: GuildMember)  {
