@@ -2,6 +2,7 @@ import { OpusEncoder } from "@discordjs/opus";
 import { GuildMember } from "discord.js";
 import Ffmpeg from "fluent-ffmpeg";
 import { writeFile } from "fs/promises";
+import { Writable } from "node:stream";
 import { Readable } from "stream";
 
 const bitRate = 48000
@@ -50,18 +51,41 @@ class VoiceUser {
         this.firstMessageTime = undefined;
 
         // convert
-        console.log(data);
-        console.log(Buffer.concat(data));
+        //console.log(data);
+        //console.log(Buffer.concat(data));
 
         await writeFile("./rec/0", data);
 
-        const ff = Ffmpeg({source: Readable.from(data)})
+        const buffers: Array<Buffer> = [];
+
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const sender = this;
+
+        const stream = new Writable({
+            write(chunk: Buffer, _: string | "buffer", callback) {
+                console.log(chunk);
+                buffers.push(chunk);
+                callback();
+            },
+            final(callback) {
+                console.log("final called");
+                sender.processMP3Buffer(Buffer.concat(buffers));
+                callback()
+            }
+        });
+
+        Ffmpeg({source: Readable.from(data)})
             .inputFormat("s16le")
             .inputOption("-ar", `${bitRate}`)
             .inputOption("-ac", `${2}`)
-            .saveToFile("./rec/0.mp3");
-        
+            .outputFormat("mp3")
+            .writeToStream(stream);
+    }
 
+    private async processMP3Buffer(buffer: Buffer) {
+        console.log("processing mp3");
+        console.log(buffer);
+        await writeFile("./rec/0.mp3", buffer);
     }
 }
 
