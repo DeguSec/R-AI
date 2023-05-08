@@ -1,15 +1,8 @@
 import { AxiosResponse } from "axios";
-import { Configuration, CreateChatCompletionRequest, CreateChatCompletionResponse, OpenAIApi } from "openai";
+import { CreateChatCompletionRequest, CreateChatCompletionResponse } from "openai";
 import { ChatCompletionModel, IChatCompletionEntity, IChatCompletionEntityDBO } from "../../Database/Models/AIProxy/ChatCompletion.model";
-import { EnvSecrets } from "../../EnvSecrets";
 import { sleep } from "../../Functions/Sleep";
-
-const configuration = new Configuration({
-    apiKey: EnvSecrets.getSecretOrThrow<string>('API_KEY'),
-});
-
-const openai = new OpenAIApi(configuration);
-
+import { openai } from "../OpenAI";
 
 const MAX_RETRIES = 7;
 const waitingFunction = (x: number) => x ** 2;
