@@ -76,6 +76,17 @@
   resolved "https://registry.yarnpkg.com/@discordjs/util/-/util-0.3.1.tgz#4e8737e1dcff7e9f5eccc3116fb44755b65b1e97"
   integrity sha512-HxXKYKg7vohx2/OupUN/4Sd02Ev3PBJ5q0gtjdcvXb0ErCva8jNHWfe/v5sU3UKjIB/uxOhc+TDOnhqffj9pRA==
 
+"@discordjs/voice@^0.16.0":
+  version "0.16.0"
+  resolved "https://registry.yarnpkg.com/@discordjs/voice/-/voice-0.16.0.tgz#9df1e492c8fea95113236a3de3ac52702c587729"
+  integrity sha512-ToGCvHD1cBscuW3p+C7zOF5+L7MJmU4GjdOARfNk9mkHyFFZq4grK+Sxr3QXKbp27DtfDBc9uqD4GUOYgxngfA==
+  dependencies:
+    "@types/ws" "^8.5.4"
+    discord-api-types "^0.37.37"
+    prism-media "^1.3.5"
+    tslib "^2.5.0"
+    ws "^8.13.0"
+
 "@discordjs/ws@^0.8.3":
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/@discordjs/ws/-/ws-0.8.3.tgz#77db8d563b731a2198c1b40f63b1ef8d230504f7"
@@ -88,17 +99,6 @@
     "@types/ws" "^8.5.4"
     "@vladfrangu/async_event_emitter" "^2.2.1"
     discord-api-types "^0.37.41"
-    tslib "^2.5.0"
-    ws "^8.13.0"
-
-"@discordjs/voice@^0.16.0":
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/@discordjs/voice/-/voice-0.16.0.tgz#9df1e492c8fea95113236a3de3ac52702c587729"
-  integrity sha512-ToGCvHD1cBscuW3p+C7zOF5+L7MJmU4GjdOARfNk9mkHyFFZq4grK+Sxr3QXKbp27DtfDBc9uqD4GUOYgxngfA==
-  dependencies:
-    "@types/ws" "^8.5.4"
-    discord-api-types "^0.37.37"
-    prism-media "^1.3.5"
     tslib "^2.5.0"
     ws "^8.13.0"
 
@@ -670,7 +670,7 @@ dir-glob@^3.0.1:
   dependencies:
     path-type "^4.0.0"
 
-discord-api-types@^0.37.41:
+discord-api-types@^0.37.37, discord-api-types@^0.37.41:
   version "0.37.41"
   resolved "https://registry.yarnpkg.com/discord-api-types/-/discord-api-types-0.37.41.tgz#b2719aa25ba6c5794d08524742ab008224b03710"
   integrity sha512-FaPGBK9hx3zqSRX1x3KQWj+OElAJKmcyyfcdCy+U4AKv+gYuIkRySM7zd1So2sE4gc1DikkghkSBgBgKh6pe4Q==
