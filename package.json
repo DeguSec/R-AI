@@ -2,18 +2,18 @@
   "dependencies": {
     "@discordjs/opus": "^0.9.0",
     "@discordjs/voice": "^0.16.0",
-    "bson": "^5.2.0",
+    "bson": "^5.3.0",
     "discord.js": "^14.11.0",
     "dotenv": "^16.0.3",
     "fluent-ffmpeg": "^2.1.2",
-    "mongoose": "^7.1.0",
-    "openai": "^3.2.1",
+    "mongoose": "^7.1.1",
+    "openai": "^3.2.1"
     "sodium-native": "^4.0.1"
   },
   "devDependencies": {
-    "@types/node": "^20.1.0",
-    "@typescript-eslint/eslint-plugin": "^5.59.2",
-    "@typescript-eslint/parser": "^5.59.2",
+    "@types/node": "^20.2.1",
+    "@typescript-eslint/eslint-plugin": "^5.59.5",
+    "@typescript-eslint/parser": "^5.59.6",
     "eslint": "^8.40.0",
     "@types/fluent-ffmpeg": "^2.1.21",
     "eslint-plugin-unused-imports": "^2.0.0",
