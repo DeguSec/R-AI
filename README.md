@@ -14,6 +14,8 @@ yarn install
 
 You also need a Mongo DB server: https://www.mongodb.com/
 
+You also need to install `curl` if it is not in your `$PATH`. If you're on Linux, you most certantly have `curl`. If you're using Windows 10 1803 or later, you already have `curl`. The easiest way to install `curl` is through downloading Git for Windows: https://git-scm.com/
+
 ### Secrets
 You need: 
   - your own Discord bot token, so make a test bot for your account: https://discord.com/developers/applications.
