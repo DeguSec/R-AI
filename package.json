@@ -7,7 +7,7 @@
     "dotenv": "^16.0.3",
     "fluent-ffmpeg": "^2.1.2",
     "mongoose": "^7.1.1",
-    "openai": "^3.2.1"
+    "openai": "^3.2.1",
     "sodium-native": "^4.0.1"
   },
   "devDependencies": {
