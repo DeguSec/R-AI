@@ -6,6 +6,10 @@ import { VoiceScheduler } from "./AIVoiceScheduler";
 
 const seekTime = 1000;
 
+/**
+ * This class is responsible for connecting, disconnecting, forwarding and 
+ * subscribing users to listeners.
+ */
 export class AIVoice {
     channel: VoiceChannel;
     voiceConnection: VoiceConnection;
@@ -16,7 +20,7 @@ export class AIVoice {
 
     constructor(channel: VoiceChannel, guild: Guild, cc: CommonComponents) {
         if(!cc.client.user)
-            throw new Error("AIVoice fail");
+            throw new Error("AIVoice fail: !cc.client.user");
 
         this.cc = cc;
         this.channel = channel;

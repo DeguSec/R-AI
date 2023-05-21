@@ -4,8 +4,9 @@ import Ffmpeg from "fluent-ffmpeg";
 import { writeFile } from "fs/promises";
 import { Writable } from "node:stream";
 import { Readable } from "stream";
+import { getExecCurl } from "../OpenAI";
 
-const bitRate = 48000
+const bitRate = 48000;
 const opusEncoder = new OpusEncoder(bitRate, 2);
 const GapTime = 1_000;
 const MaxMumbleTime = 28_000; // for the sake of not going over Open AI
@@ -86,6 +87,32 @@ class VoiceUser {
         console.log("processing mp3");
         console.log(buffer);
         await writeFile("./rec/0.mp3", buffer);
+
+        console.log("Spawning curl");
+        const curl = getExecCurl();
+
+        if(!curl.stdin) {
+            console.log("curl.stdin no avaliable")
+            return;
+        }
+
+        if(!curl.stdout) {
+            console.log("curl.stdout no avaliable")
+            return;
+        }
+        
+        curl.stdout.on("data", (data: Buffer) => {
+            console.log("curl mp3 data");
+            console.log(data);
+            console.log(data.toString());
+        });
+
+        curl.stdin.write(buffer, () => {
+            console.log("wrote buffer now ending");
+            curl.stdin?.end();
+        });
+        
+        // const curl = syncCurl(buffer);
     }
 }
 
