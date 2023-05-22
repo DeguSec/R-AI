@@ -1,7 +1,6 @@
 import { OpusEncoder } from "@discordjs/opus";
 import { GuildMember } from "discord.js";
 import Ffmpeg from "fluent-ffmpeg";
-import { writeFile } from "fs/promises";
 import { Writable } from "node:stream";
 import { Readable } from "stream";
 import { getExecCurl } from "../OpenAI";
@@ -44,18 +43,12 @@ class VoiceUser {
         this.awaitingData = [];
 
         const messageLength = this.firstMessageTime ? (Date.now() - this.firstMessageTime) : 0;
-        const ranted = messageLength > MaxMumbleTime;
-
-        console.log(messageLength, ranted);
+        
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const ranted = messageLength > MaxMumbleTime; // TODO: Implement ranting limit
 
         this.dispatchTimer = undefined;
         this.firstMessageTime = undefined;
-
-        // convert
-        //console.log(data);
-        //console.log(Buffer.concat(data));
-
-        await writeFile("./rec/0", data);
 
         const buffers: Array<Buffer> = [];
 
@@ -64,14 +57,13 @@ class VoiceUser {
 
         const stream = new Writable({
             write(chunk: Buffer, _: string | "buffer", callback) {
-                console.log(chunk);
                 buffers.push(chunk);
                 callback();
             },
             final(callback) {
                 console.log("final called");
                 sender.processMP3Buffer(Buffer.concat(buffers));
-                callback()
+                callback();
             }
         });
 
@@ -84,35 +76,23 @@ class VoiceUser {
     }
 
     private async processMP3Buffer(buffer: Buffer) {
-        console.log("processing mp3");
-        console.log(buffer);
-        await writeFile("./rec/0.mp3", buffer);
-
-        console.log("Spawning curl");
         const curl = getExecCurl();
 
         if(!curl.stdin) {
-            console.log("curl.stdin no avaliable")
-            return;
+            throw new Error("curl.stdin no avaliable");
         }
 
         if(!curl.stdout) {
-            console.log("curl.stdout no avaliable")
-            return;
+            throw new Error("curl.stdout no avaliable");
         }
         
         curl.stdout.on("data", (data: Buffer) => {
-            console.log("curl mp3 data");
-            console.log(data);
             console.log(data.toString());
         });
 
         curl.stdin.write(buffer, () => {
-            console.log("wrote buffer now ending");
             curl.stdin?.end();
         });
-        
-        // const curl = syncCurl(buffer);
     }
 }
 
