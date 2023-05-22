@@ -3,7 +3,7 @@ import { GuildMember } from "discord.js";
 import Ffmpeg from "fluent-ffmpeg";
 import { Writable } from "node:stream";
 import { Readable } from "stream";
-import { getExecCurl } from "../OpenAI";
+import { getExecCurl } from "./VoiceProcessing";
 
 const bitRate = 48000;
 const opusEncoder = new OpusEncoder(bitRate, 2);
