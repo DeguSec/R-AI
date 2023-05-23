@@ -16,24 +16,35 @@ export const getExecCurl = () => {
     return exec(`curl https://api.openai.com/v1/audio/transcriptions -H "Authorization: Bearer ${apiKey}" -H "Content-Type: multipart/form-data" -F file="@-;filename=0.mp3" -F model="whisper-1"`)
 }
 
-export const curlFffmpegPipe = (source: Readable) => {
-    const curl = getExecCurl();
+export const curlFffmpegPipe = async (source: Readable): Promise<string> => {
+    return new Promise<string>((resolve) => {
+        const curl = getExecCurl();
 
-    if(!curl.stdin)
-        throw new Error("curl.stdin not avaliable");
+        if(!curl.stdin)
+            throw new Error("curl.stdin not avaliable");
+    
+        if(!curl.stdout)
+            throw new Error("curl.stdout not avaliable");
+    
+        Ffmpeg({source})
+            .inputFormat("s16le")
+            .inputOption("-ar", `${bitRate}`)
+            .inputOption("-ac", `${2}`)
+            .outputFormat("mp3")
+            .writeToStream(curl.stdin);
+    
+        // TODO: maybe find a better way, but this should be ok.
+        // I mean, most of the time, there's only 1 data chunk.
+        // I haven't seen it do two chunks... I guess this is fine then.
+        let text = "";
+    
+        curl.stdout.on("data", (data: Buffer) => {
+            text += data.toString();
+        });
 
-    if(!curl.stdout)
-        throw new Error("curl.stdout not avaliable");
-
-    Ffmpeg({source})
-        .inputFormat("s16le")
-        .inputOption("-ar", `${bitRate}`)
-        .inputOption("-ac", `${2}`)
-        .outputFormat("mp3")
-        .writeToStream(curl.stdin);
-
-    curl.stdout.on("data", (data: Buffer) => {
-        console.log(data.toString());
-    });
+        curl.stdout.on("end", () => {
+            resolve(text);
+        });
+    })
 
 }

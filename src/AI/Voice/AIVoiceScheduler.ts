@@ -42,7 +42,9 @@ class VoiceUser {
         this.dispatchTimer = undefined;
         this.firstMessageTime = undefined;
 
-        curlFffmpegPipe(Readable.from(data));
+        const text = await curlFffmpegPipe(Readable.from(data));
+
+        console.log(this.user.nickname, ":", text);
     }
 }
 
