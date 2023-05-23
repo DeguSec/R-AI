@@ -1,14 +1,6 @@
-import { OpusEncoder } from "@discordjs/opus";
 import { GuildMember } from "discord.js";
-import Ffmpeg from "fluent-ffmpeg";
-import { Writable } from "node:stream";
-import { Readable } from "stream";
-import { getExecCurl } from "./VoiceProcessing";
-
-const bitRate = 48000;
-const opusEncoder = new OpusEncoder(bitRate, 2);
-const GapTime = 1_000;
-const MaxMumbleTime = 28_000; // for the sake of not going over Open AI
+import { GapTime, MaxMumbleTime, curlFffmpegPipe, opusEncoder } from "./VoiceProcessing";
+import { Readable } from "node:stream";
 
 class VoiceUser {
     // converted opus data
@@ -50,49 +42,7 @@ class VoiceUser {
         this.dispatchTimer = undefined;
         this.firstMessageTime = undefined;
 
-        const buffers: Array<Buffer> = [];
-
-        // eslint-disable-next-line @typescript-eslint/no-this-alias
-        const sender = this;
-
-        const stream = new Writable({
-            write(chunk: Buffer, _: string | "buffer", callback) {
-                buffers.push(chunk);
-                callback();
-            },
-            final(callback) {
-                console.log("final called");
-                sender.processMP3Buffer(Buffer.concat(buffers));
-                callback();
-            }
-        });
-
-        Ffmpeg({source: Readable.from(data)})
-            .inputFormat("s16le")
-            .inputOption("-ar", `${bitRate}`)
-            .inputOption("-ac", `${2}`)
-            .outputFormat("mp3")
-            .writeToStream(stream);
-    }
-
-    private async processMP3Buffer(buffer: Buffer) {
-        const curl = getExecCurl();
-
-        if(!curl.stdin) {
-            throw new Error("curl.stdin no avaliable");
-        }
-
-        if(!curl.stdout) {
-            throw new Error("curl.stdout no avaliable");
-        }
-        
-        curl.stdout.on("data", (data: Buffer) => {
-            console.log(data.toString());
-        });
-
-        curl.stdin.write(buffer, () => {
-            curl.stdin?.end();
-        });
+        curlFffmpegPipe(Readable.from(data));
     }
 }
 
