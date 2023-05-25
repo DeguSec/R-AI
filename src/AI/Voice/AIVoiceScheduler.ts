@@ -17,9 +17,10 @@ export class VoiceScheduler {
 
     constructor(channel: VoiceChannel, cc: CommonComponents) {
         this.cc = cc;
-        const debug = this.debugger = new AIDebugger(cc);
 
-        (async () => this.personality = await new PersonalityFactory().generateBot(debug, channel.id))()
+
+        const debug = this.debugger = new AIDebugger(cc);
+        (async () => this.personality = await new PersonalityFactory().generateBot(debug, channel.id))();
     }
 
     getUser(user: GuildMember) {
