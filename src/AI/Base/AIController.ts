@@ -1,7 +1,7 @@
 import { Channel, Message, TextChannel, Typing } from "discord.js";
 import { CheckSelfInteract } from "../../Functions/CheckSelfInteract";
 import { SeparateMessages } from "../../Functions/SeparateMessages";
-import { Personality, PersonalityFactory } from "./AIPersonality";
+import { Personality, generateBot, generateCustomBot } from "./AIPersonality";
 import { AIDebugger } from "./AIDebugger";
 import { CommonComponents } from "../../CommonComponents";
 import { IMessageEntity } from "../../Database/Models/Messages.model";
@@ -11,7 +11,6 @@ import { convertUserForBot } from "../../Functions/UserFunctions";
 import { DEFAULT_IGNORE_STRING } from "../../Defaults";
 import { IChatCompletionEntityDBO } from "../../Database/Models/AIProxy/ChatCompletion.model";
 
-const personalityFactory = new PersonalityFactory();
 const proxy = new AIProxy();
 
 export interface AIMessage {
@@ -89,9 +88,9 @@ export class AIController {
      */
     async strapPersonality(personalityString?: string) {
         if (!personalityString)
-            this.personality = await personalityFactory.generateBot(this.aiDebugger, this.channel.id);
+            this.personality = await generateBot(this.aiDebugger, this.channel.id);
         else
-            this.personality = await personalityFactory.generateCustomBot(this.aiDebugger, this.channel.id, personalityString);
+            this.personality = await generateCustomBot(this.aiDebugger, this.channel.id, personalityString);
     }
 
     /**
@@ -277,13 +276,13 @@ export class AIController {
 
     async changePersonality(personality: string) {
         await this.personality?.deleteMessages();
-        this.personality = await personalityFactory.generateBot(this.aiDebugger, this.channel.id, personality);
+        this.personality = await generateBot(this.aiDebugger, this.channel.id, personality);
         await this.runAfterCreatingNewPersonality();
     }
 
     async replacePrompt(newPrompt: string) {
         await this.personality?.deleteMessages();
-        this.personality = await personalityFactory.generateCustomBot(this.aiDebugger, this.channel.id, newPrompt);
+        this.personality = await generateCustomBot(this.aiDebugger, this.channel.id, newPrompt);
         await this.runAfterCreatingNewPersonality();
     }
 

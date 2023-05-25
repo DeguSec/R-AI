@@ -1,5 +1,5 @@
 import { GuildMember, VoiceChannel } from "discord.js";
-import { Personality, PersonalityFactory } from "../Base/AIPersonality";
+import { Personality, generateBot } from "../Base/AIPersonality";
 import { AIDebugger } from "../Base/AIDebugger";
 import { CommonComponents } from "../../CommonComponents";
 import { AIVoiceUser } from "./AIVoiceUser";
@@ -20,7 +20,7 @@ export class VoiceScheduler {
 
 
         const debug = this.debugger = new AIDebugger(cc);
-        (async () => this.personality = await new PersonalityFactory().generateBot(debug, channel.id))();
+        (async () => this.personality = await generateBot(debug, channel.id))();
     }
 
     getUser(user: GuildMember) {
