@@ -14,7 +14,7 @@ export class Personality extends SyncPersonality {
     /**
      * this will throw an error if an empty content is passed
      */
-    async addMessageObject(messageObject: ChatCompletionRequestMessage) {
+    override async addMessageObject(messageObject: ChatCompletionRequestMessage) {
         super.addMessageObject(messageObject); 
         await new MessagesModel({ channel: this.channel, content: messageObject }).save();
     }
@@ -22,7 +22,7 @@ export class Personality extends SyncPersonality {
     /**
      * Clear the database
      */
-    async deleteMessages() {
+    override async deleteMessages() {
         await MessagesModel.deleteMany({ channel: this.channel }).exec();
         super.messages = [];
     }
