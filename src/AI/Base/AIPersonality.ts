@@ -11,15 +11,18 @@ export class Personality extends SyncPersonality {
         super(initialSystemMessage, aiDebugger, channel);
     }
 
+    /**
+     * this will throw an error if an empty content is passed
+     */
     async addMessageObject(messageObject: ChatCompletionRequestMessage) {
-        super.addMessageObject(messageObject);
+        super.addMessageObject(messageObject); 
         await new MessagesModel({ channel: this.channel, content: messageObject }).save();
     }
 
     /**
      * Clear the database
      */
-    async deleteDB() {
+    async deleteMessages() {
         await MessagesModel.deleteMany({ channel: this.channel }).exec();
         super.messages = [];
     }
@@ -29,14 +32,6 @@ export class Personality extends SyncPersonality {
      */
     async restoreSystemMessage() {
         this.addSystemMessage(this.initialSystemMessage);
-    }
-
-    async reset() {
-        this.log("Resetting the personality");
-
-        // remove from db
-        super.reset();
-        await this.deleteDB();
     }
 }
 

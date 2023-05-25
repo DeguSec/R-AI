@@ -276,13 +276,13 @@ export class AIController {
     }
 
     async changePersonality(personality: string) {
-        await this.personality?.deleteDB();
+        await this.personality?.deleteMessages();
         this.personality = await personalityFactory.generateBot(this.aiDebugger, this.channel.id, personality);
         await this.runAfterCreatingNewPersonality();
     }
 
     async replacePrompt(newPrompt: string) {
-        await this.personality?.deleteDB();
+        await this.personality?.deleteMessages();
         this.personality = await personalityFactory.generateCustomBot(this.aiDebugger, this.channel.id, newPrompt);
         await this.runAfterCreatingNewPersonality();
     }

@@ -44,17 +44,18 @@ export class SyncPersonality {
         this.addMessageObject(messageObject);
     }
 
+    /**
+     * @param messageObject ChatCompletionRequestMessage 
+     */
     addMessageObject(messageObject: ChatCompletionRequestMessage) {
         this.log("added object");
         this.log(messageObject);
 
         messageObject.content = messageObject.content.trim();
 
-        if(messageObject.content == "") {
-            this.log("the content of the message was empty?");
-            return;
-        }
-
+        if(messageObject.content == "")
+            throw new Error("the content of the message was empty?");
+        
         this.messages.push(messageObject);
     }
 
