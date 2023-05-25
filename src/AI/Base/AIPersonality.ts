@@ -1,63 +1,20 @@
-import { ChatCompletionRequestMessage, ChatCompletionRequestMessageRoleEnum, CreateChatCompletionRequest } from "openai";
+import { ChatCompletionRequestMessage } from "openai";
 import { AIDebugger } from "./AIDebugger";
 import { IPersonalitiesEntity, PersonalitiesModel } from "../../Database/Models/Personalities.model";
 import { MessagesModel } from "../../Database/Models/Messages.model";
+import { SyncPersonality } from "./AISyncPersonality";
 
 export const DEFAULT = "Rchan";
 
-export class Personality {
-    messages: Array<ChatCompletionRequestMessage> = [];
-    channel: string;
-    protected initialSystemMessage: string;
-    private _debug?: AIDebugger;
-
+export class Personality extends SyncPersonality {
     constructor(initialSystemMessage: string, aiDebugger: AIDebugger, channel: string) {
-        this.initialSystemMessage = initialSystemMessage;
-        this.channel = channel;
-        this._debug = aiDebugger;
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    private log(str: any) {
-        if (this._debug)
-            this._debug.log(str);
-
-        else throw new Error("No debugger");
-    }
-
-    async addAssistantMessage(message: string, name?: string) {
-        this.log("assistant message added");
-        await this.addMessage(ChatCompletionRequestMessageRoleEnum.Assistant, message, name);
-    }
-
-    async addUserMessage(message: string, userId?: string) {
-        this.log("user message added");
-        await this.addMessage(ChatCompletionRequestMessageRoleEnum.User, message, userId);
-    }
-
-    async addSystemMessage(message: string) {
-        this.log("system message added");
-        await this.addMessage(ChatCompletionRequestMessageRoleEnum.System, message);
-    }
-
-    async addMessage(role: ChatCompletionRequestMessageRoleEnum, content: string, name?: string) {
-        const messageObject = { role, content, name };
-        await this.addMessageObject(messageObject);
+        super(initialSystemMessage, aiDebugger, channel);
     }
 
     async addMessageObject(messageObject: ChatCompletionRequestMessage) {
-        this.log("added object");
-        this.log(messageObject);
+        super.addMessageObject(messageObject);
+        console.log("called the async");
         await new MessagesModel({ channel: this.channel, content: messageObject }).save();
-        this.messages.push(messageObject);
-    }
-
-    getChatCompletion(): CreateChatCompletionRequest {
-        this.log(this.messages);
-        return {
-            model: "gpt-3.5-turbo",
-            messages: this.messages,
-        };
     }
 
     /**
@@ -72,25 +29,15 @@ export class Personality {
      * Run this once ready and empty.
      */
     async restoreSystemMessage() {
-        await this.addSystemMessage(this.initialSystemMessage);
+        this.addSystemMessage(this.initialSystemMessage);
     }
 
     async reset() {
         this.log("Resetting the personality");
 
         // remove from db
+        super.reset();
         await this.deleteDB();
-        await this.restoreSystemMessage();
-    }
-
-    getInitialSystemMessage() {
-        return this.initialSystemMessage;
-    }
-
-    countUserMessages() {
-        return this.messages
-            .filter((message) => message.role == ChatCompletionRequestMessageRoleEnum.User)
-            .length
     }
 }
 
