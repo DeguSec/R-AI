@@ -16,7 +16,7 @@ export class AIVoice {
     cc: CommonComponents
     vcUsers: Map<string, AudioReceiveStream> = new Map();
     checkForUsersInterval: NodeJS.Timer;
-    aiVoiceScheduler = new VoiceScheduler();
+    aiVoiceScheduler: VoiceScheduler;
 
     constructor(channel: VoiceChannel, guild: Guild, cc: CommonComponents) {
         if(!cc.client.user)
@@ -24,6 +24,8 @@ export class AIVoice {
 
         this.cc = cc;
         this.channel = channel;
+
+        this.aiVoiceScheduler = new VoiceScheduler(channel, cc);
 
         this.voiceConnection = joinVoiceChannel({
             channelId: channel.id,
@@ -35,6 +37,7 @@ export class AIVoice {
 
         this.checkForUsersInterval = setInterval(() => this.checkForUsers(), seekTime);
         this.subscribeAll();
+
     }
 
     /**

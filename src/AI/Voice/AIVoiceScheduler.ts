@@ -1,61 +1,32 @@
-import { GuildMember } from "discord.js";
-import { GapTime, MaxMumbleTime, curlFffmpegPipe, opusEncoder } from "./VoiceProcessing";
-import { Readable } from "node:stream";
+import { GuildMember, VoiceChannel } from "discord.js";
+import { Personality, PersonalityFactory } from "../Base/AIPersonality";
+import { AIDebugger } from "../Base/AIDebugger";
+import { CommonComponents } from "../../CommonComponents";
+import { AIVoiceUser } from "./AIVoiceUser";
 
-class VoiceUser {
-    // converted opus data
-    awaitingData: Array<Buffer> = [];
-    user: GuildMember;
-    dispatchTimer?: NodeJS.Timer;
-    firstMessageTime?: number;
-
-    constructor(user: GuildMember) {
-        this.user = user;
-    }  
-
-    addData(data: Buffer) {
-        const decodedOpus = opusEncoder.decode(data);
-        //const decodedOpus = data;
-        this.awaitingData.push(decodedOpus);
-
-        //console.log("added data for:", this.user.id);
-        if(this.dispatchTimer)
-            clearTimeout(this.dispatchTimer);
-
-        if(!this.firstMessageTime)
-            this.firstMessageTime = Date.now();
-
-        this.dispatchTimer = setTimeout(() => this.convert(), GapTime);
-    }
-
-    async convert() {
-        console.log("Dispatching convert.");
-
-        const data = this.awaitingData;
-        this.awaitingData = [];
-
-        const messageLength = this.firstMessageTime ? (Date.now() - this.firstMessageTime) : 0;
-        
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const ranted = messageLength > MaxMumbleTime; // TODO: Implement ranting limit
-
-        this.dispatchTimer = undefined;
-        this.firstMessageTime = undefined;
-
-        const text = await curlFffmpegPipe(Readable.from(data));
-
-        console.log(this.user.nickname, ":", text);
-    }
-}
-
+/**
+ * Per channel operations
+ */
 export class VoiceScheduler {
-    users: Map<string, VoiceUser> = new Map();
+    users: Map<string, AIVoiceUser> = new Map();
+
+    // AI Stuff
+    personality?: Personality;
+    debugger: AIDebugger;
+    cc: CommonComponents;
+
+    constructor(channel: VoiceChannel, cc: CommonComponents) {
+        this.cc = cc;
+        const debug = this.debugger = new AIDebugger(cc);
+
+        (async () => this.personality = await new PersonalityFactory().generateBot(debug, channel.id))()
+    }
 
     getUser(user: GuildMember) {
         let userObject = this.users.get(user.id);
 
         if(!userObject) {
-            userObject = new VoiceUser(user);
+            userObject = new AIVoiceUser(user);
             this.users.set(user.id, userObject);
         }
 
