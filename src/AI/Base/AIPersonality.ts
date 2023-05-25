@@ -13,7 +13,6 @@ export class Personality extends SyncPersonality {
 
     async addMessageObject(messageObject: ChatCompletionRequestMessage) {
         super.addMessageObject(messageObject);
-        console.log("called the async");
         await new MessagesModel({ channel: this.channel, content: messageObject }).save();
     }
 
@@ -22,7 +21,7 @@ export class Personality extends SyncPersonality {
      */
     async deleteDB() {
         await MessagesModel.deleteMany({ channel: this.channel }).exec();
-        this.messages = [];
+        super.messages = [];
     }
 
     /**

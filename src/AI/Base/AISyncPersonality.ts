@@ -47,6 +47,14 @@ export class SyncPersonality {
     addMessageObject(messageObject: ChatCompletionRequestMessage) {
         this.log("added object");
         this.log(messageObject);
+
+        messageObject.content = messageObject.content.trim();
+
+        if(messageObject.content == "") {
+            this.log("the content of the message was empty?");
+            return;
+        }
+
         this.messages.push(messageObject);
     }
 
