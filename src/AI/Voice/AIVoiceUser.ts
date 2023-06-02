@@ -8,12 +8,13 @@ import { Readable } from "node:stream";
 export class AIVoiceUser {
     // converted opus data
     awaitingData: Array<Buffer> = [];
-    user: GuildMember;
+    guildMember: GuildMember;
     dispatchTimer?: NodeJS.Timer;
     firstMessageTime?: number;
 
-    constructor(user: GuildMember) {
-        this.user = user;
+    constructor(guildMember: GuildMember) {
+        this.guildMember = guildMember;
+        console.log(guildMember);
     }  
 
     addData(data: Buffer) {
@@ -47,6 +48,6 @@ export class AIVoiceUser {
 
         const text = await curlFffmpegPipe(Readable.from(data));
 
-        console.log(this.user.nickname, ":", text);
+        console.log(this.guildMember.user.username, ":", text);
     }
 }
