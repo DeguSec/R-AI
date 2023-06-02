@@ -1,15 +1,21 @@
 import { GuildMember } from "discord.js";
-import { GapTime, MaxMumbleTime, curlFffmpegPipe, opusEncoder } from "./VoiceProcessing";
+import { GapTime, curlFffmpegPipe, opusEncoder } from "./VoiceProcessing";
 import { Readable } from "node:stream";
 
 /**
  * Per user operations
  */
 export class AIVoiceUser {
-    // converted opus data
+    // converted opus data (PMC)
     awaitingData: Array<Buffer> = [];
+
+    // user
     guildMember: GuildMember;
+
+    // timer which 
     dispatchTimer?: NodeJS.Timer;
+
+    // the time when the user started to talk
     firstMessageTime?: number;
 
     constructor(guildMember: GuildMember) {
@@ -35,19 +41,19 @@ export class AIVoiceUser {
     async convert() {
         console.log("Dispatching convert.");
 
+        // retrieve and clear data
         const data = this.awaitingData;
         this.awaitingData = [];
 
-        const messageLength = this.firstMessageTime ? (Date.now() - this.firstMessageTime) : 0;
-        
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const ranted = messageLength > MaxMumbleTime; // TODO: Implement ranting limit
-
+        // set the proper timers
         this.dispatchTimer = undefined;
+
+        // reset the first message time
         this.firstMessageTime = undefined;
 
+        // get the text
         const text = await curlFffmpegPipe(Readable.from(data));
 
-        console.log(this.guildMember.user.username, ":", text);
+        console.log(`${this.guildMember.user.username} : ${text}`);
     }
 }
