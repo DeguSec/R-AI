@@ -2,7 +2,8 @@ import { ChatCompletionRequestMessage, ChatCompletionRequestMessageRoleEnum, Cre
 import { AIDebugger } from "./AIDebugger";
 
 /**
- * This personality doesn't save to the database or do anything weird with databases 
+ * This personality doesn't save to the database or do anything weird with databases
+ * @todo remove channel from requirements
  */
 export class SyncPersonality {
     messages: Array<ChatCompletionRequestMessage> = [];
