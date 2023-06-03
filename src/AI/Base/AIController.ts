@@ -6,12 +6,10 @@ import { AIDebugger } from "./AIDebugger";
 import { CommonComponents } from "../../CommonComponents";
 import { IMessageEntity } from "../../Database/Models/Messages.model";
 import { ChannelModel } from "../../Database/Models/Channel.model";
-import { AIProxy } from "./AIProxy";
 import { convertUserForBot } from "../../Functions/UserFunctions";
 import { DEFAULT_IGNORE_STRING } from "../../Defaults";
 import { IChatCompletionEntityDBO } from "../../Database/Models/AIProxy/ChatCompletion.model";
-
-const proxy = new AIProxy();
+import { proxy } from "./_Base";
 
 export interface AIMessage {
     message: string,

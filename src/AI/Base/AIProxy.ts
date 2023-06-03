@@ -121,3 +121,5 @@ export class AIProxy {
         }
     }
 }
+
+export const proxy = new AIProxy();
