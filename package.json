@@ -6,7 +6,7 @@
     "discord.js": "^14.11.0",
     "dotenv": "^16.0.3",
     "mongoose": "^7.2.3",
-    "openai": "^3.2.1"
+    "openai": "^3.2.1",
     "fluent-ffmpeg": "^2.1.2",
     "sodium-native": "^4.0.1"
   },
