@@ -236,6 +236,7 @@ export class AIController {
         this.currentDBO = promise.dbObject;
 
         const res = await promise.response;
+        this.currentDBO = undefined;
 
         clearInterval(requestTyping);
 
