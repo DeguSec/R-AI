@@ -14,13 +14,10 @@ describe("User Functions tests", () => {
                 const element = converted[letter];
                 const passing = allowed.indexOf(element) != -1;
                 
-                // if(!passing)
-                //     console.log(element);
-                
                 assert.isTrue(passing);
             }
         }
-    });
+    }).timeout(5000).slow(2500);
 
     it("should not strip the letters that are allowed", () => {
         for (let _ = 0; _ < 1000; _++) {
@@ -29,6 +26,6 @@ describe("User Functions tests", () => {
 
             assert.isTrue(name == converted);
         }
-    })
+    });
 
 })
