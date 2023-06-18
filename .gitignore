@@ -3,3 +3,4 @@ src/secrets.ts
 *.env
 pnpm-lock.yaml
 .eslintcache
+dist
