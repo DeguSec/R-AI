@@ -12,13 +12,25 @@ export class SortedArray<K, T> {
     items: Array<SortedItem<K, T>> = [];
 
     insert(key: K, item: T) {
+        // make new sorted item
+        const si = new SortedItem<K, T>(key, item);
+
+        if(this.items.length == 0) {
+            this.items.push(si);
+            return;
+        }
+            
+
         // get potential item
         const index = this.findIndex(key);
 
         // goes off the far end of the array
         if(index == this.items.length) {
-            this.items.push(new SortedItem<K, T>(key, item));
+            this.items.push(si);
+            return
         }
+
+        this.items.splice(index, 0, si);
     }
 
     get(key: K) {
@@ -48,8 +60,7 @@ export class SortedArray<K, T> {
             return start;
 
         // find the midpoint
-        const checkIndex = ((start + end) / 2) % 1; 
-        console.log(checkIndex);
+        const checkIndex = Math.floor((start + end) / 2); 
 
         // find the key at index 
         const checkItem = this.items[checkIndex].key;
@@ -57,17 +68,20 @@ export class SortedArray<K, T> {
         if(checkItem == key) 
             return checkIndex;
 
-        else if(checkItem > key)
+        else if(checkItem < key)
             return this.findIndex(key, checkIndex + 1, end);
 
-        else // checkItem < key
-            return this.findIndex(key, start, checkIndex - 1);
+        else // checkItem > key
+            return this.findIndex(key, start, checkIndex);
     }
 
     clear() {
         this.items = [];
     }
 
+    /**
+     * @returns values in ascending order
+     */
     get values () {
         return this.items.map((item) => {
             return item.value;
