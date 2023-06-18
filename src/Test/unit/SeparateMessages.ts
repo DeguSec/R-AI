@@ -16,7 +16,6 @@ describe("Separate Messages (1000)", () => {
     it("should separate items bigger than max length", () => {
         for (let _ = 0; _ < 1000; _++) {
             const text = RandomCharacters(max * (2 + Math.random() * 10));
-            // console.log(text.length);
             
             const messages = SeparateMessages(text);
             assert.isTrue(messages.length > 1);
