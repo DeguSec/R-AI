@@ -24,7 +24,7 @@
     "typescript": "^5.0.4"
   },
   "scripts": {
-    "test": "rm -r dist/; tsc && mocha \"./dist/test/**/*.js\"",
+    "test": "rm -r dist/; tsc && mocha \"./dist/Test/**/*.js\"",
     "start": "ts-node src/Bot.ts",
     "seed": "ts-node src/Bot.ts seed",
     "unseed": "ts-node src/Bot.ts unseed",
