@@ -1,7 +1,7 @@
 import { assert } from "chai";
 import { sleep } from "../../Functions/Sleep";
 
-describe("Await tests", async () => {
+describe("Await tests", () => {
     it("should wait 1 second", async () => {
         await sleep(1);
         assert.isTrue(true);
