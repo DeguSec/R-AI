@@ -1,5 +1,5 @@
 // Throw into config db
-const max = 1998;
+export const max = 1998;
 const charOrder = ["\n", " "];
 
 export const SeparateMessages = (message: string): Array<string> => {
