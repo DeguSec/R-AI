@@ -6,7 +6,7 @@ import { CommonComponents } from "../CommonComponents";
  * @param cc 
  * @returns 
  */
-export const CheckSelfInteract = (authorId: string, cc: CommonComponents) => {
+export const CheckSelfInteract = (authorId: string, cc: Partial<CommonComponents>) => {
     if(!cc.id)
         return true;
 
