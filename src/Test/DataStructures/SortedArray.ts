@@ -23,6 +23,27 @@ function unsortedCheck<T>(size: number, valueFunction: () => T) {
     });
 }
 
+function sortedCheck(size: number) {
+    const sa = new SortedArray<number, number>();
+    const normal = new Array<number>();
+
+    for (let _ = 0; _ < size; _++) {
+        const value = Math.random();
+        sa.insert(value, value);
+        normal.push(value);
+    }
+
+    const saValues = sa.values;
+    normal.sort();
+
+    for (let index = 0; index < normal.length; index++) {
+        const normalElement = normal[index];
+        const saElement = saValues[index];
+        
+        assert.isTrue(normalElement == saElement);
+    }
+}
+
 describe("Sorted Array tests", () => {
     it("should work with simple predefined arrays", () => {
         const sa = new SortedArray<number, number>();
@@ -54,81 +75,6 @@ describe("Sorted Array tests", () => {
 
     });
 
-    it("should work with complex random arrays (1,000)", () => {
-        const sa = new SortedArray<number, number>();
-        const normal = new Array<number>();
-
-        for (let _ = 0; _ < 1_000; _++) {
-            const value = Math.random();
-            sa.insert(value, value);
-            normal.push(value);
-        }
-
-        const saValues = sa.values;
-        normal.sort();
-
-        for (let index = 0; index < normal.length; index++) {
-            const normalElement = normal[index];
-            const saElement = saValues[index];
-            
-            assert.isTrue(normalElement == saElement);
-        }
-    });
-
-    it("should work with complex random arrays (10,000)", () => {
-        const sa = new SortedArray<number, number>();
-        const normal = new Array<number>();
-
-        for (let _ = 0; _ < 10_000; _++) {
-            const value = Math.random();
-            sa.insert(value, value);
-            normal.push(value);
-        }
-
-        const saValues = sa.values;
-        normal.sort();
-
-        for (let index = 0; index < normal.length; index++) {
-            const normalElement = normal[index];
-            const saElement = saValues[index];
-            
-            assert.isTrue(normalElement == saElement);
-        }
-    });
-
-    it("should work with complex random arrays (50,000)", () => {
-        const sa = new SortedArray<number, number>();
-        const normal = new Array<number>();
-
-        for (let _ = 0; _ < 50_000; _++) {
-            const value = Math.random();
-            sa.insert(value, value);
-            normal.push(value);
-        }
-
-        const saValues = sa.values;
-        normal.sort();
-
-        for (let index = 0; index < normal.length; index++) {
-            const normalElement = normal[index];
-            const saElement = saValues[index];
-            
-            assert.isTrue(normalElement == saElement);
-        }
-    });
-
-    it("should work with complex random arrays (100,000) (unsorted) (numbers)", () => {
-        unsortedCheck(100_000, Math.random);
-    }).timeout(0);
-
-    it("should work with complex random arrays (100,000) (unsorted) (text)", () => {
-        unsortedCheck(100_000, () => RandomCharacters(10));
-    }).timeout(0);
-
-    it("should work with complex random arrays (100,000) (unsorted) (date)", () => {
-        unsortedCheck(100_000, () => new Date(Math.floor(Math.random() * 1_687_117_970)));
-    }).timeout(0);
-
     it("should work with duplicates", () => {
         const sa = new SortedArray<number, number>();
 
@@ -142,6 +88,29 @@ describe("Sorted Array tests", () => {
                 assert.isTrue(value >= array[index - 1])
             }
         });
-    })
+    });
 
+    it("should work with complex random arrays (1,000)", () => {
+        sortedCheck(1_000);
+    }).timeout(0);
+
+    it("should work with complex random arrays (10,000)", () => {
+        sortedCheck(10_000);
+    }).timeout(0);
+
+    it("should work with complex random arrays (50,000)", () => {
+        sortedCheck(50_000);
+    }).timeout(0);
+
+    it("should work with complex random arrays (100,000) (unsorted) (numbers)", () => {
+        unsortedCheck(100_000, Math.random);
+    }).timeout(0);
+
+    it("should work with complex random arrays (100,000) (unsorted) (text)", () => {
+        unsortedCheck(100_000, () => RandomCharacters(10));
+    }).timeout(0);
+
+    it("should work with complex random arrays (100,000) (unsorted) (date)", () => {
+        unsortedCheck(100_000, () => new Date(Math.floor(Math.random() * 1_687_117_970)));
+    }).timeout(0);
 });
