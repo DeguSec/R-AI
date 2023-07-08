@@ -10,6 +10,7 @@ import { convertUserForBot } from "../../Functions/UserFunctions";
 import { DEFAULT_IGNORE_STRING } from "../../Defaults";
 import { IChatCompletionEntityDBO } from "../../Database/Models/AIProxy/ChatCompletion.model";
 import { proxy } from "./_Base";
+import { extractResponse } from "../../Functions/ExtractResponse";
 
 export interface AIMessage {
     message: string,
@@ -252,7 +253,7 @@ export class AIController {
 
         this.aiDebugger.logResponse(res.response);
         // get the content from request
-        const resContent = res.response.data.choices[0].message?.content;
+        const resContent = extractResponse(res.response);
         if (!resContent)
             return;
 

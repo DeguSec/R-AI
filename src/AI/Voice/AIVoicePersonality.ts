@@ -3,7 +3,7 @@ import { AIDebugger } from "../Base/AIDebugger"
 import { SortedArray } from "../../DataStructures/SortedArray";
 
 export class VoicePersonality {
-    messages: SortedArray<Date, ChatCompletionRequestMessage> = new SortedArray<Date, ChatCompletionRequestMessage> ();
+    messages: SortedArray<number, ChatCompletionRequestMessage> = new SortedArray<number, ChatCompletionRequestMessage> ();
     
     debug: AIDebugger;
 
@@ -13,6 +13,8 @@ export class VoicePersonality {
     constructor(initialSystemMessage: string, debug: AIDebugger) {
         this.initialSystemMessage = initialSystemMessage;
         this.debug = debug;
+
+        this.reset();
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -23,24 +25,24 @@ export class VoicePersonality {
         else throw new Error("No debugger");
     }
 
-    addAssistantMessage(message: string, name: string, time: Date) {
-        this.addMessage(ChatCompletionRequestMessageRoleEnum.Assistant, message, time, name);
+    addAssistantMessage(message: string, time: number) {
+        this.addMessage(ChatCompletionRequestMessageRoleEnum.Assistant, message, time, "assistant");
     }
 
-    addUserMessage(message: string, name: string, time: Date) {
+    addUserMessage(message: string, name: string, time: number) {
         this.addMessage(ChatCompletionRequestMessageRoleEnum.User, message,time, name);
     }
     
-    addSystemMessage(message: string, time?: Date): void {
-        this.addMessage(ChatCompletionRequestMessageRoleEnum.System, message, time ? time : new Date(), undefined);
+    addSystemMessage(message: string, time?: number): void {
+        this.addMessage(ChatCompletionRequestMessageRoleEnum.System, message, time ? time : Date.now(), undefined);
     }
 
-    addMessage(role: ChatCompletionRequestMessageRoleEnum, content: string, time: Date, name?: string) {
+    addMessage(role: ChatCompletionRequestMessageRoleEnum, content: string, time: number, name?: string) {
         const messageObject = { role, content, name };
         this.addMessageObject(messageObject, time);
     }
 
-    addMessageObject(messageObject: ChatCompletionRequestMessage, time: Date) {
+    addMessageObject(messageObject: ChatCompletionRequestMessage, time: number) {
         this.messages.insert(time, messageObject);
     }
 
@@ -64,6 +66,11 @@ export class VoicePersonality {
     
         // remove from db
         this.deleteMessages();
+
+        // re add system message
+        this.addSystemMessage(this.initialSystemMessage);
+
+        console.log("Added init message here.");
     }
     
     getInitialSystemMessage() {

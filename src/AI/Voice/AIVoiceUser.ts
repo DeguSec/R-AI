@@ -1,6 +1,9 @@
 import { GuildMember } from "discord.js";
 import { GapTime, curlFffmpegPipe, opusEncoder } from "./VoiceProcessing";
 import { Readable } from "node:stream";
+import { convertUserForBot } from "../../Functions/UserFunctions";
+
+type AIVoiceUserListener = (time: number, id: string, text: string) => void;
 
 /**
  * Per user operations
@@ -18,11 +21,19 @@ export class AIVoiceUser {
     // the time when the user started to talk
     firstMessageTime?: number;
 
-    constructor(guildMember: GuildMember) {
+    convertedMessagesListener: AIVoiceUserListener;
+
+    constructor(guildMember: GuildMember, listener: AIVoiceUserListener) {
         this.guildMember = guildMember;
-        console.log(guildMember);
+        this.convertedMessagesListener = listener;
+
+        // console.log(guildMember);
     }  
 
+    /**
+     * Adds data to the internal voice buffer
+     * @param data 
+     */
     addData(data: Buffer) {
         const decodedOpus = opusEncoder.decode(data);
         //const decodedOpus = data;
@@ -39,21 +50,34 @@ export class AIVoiceUser {
     }
 
     async convert() {
-        console.log("Dispatching convert.");
+        if(!this.firstMessageTime) {
+            console.log("Cannot convert on empty first message time");
+            return;
+        }
+
+        // if(this.awaitingData.length < 100) {
+        //     console.log("Data is too short for now.");
+        //     return;
+        // }
 
         // retrieve and clear data
         const data = this.awaitingData;
         this.awaitingData = [];
 
+        console.log("Dispatching convert.", data.length);
+
         // set the proper timers
         this.dispatchTimer = undefined;
 
         // reset the first message time
+        const messageTime = this.firstMessageTime;
         this.firstMessageTime = undefined;
 
         // get the text
         const text = await curlFffmpegPipe(Readable.from(data));
 
         console.log(`${this.guildMember.user.username} : ${text}`);
+
+        this.convertedMessagesListener(messageTime, convertUserForBot(this.guildMember.user), text);
     }
 }
