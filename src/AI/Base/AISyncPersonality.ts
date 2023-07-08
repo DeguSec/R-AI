@@ -52,6 +52,11 @@ export class SyncPersonality {
         this.log("added object");
         this.log(messageObject);
 
+        if(!messageObject.content) {
+            this.log("Cannot add message because it is null");
+            return;
+        }
+
         messageObject.content = messageObject.content.trim();
 
         if(messageObject.content == "")
