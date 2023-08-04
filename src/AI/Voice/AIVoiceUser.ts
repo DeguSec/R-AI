@@ -32,6 +32,7 @@ export class AIVoiceUser {
 
     /**
      * Adds data to the internal voice buffer
+     * @returns true if the data is long enough to process
      * @param data 
      */
     addData(data: Buffer) {
@@ -46,7 +47,11 @@ export class AIVoiceUser {
         if(!this.firstMessageTime)
             this.firstMessageTime = Date.now();
 
+        if(this.awaitingData.length < 100)
+            return false;
+
         this.dispatchTimer = setTimeout(() => this.convert(), GapTime);
+        return true;
     }
 
     async convert() {
@@ -54,11 +59,6 @@ export class AIVoiceUser {
             console.log("Cannot convert on empty first message time");
             return;
         }
-
-        // if(this.awaitingData.length < 100) {
-        //     console.log("Data is too short for now.");
-        //     return;
-        // }
 
         // retrieve and clear data
         const data = this.awaitingData;

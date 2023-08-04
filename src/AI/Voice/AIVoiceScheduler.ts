@@ -45,18 +45,19 @@ export class VoiceScheduler {
     }
 
     addData(user: GuildMember, data: Buffer) {
-        this.getUser(user).addData(data);
+        const meetsConditions = this.getUser(user).addData(data);
 
         // schedule an API call to the thing and remove previous one if it exists
         if(this.userDataScheduling.has(user.user.id))
             clearTimeout(this.userDataScheduling.get(user.user.id));
 
-        this.userDataScheduling.set(user.user.id, setTimeout(async () => {
-            this.userDataScheduling.delete(user.user.id);
-            if(this.userDataScheduling.size == 0)
-                await this.react();
+        if (meetsConditions)
+            this.userDataScheduling.set(user.user.id, setTimeout(async () => {
+                this.userDataScheduling.delete(user.user.id);
+                if(this.userDataScheduling.size == 0)
+                    await this.react();
 
-        }, scheduling));
+            }, scheduling));
     }
 
     addUserMessage(time: number, user: string, message: string) {
