@@ -10,6 +10,7 @@ const apiKey = EnvSecrets.getSecretOrThrow<string>('API_KEY');
 export const bitRate = 48000;
 export const opusEncoder = new OpusEncoder(bitRate, 2);
 export const GapTime = 1_000;
+export const PacketTime = 60;
 export const MaxMumbleTime = 28_000; // for the sake of not going over Open AI
 
 export const getExecCurl = () => {

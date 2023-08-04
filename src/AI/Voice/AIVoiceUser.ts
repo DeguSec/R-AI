@@ -1,5 +1,5 @@
 import { GuildMember } from "discord.js";
-import { GapTime, curlFffmpegPipe, opusEncoder } from "./VoiceProcessing";
+import { GapTime, PacketTime, curlFffmpegPipe, opusEncoder } from "./VoiceProcessing";
 import { Readable } from "node:stream";
 import { convertUserForBot } from "../../Functions/UserFunctions";
 
@@ -47,7 +47,7 @@ export class AIVoiceUser {
         if(!this.firstMessageTime)
             this.firstMessageTime = Date.now();
 
-        if(this.awaitingData.length < 100)
+        if(this.awaitingData.length < PacketTime)
             return false;
 
         this.dispatchTimer = setTimeout(() => this.convert(), GapTime);
