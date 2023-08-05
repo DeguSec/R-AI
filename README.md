@@ -22,6 +22,7 @@ You need:
   - your own OpenAI API key which you can get from here: https://platform.openai.com/account/api-keys.
   - to add your Mongo DB connection string to the env file: https://www.mongodb.com/docs/manual/reference/connection-string/
   - a database name (rchan is good enough if you don't know what to name it)
+  - Azure AI token. You can get it with this tutorial (check prerequisites): https://learn.microsoft.com/en-us/azure/ai-services/speech-service/get-started-text-to-speech
 
 Create a .env file in the root dir of the project
 Example .env file:
@@ -30,6 +31,8 @@ TOKEN=Discord bot token goes here
 API_KEY=OpenAI api key goes here
 DB_CONNECTION_STRING=MongoDB connection string here
 DB_NAME=rchan
+SPEECH_KEY=Azure resource token goes here
+SPEECH_REGION=uksouth or other
 ```
 
 ### Running the bot

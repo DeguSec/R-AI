@@ -6,6 +6,7 @@
     "discord.js": "^14.11.0",
     "dotenv": "^16.3.1",
     "fluent-ffmpeg": "^2.1.2",
+    "microsoft-cognitiveservices-speech-sdk": "^1.31.0",
     "mongoose": "^7.4.1",
     "openai": "^3.3.0",
     "sodium-native": "^4.0.1"
