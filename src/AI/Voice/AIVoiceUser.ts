@@ -26,8 +26,6 @@ export class AIVoiceUser {
     constructor(guildMember: GuildMember, listener: AIVoiceUserListener) {
         this.guildMember = guildMember;
         this.convertedMessagesListener = listener;
-
-        // console.log(guildMember);
     }  
 
     /**
@@ -37,10 +35,8 @@ export class AIVoiceUser {
      */
     addData(data: Buffer) {
         const decodedOpus = opusEncoder.decode(data);
-        //const decodedOpus = data;
         this.awaitingData.push(decodedOpus);
 
-        //console.log("added data for:", this.user.id);
         if(this.dispatchTimer)
             clearTimeout(this.dispatchTimer);
 
@@ -64,8 +60,6 @@ export class AIVoiceUser {
         const data = this.awaitingData;
         this.awaitingData = [];
 
-        console.log("Dispatching convert.", data.length);
-
         // set the proper timers
         this.dispatchTimer = undefined;
 
@@ -76,11 +70,9 @@ export class AIVoiceUser {
         // get the text
         const text = await curlFffmpegPipe(Readable.from(data));
 
-        console.log(`${this.guildMember.user.username} : ${text}`);
-
         this.convertedMessagesListener(messageTime, convertUserForBot(this.guildMember.user), text);
 
         // speak
-        
+
     }
 }
