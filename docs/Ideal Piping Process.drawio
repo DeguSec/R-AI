@@ -1,0 +1,63 @@
+<mxfile host="app.diagrams.net" modified="2023-05-21T01:17:47.883Z" agent="Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/113.0" etag="82xWBWa8raK2DcDnPYqU" version="21.3.2" type="device">
+  <diagram name="Page-1" id="xw5Q4BvkCJkUqAqLUO85">
+    <mxGraphModel dx="902" dy="895" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1000" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="I6hYbPyPmaMw-4eO5OVv-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="I6hYbPyPmaMw-4eO5OVv-1" target="I6hYbPyPmaMw-4eO5OVv-27">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="I6hYbPyPmaMw-4eO5OVv-1" value="Discord Opus Packets" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="360" y="90" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="I6hYbPyPmaMw-4eO5OVv-2" value="&lt;div style=&quot;font-size: 38px;&quot;&gt;&lt;b style=&quot;font-size: 38px;&quot;&gt;Ideal Piping Process&lt;/b&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=38;" vertex="1" parent="1">
+          <mxGeometry x="360" y="-130" width="620" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="I6hYbPyPmaMw-4eO5OVv-13" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="I6hYbPyPmaMw-4eO5OVv-10" target="I6hYbPyPmaMw-4eO5OVv-12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="I6hYbPyPmaMw-4eO5OVv-10" value="Encoding into MP3" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="700" y="90" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="I6hYbPyPmaMw-4eO5OVv-12" value="&lt;div&gt;Curl&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="860" y="90" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="I6hYbPyPmaMw-4eO5OVv-23" value="&lt;h1&gt;Discord&lt;br&gt;&lt;/h1&gt;&lt;p&gt;Discord packets come in and get fed into the pipe&lt;br&gt;&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="360" y="-40" width="100" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="I6hYbPyPmaMw-4eO5OVv-24" value="&lt;h1&gt;Detect pauses&lt;br&gt;&lt;/h1&gt;&lt;div&gt;The pauses are detected and removed from the data. This means faster process, less cost from OpenAI per minute of actual conversation. &lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;Pauses also tell the program when to finalise the data to OpenAI with a pipe end(). &lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="360" y="200" width="250" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="I6hYbPyPmaMw-4eO5OVv-34" value="&lt;h1&gt;Decoding&lt;/h1&gt;&lt;p&gt;Decoding happens in step with pauses to save time. Pauses don&#39;t make it into the encoding pipe.&lt;br&gt;&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="470" y="-60" width="200" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="I6hYbPyPmaMw-4eO5OVv-35" value="" style="group" vertex="1" connectable="0" parent="1">
+          <mxGeometry x="520" y="50" width="140" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="I6hYbPyPmaMw-4eO5OVv-27" value="" style="rounded=0;fontColor=default;labelBackgroundColor=none;labelBorderColor=none;whiteSpace=wrap;html=1;dashed=1;dashPattern=1 4;" vertex="1" parent="I6hYbPyPmaMw-4eO5OVv-35">
+          <mxGeometry width="140" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="I6hYbPyPmaMw-4eO5OVv-7" value="Detect pauses" style="whiteSpace=wrap;html=1;rounded=0;" vertex="1" parent="I6hYbPyPmaMw-4eO5OVv-35">
+          <mxGeometry x="10" y="70" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="I6hYbPyPmaMw-4eO5OVv-25" value="Decoding into PMC" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="I6hYbPyPmaMw-4eO5OVv-35">
+          <mxGeometry x="10" y="10" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="I6hYbPyPmaMw-4eO5OVv-33" value="end()" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="I6hYbPyPmaMw-4eO5OVv-7" target="I6hYbPyPmaMw-4eO5OVv-10">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="770" y="120.00000000000011" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="I6hYbPyPmaMw-4eO5OVv-32" value="data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="I6hYbPyPmaMw-4eO5OVv-25" target="I6hYbPyPmaMw-4eO5OVv-10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="I6hYbPyPmaMw-4eO5OVv-37" value="&lt;h1&gt;Curl&lt;/h1&gt;&lt;p&gt;Curl makes the final connection. It feeds the mp3 pipe it receives from the mp3 encoder. This means that in theory it *should* be a little faster if the pipe processes data properly because OpenAI will get the data as it is being said in real time. It&#39;ll let them preprocess before the request completes.&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="680" y="-70" width="300" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="I6hYbPyPmaMw-4eO5OVv-40" value="&lt;h1&gt;Detect pauses...&lt;br&gt;&lt;/h1&gt;&lt;p&gt;In theory, I will have to stop the user from making 10 minute long pipes as this will break OpenAI which isn&#39;t good for anyone. Something will have to be done in order to stop processing or cancelling the request. I think I will implement a 90 second limit for chats on Discord where they will just get hard cut off but the request goes through anyway.&lt;br&gt;&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;spacing=5;spacingTop=-20;whiteSpace=wrap;overflow=hidden;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="685" y="170" width="290" height="160" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

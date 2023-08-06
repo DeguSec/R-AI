@@ -1,4 +1,7 @@
-import { User } from "discord.js";
+export type UserForBot = {
+    username: string,
+    discriminator: string,
+}
 
 export const stripBad = (text: string) => text.replace(/[^A-Za-z0-9]/g, "");
-export const convertUserForBot = (user: User) => `${stripBad(user.username)}${user.discriminator}`;
+export const convertUserForBot = (user: UserForBot) => `${stripBad(user.username)}${user.discriminator}`;

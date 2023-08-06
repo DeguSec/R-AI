@@ -2,10 +2,11 @@ import { Client, Partials } from "discord.js";
 import mongoose from "mongoose";
 import { EnvSecrets } from "./EnvSecrets";
 import { StrapListeners } from "./Listeners/_Listeners";
-import { AIPool } from "./AI/AIPool";
+import { AIPool } from "./AI/Base/AIPool";
 import { DbSeeder } from "./Database/Seeding/Seeder";
 import { CommonComponents, CommonComponentsPending } from "./CommonComponents";
-import { AITokenCounter } from "./AI/AITokenCounter";
+import { AITokenCounter } from "./AI/Base/AITokenCounter";
+import { AIVoicePool } from "./AI/Voice/AIVoicePool";
 
 
 async function main() {
@@ -42,23 +43,27 @@ async function main() {
             'GuildMessageReactions',
             'Guilds',
             'GuildMessageTyping',
-            'DirectMessageTyping'
+            'DirectMessageTyping',
+            'GuildVoiceStates',
         ]
     });
 
     console.log("Populating components");
-    const cc: CommonComponentsPending = { client, tokenCounter: new AITokenCounter() };
+
+    const cc: CommonComponentsPending = { 
+        client, 
+        tokenCounter: new AITokenCounter(), 
+        vAis: new AIVoicePool() 
+    };
+
     new AIPool(cc);
-    //await ais.populate();
 
     // Strap client with listeners 
     console.log("Strapping listeners");
     StrapListeners(cc as CommonComponents);
 
-    await client.login(EnvSecrets.getSecretOrThrow<string>('TOKEN'));
+    await client.login(EnvSecrets.getSecretKeyOrThrow('TOKEN'));
     console.log("Connected to Discord");
 }
 
-main() //.catch((reason) => {
-//     console.log(reason);
-// });
+main();

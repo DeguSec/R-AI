@@ -1,21 +1,14 @@
 import { AxiosResponse } from "axios";
-import { Configuration, CreateChatCompletionRequest, CreateChatCompletionResponse, OpenAIApi } from "openai";
-import { ChatCompletionModel, IChatCompletionEntity, IChatCompletionEntityDBO } from "../Database/Models/AIProxy/ChatCompletion.model";
-import { EnvSecrets } from "../EnvSecrets";
-import { sleep } from "../Functions/Sleep";
-
-const configuration = new Configuration({
-    apiKey: EnvSecrets.getSecretOrThrow<string>('API_KEY'),
-});
-
-const openai = new OpenAIApi(configuration);
-
+import { CreateChatCompletionRequest, CreateChatCompletionResponse } from "openai";
+import { ChatCompletionModel, IChatCompletionEntity, IChatCompletionEntityDBO } from "../../Database/Models/AIProxy/ChatCompletion.model";
+import { sleep } from "../../Functions/Sleep";
+import { openai } from "../OpenAI";
 
 const MAX_RETRIES = 7;
 const waitingFunction = (x: number) => x ** 2;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type chatCompletionType = AxiosResponse<CreateChatCompletionResponse, any>;
+export type chatCompletionType = AxiosResponse<CreateChatCompletionResponse, any>;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const openAICall = async (dbo: IChatCompletionEntityDBO): Promise<{ success: boolean, content?: chatCompletionType, error?: any }> => {
@@ -128,3 +121,5 @@ export class AIProxy {
         }
     }
 }
+
+export const proxy = new AIProxy();

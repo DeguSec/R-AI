@@ -19,5 +19,24 @@
         "mode": "auto"
       }
     ],
-    "eslint.validate": ["javascript", "typescript", "javascriptreact", "typescriptreact"]
+    "eslint.validate": [
+      "javascript",
+      "typescript",
+      "javascriptreact",
+      "typescriptreact"
+    ],
+    "files.eol": "\r\n",
+    "javascript.preferences.importModuleSpecifier": "relative",
+    "javascript.preferences.importModuleSpecifierEnding": "minimal",
+    "typescript.preferences.importModuleSpecifier": "relative",
+    "typescript.preferences.importModuleSpecifierEnding": "minimal",
+    "spellright.language": [
+      "en-US-10-1."
+    ],
+    "spellright.documentTypes": [
+      "markdown",
+      "latex",
+      "plaintext",
+      "typescript"
+    ]
 }

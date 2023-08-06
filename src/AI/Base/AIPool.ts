@@ -1,6 +1,6 @@
-import { CommonComponents, CommonComponentsPending } from "../CommonComponents";
-import { ChannelModel, IChannelEntityDBO } from "../Database/Models/Channel.model";
-import { IMessageEntityDBO, MessagesModel } from "../Database/Models/Messages.model";
+import { CommonComponents, CommonComponentsPending } from "../../CommonComponents";
+import { ChannelModel, IChannelEntityDBO } from "../../Database/Models/Channel.model";
+import { IMessageEntityDBO, MessagesModel } from "../../Database/Models/Messages.model";
 import { AIController } from "./AIController";
 
 export class AIPool {
@@ -52,7 +52,6 @@ export class AIPool {
             // basically give up
 
             console.log(`There was an error with: ${enabledChannel}`);
-            //console.trace(error);
 
             await this.disable(enabledChannel.channel);
         }
@@ -99,11 +98,7 @@ export class AIPool {
             const ai = new AIController(this.cc, channel);
             await ai.strapPersonality();
             await ai.runAfterCreatingNewPersonality();
-
-            //await this.strap(ai);
             this.pool.set(channelID, ai);
-
-
         } catch {
             return;
         }
