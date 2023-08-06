@@ -4,6 +4,7 @@ import { ProfanityOption, ResultReason, SpeechConfig, SpeechSynthesisOutputForma
 import { exec } from "node:child_process";
 import { Readable } from "node:stream";
 import { EnvSecrets } from "../../EnvSecrets";
+import { quote }  from "shell-quote";
 
 // keys
 const apiKey = EnvSecrets.getSecretKeyOrThrow('API_KEY');
@@ -18,7 +19,17 @@ export const PacketTime = 60;
 export const MaxMumbleTime = 28_000; // for the sake of not going over Open AI
 
 export const getExecCurl = () => {
-    return exec(`curl https://api.openai.com/v1/audio/transcriptions -H "Authorization: Bearer ${apiKey}" -H "Content-Type: multipart/form-data" -F file="@-;filename=0.mp3" -F model="whisper-1"`)
+    return exec(
+        quote(
+            [
+                `curl https://api.openai.com/v1/audio/transcriptions`,
+                `-H`, `Authorization: Bearer ${apiKey}`,
+                `-H`, "Content-Type: multipart/form-data", 
+                `-F`, `file="@-;filename=0.mp3"`,
+                `-F`, `model="whisper-1"`
+            ]
+        )
+    );
 }
 
 export const curlFffmpegPipe = async (source: Readable): Promise<string> => {
