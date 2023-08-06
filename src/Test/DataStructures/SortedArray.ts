@@ -34,7 +34,9 @@ function sortedCheck(size: number) {
     }
 
     const saValues = sa.values;
-    normal.sort();
+    normal.sort((a, b) => {
+        return a - b;
+    });
 
     for (let index = 0; index < normal.length; index++) {
         const normalElement = normal[index];
