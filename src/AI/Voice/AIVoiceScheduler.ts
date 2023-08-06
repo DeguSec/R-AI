@@ -124,11 +124,5 @@ export class VoiceScheduler {
 
         console.log(this.audioPlayer.stop());
         this.audioPlayer.play(resource);
-
-
-        //console.log(this.voiceConnection.playOpusPacket(buff));
-
-        //this.voiceConnection.
-        //this.voiceConnection.dispatchAudio();
     }
 }
