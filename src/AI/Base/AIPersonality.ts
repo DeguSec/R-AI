@@ -57,7 +57,6 @@ export async function generateBot(debug: AIDebugger, channel: string, personalit
         personalityObject = new Personality(personalityEntity.initialSystemMessage, debug, channel);
 
     // kick into life
-    // await personalityObject.reset();
     return personalityObject;
 }
 
