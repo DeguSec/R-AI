@@ -69,8 +69,6 @@ export class VoicePersonality {
 
         // re add system message
         this.addSystemMessage(this.initialSystemMessage);
-
-        console.log("Added init message here.");
     }
     
     getInitialSystemMessage() {

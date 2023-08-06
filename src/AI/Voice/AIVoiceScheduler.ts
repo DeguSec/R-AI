@@ -77,12 +77,9 @@ export class VoiceScheduler {
     }
 
     async react() {
-        console.log("Reacting...");
-
         const start = Date.now();
 
         const chat = this.personality.getChatCompletion();
-        console.log(chat);
 
         const promise = await proxy.send(chat);
         const response = await promise.response;
@@ -100,29 +97,18 @@ export class VoiceScheduler {
             return
         }
 
-        console.log(`AI: ${aiContent}`);
         this.personality.addAssistantMessage(aiContent, start);
 
         this.speak(aiContent);
     }
 
     async speak(text: string) {
-        console.log("speaking");
-        
         // make call to get data
         const buff = await getTTS(text);
 
-        // send the opus packet
-
-        console.log("speaking 2", buff);
-
-        const resource = createAudioResource(Readable.from(buff), {
+        // complete the audio request
+        this.audioPlayer.play(createAudioResource(Readable.from(buff), {
             inputType: StreamType.OggOpus
-        });
-
-        console.log("made resource", resource);
-
-        console.log(this.audioPlayer.stop());
-        this.audioPlayer.play(resource);
+        }));
     }
 }
