@@ -6,9 +6,9 @@ import { Readable } from "node:stream";
 import { EnvSecrets } from "../../EnvSecrets";
 
 // keys
-const apiKey = EnvSecrets.getSecretOrThrow<string>('API_KEY');
-const SPEECH_KEY = EnvSecrets.getSecretOrThrow<string>("SPEECH_KEY");
-const SPEECH_REGION = EnvSecrets.getSecretOrThrow<string>("SPEECH_REGION");
+const apiKey = EnvSecrets.getSecretKeyOrThrow('API_KEY');
+const SPEECH_KEY = EnvSecrets.getSecretKeyOrThrow("SPEECH_KEY");
+const SPEECH_REGION = EnvSecrets.getSecretKeyOrThrow("SPEECH_REGION");
 
 // Audio constants
 export const bitRate = 48000;
@@ -57,6 +57,7 @@ export const curlFffmpegPipe = async (source: Readable): Promise<string> => {
 const speechConfig = SpeechConfig.fromSubscription(SPEECH_KEY, SPEECH_REGION);
 speechConfig.speechSynthesisOutputFormat = SpeechSynthesisOutputFormat.Ogg48Khz16BitMonoOpus;
 speechConfig.speechSynthesisVoiceName = "en-US-JennyNeural"; 
+//speechConfig.speechSynthesisVoiceName = "pl-PL-AgnieszkaNeural"; 
 speechConfig.setProfanity(ProfanityOption.Raw);
 
 // Create the speech synthesizer.

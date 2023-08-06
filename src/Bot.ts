@@ -62,7 +62,7 @@ async function main() {
     console.log("Strapping listeners");
     StrapListeners(cc as CommonComponents);
 
-    await client.login(EnvSecrets.getSecretOrThrow<string>('TOKEN'));
+    await client.login(EnvSecrets.getSecretKeyOrThrow('TOKEN'));
     console.log("Connected to Discord");
 }
 
