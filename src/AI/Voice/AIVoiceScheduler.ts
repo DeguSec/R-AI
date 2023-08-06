@@ -1,4 +1,4 @@
-import { GuildMember, VoiceChannel } from "discord.js";
+import { GuildMember } from "discord.js";
 import { AIDebugger } from "../Base/AIDebugger";
 import { CommonComponents } from "../../CommonComponents";
 import { AIVoiceUser } from "./AIVoiceUser";
@@ -7,6 +7,9 @@ import { stripBad } from "../../Functions/UserFunctions";
 import { VoicePersonality } from "./AIVoicePersonality";
 import { proxy } from "../Base/AIProxy";
 import { extractResponse } from "../../Functions/ExtractResponse";
+import { getTTS } from "./VoiceProcessing";
+import { AudioPlayer, StreamType, VoiceConnection, createAudioResource } from "@discordjs/voice";
+import { Readable } from "stream";
 
 const scheduling = 3000;
 
@@ -25,11 +28,20 @@ export class VoiceScheduler {
     debugger: AIDebugger;
     cc: CommonComponents;
 
-    constructor(channel: VoiceChannel, cc: CommonComponents) {
+    // to play audio
+    voiceConnection: VoiceConnection;
+    audioPlayer: AudioPlayer;
+
+    constructor(cc: CommonComponents, voiceConnection: VoiceConnection) {
         this.cc = cc;
 
-        this.debugger = new AIDebugger(cc);
+        // audio
+        this.voiceConnection = voiceConnection;
+        this.audioPlayer = new AudioPlayer();
+        voiceConnection.subscribe(this.audioPlayer);
 
+        // ai
+        this.debugger = new AIDebugger(cc);
         this.personality = new VoicePersonality(DEFAULT_PERSONALITY_STRING, this.debugger);
     }
 
@@ -90,5 +102,33 @@ export class VoiceScheduler {
 
         console.log(`AI: ${aiContent}`);
         this.personality.addAssistantMessage(aiContent, start);
+
+        this.speak(aiContent);
+    }
+
+    async speak(text: string) {
+        console.log("speaking");
+        
+        // make call to get data
+        const buff = await getTTS(text);
+
+        // send the opus packet
+
+        console.log("speaking 2", buff);
+
+        const resource = createAudioResource(Readable.from(buff), {
+            inputType: StreamType.OggOpus
+        });
+
+        console.log("made resource", resource);
+
+        console.log(this.audioPlayer.stop());
+        this.audioPlayer.play(resource);
+
+
+        //console.log(this.voiceConnection.playOpusPacket(buff));
+
+        //this.voiceConnection.
+        //this.voiceConnection.dispatchAudio();
     }
 }

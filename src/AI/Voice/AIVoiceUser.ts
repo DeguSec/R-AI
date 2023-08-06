@@ -79,5 +79,8 @@ export class AIVoiceUser {
         console.log(`${this.guildMember.user.username} : ${text}`);
 
         this.convertedMessagesListener(messageTime, convertUserForBot(this.guildMember.user), text);
+
+        // speak
+        
     }
 }

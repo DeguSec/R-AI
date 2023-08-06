@@ -18,14 +18,16 @@ export class AIVoice {
     checkForUsersInterval: NodeJS.Timer;
     aiVoiceScheduler: VoiceScheduler;
 
+    aiVoicePackets: Array<Buffer> = [];
+    // aiVoiceLoop: NodeJS.Timer;
+    currentlyProcessingVoicePackets = false;
+
     constructor(channel: VoiceChannel, guild: Guild, cc: CommonComponents) {
         if(!cc.client.user)
             throw new Error("AIVoice fail: !cc.client.user");
 
         this.cc = cc;
         this.channel = channel;
-
-        this.aiVoiceScheduler = new VoiceScheduler(channel, cc);
 
         this.voiceConnection = joinVoiceChannel({
             channelId: channel.id,
@@ -38,6 +40,9 @@ export class AIVoice {
         this.checkForUsersInterval = setInterval(() => this.checkForUsers(), seekTime);
         this.subscribeAll();
 
+        // this.aiVoiceLoop = setInterval(() => this.processSpeakingPackets(), 1000);
+
+        this.aiVoiceScheduler = new VoiceScheduler(cc, this.voiceConnection);
     }
 
     /**
@@ -71,4 +76,28 @@ export class AIVoice {
             this.cc.vAis.disconnected(this.channel.id);
         }
     }
+
+    // private processSpeakingPackets() {
+    //     if(this.currentlyProcessingVoicePackets)
+    //         return;
+        
+    //     // block execution
+    //     this.currentlyProcessingVoicePackets = true;
+
+    //     // move packets off the stack
+    //     const processingVoicePackets: Array<Buffer> = this.aiVoicePackets;
+    //     this.aiVoicePackets = [];
+
+    //     // I assume this blocks?
+    //     processingVoicePackets.forEach((packet) => {
+    //         this.voiceConnection.playOpusPacket(packet);
+    //     });
+
+    //     // re enable execution
+    //     this.currentlyProcessingVoicePackets = false;
+    // }
+
+    // addToBuffer(buff: Buffer) {
+    //     this.aiVoicePackets.push(buff);
+    // }
 }
