@@ -39,8 +39,15 @@ function sortedCheck(size: number) {
     for (let index = 0; index < normal.length; index++) {
         const normalElement = normal[index];
         const saElement = saValues[index];
+        const assertion = normalElement == saElement;
+
+        if(!assertion) {
+            console.error("Assertion failed", normalElement, saElement);
+            console.error(sa);
+            console.error(normal);
+        }
         
-        assert.isTrue(normalElement == saElement);
+        assert.isTrue(assertion);
     }
 }
 

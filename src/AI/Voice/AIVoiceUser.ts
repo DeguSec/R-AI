@@ -71,8 +71,5 @@ export class AIVoiceUser {
         const text = await curlFffmpegPipe(Readable.from(data));
 
         this.convertedMessagesListener(messageTime, convertUserForBot(this.guildMember.user), text);
-
-        // speak
-
     }
 }
