@@ -11,7 +11,7 @@
     "mongoose": "^7.4.1",
     "openai": "^3.3.0",
     "shell-quote": "^1.8.1",
-    "sodium-native": "^4.0.1"
+    "sodium-native": "^4.0.4"
   },
   "devDependencies": {
     "@types/chai": "^4.3.5",
