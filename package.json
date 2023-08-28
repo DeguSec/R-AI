@@ -4,7 +4,7 @@
     "@discordjs/voice": "^0.16.0",
     "@types/shell-quote": "^1.7.1",
     "bson": "^5.3.0",
-    "discord.js": "^14.12.1",
+    "discord.js": "^14.13.0",
     "dotenv": "^16.3.1",
     "fluent-ffmpeg": "^2.1.2",
     "microsoft-cognitiveservices-speech-sdk": "^1.31.0",
