@@ -14,7 +14,7 @@
     "sodium-native": "^4.0.4"
   },
   "devDependencies": {
-    "@types/chai": "^4.3.5",
+    "@types/chai": "^4.3.6",
     "@types/fluent-ffmpeg": "^2.1.21",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.4.8",
