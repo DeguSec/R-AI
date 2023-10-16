@@ -9,7 +9,7 @@
     "fluent-ffmpeg": "^2.1.2",
     "microsoft-cognitiveservices-speech-sdk": "^1.32.0",
     "mongoose": "^7.5.0",
-    "openai": "^3.3.0",
+    "openai": "^4.12.1",
     "shell-quote": "^1.8.1",
     "sodium-native": "^4.0.4"
   },
