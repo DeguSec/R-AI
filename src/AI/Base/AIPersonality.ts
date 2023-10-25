@@ -1,8 +1,8 @@
-import { ChatCompletionRequestMessage } from "openai";
 import { AIDebugger } from "./AIDebugger";
 import { IPersonalitiesEntity, PersonalitiesModel } from "../../Database/Models/Personalities.model";
 import { MessagesModel } from "../../Database/Models/Messages.model";
 import { SyncPersonality } from "./AISyncPersonality";
+import { ChatCompletionMessageParam } from "openai/resources";
 
 export const DEFAULT = "Rchan";
 
@@ -14,7 +14,7 @@ export class Personality extends SyncPersonality {
     /**
      * this will throw an error if an empty content is passed
      */
-    override async addMessageObject(messageObject: ChatCompletionRequestMessage) {
+    override async addMessageObject(messageObject: ChatCompletionMessageParam) {
         super.addMessageObject(messageObject); 
         await new MessagesModel({ channel: this.channel, content: messageObject }).save();
     }

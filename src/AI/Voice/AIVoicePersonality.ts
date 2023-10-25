@@ -1,9 +1,9 @@
-import { ChatCompletionRequestMessage, ChatCompletionRequestMessageRoleEnum, CreateChatCompletionRequest } from "openai";
 import { AIDebugger } from "../Base/AIDebugger"
 import { SortedArray } from "../../DataStructures/SortedArray";
+import { ChatCompletionCreateParamsNonStreaming, ChatCompletionMessageParam, ChatCompletionRole } from "openai/resources";
 
 export class VoicePersonality {
-    messages: SortedArray<number, ChatCompletionRequestMessage> = new SortedArray<number, ChatCompletionRequestMessage> ();
+    messages: SortedArray<number, ChatCompletionMessageParam> = new SortedArray<number, ChatCompletionMessageParam> ();
     
     debug: AIDebugger;
 
@@ -26,27 +26,27 @@ export class VoicePersonality {
     }
 
     addAssistantMessage(message: string, time: number) {
-        this.addMessage(ChatCompletionRequestMessageRoleEnum.Assistant, message, time, "assistant");
+        this.addMessage("assistant", message, time, "assistant");
     }
 
     addUserMessage(message: string, name: string, time: number) {
-        this.addMessage(ChatCompletionRequestMessageRoleEnum.User, message,time, name);
+        this.addMessage("user", message, time, name);
     }
     
     addSystemMessage(message: string, time?: number): void {
-        this.addMessage(ChatCompletionRequestMessageRoleEnum.System, message, time ? time : Date.now(), undefined);
+        this.addMessage("system", message, time ? time : Date.now(), undefined);
     }
 
-    addMessage(role: ChatCompletionRequestMessageRoleEnum, content: string, time: number, name?: string) {
+    addMessage(role: ChatCompletionRole, content: string, time: number, name?: string) {
         const messageObject = { role, content, name };
         this.addMessageObject(messageObject, time);
     }
 
-    addMessageObject(messageObject: ChatCompletionRequestMessage, time: number) {
+    addMessageObject(messageObject: ChatCompletionMessageParam, time: number) {
         this.messages.insert(time, messageObject);
     }
 
-    getChatCompletion(): CreateChatCompletionRequest {
+    getChatCompletion(): ChatCompletionCreateParamsNonStreaming {
         this.log(this.messages);
         return {
             model: "gpt-3.5-turbo",
@@ -77,7 +77,7 @@ export class VoicePersonality {
     
     countUserMessages() {
         return this.messages.values
-            .filter((message) => message.role == ChatCompletionRequestMessageRoleEnum.User)
+            .filter((message) => message.role == "user")
             .length
     }
 }

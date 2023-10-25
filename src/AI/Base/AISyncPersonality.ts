@@ -1,7 +1,6 @@
 
-import { ChatCompletionMessageParam, ChatCompletionRole } from "openai/resources";
+import { ChatCompletionCreateParamsNonStreaming, ChatCompletionMessageParam, ChatCompletionRole } from "openai/resources";
 import { AIDebugger } from "./AIDebugger";
-import { ChatCompletionCreateParamsBase } from "openai/resources/chat/completions";
 
 /**
  * This personality doesn't save to the database or do anything weird with databases
@@ -67,7 +66,7 @@ export class SyncPersonality {
         this.messages.push(messageObject);
     }
 
-    getChatCompletion(): ChatCompletionCreateParamsBase {
+    getChatCompletion(): ChatCompletionCreateParamsNonStreaming {
         this.log(this.messages);
         return {
             model: "gpt-3.5-turbo",

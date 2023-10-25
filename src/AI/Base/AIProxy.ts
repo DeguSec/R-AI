@@ -1,4 +1,4 @@
-import { ChatCompletion } from "openai/resources";
+import { ChatCompletion, ChatCompletionCreateParamsNonStreaming } from "openai/resources";
 import { ChatCompletionModel, IChatCompletionEntity, IChatCompletionEntityDBO } from "../../Database/Models/AIProxy/ChatCompletion.model";
 import { sleep } from "../../Functions/Sleep";
 import { openai } from "../OpenAI";
@@ -6,15 +6,27 @@ import { openai } from "../OpenAI";
 const MAX_RETRIES = 7;
 const waitingFunction = (x: number) => x ** 2;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type chatCompletionType = ChatCompletion;
 
+
+type openAICallReturnSuccess = {
+    success: true,
+    content: chatCompletionType
+}
+
+type openAICallReturnFail = {
+    success: false,
+    error: unknown,
+}
+
+export type openAICallReturn = Promise<openAICallReturnSuccess | openAICallReturnFail>
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const openAICall = async (dbo: IChatCompletionEntityDBO): Promise<{ success: boolean, content?: chatCompletionType, error?: any }> => {
-    const unstring = JSON.parse(dbo.content);
+const openAICall = async (dbo: IChatCompletionEntityDBO): openAICallReturn => {
+    const unstring: ChatCompletionCreateParamsNonStreaming = JSON.parse(dbo.content);
 
     try {
-        const req = await openai.createChatCompletion(unstring);
+        const req = await openai.chat.completions.create(unstring);
         return {
             success: true,
             content: req,
@@ -62,11 +74,17 @@ export class AIProxy {
             const call = await openAICall(res);
 
             // if either cancelled before return or completed successfully, populate the token schema
-            if (call.content?.data.usage)
-                res.chatCompletionTokenSchema = {
-                    prompt_tokens: call.content.data.usage.prompt_tokens,
-                    completion_tokens: call.content.data.usage.completion_tokens,
-                };
+            if (call.success) {
+                if(call.content.usage)
+                    res.chatCompletionTokenSchema = {
+                        prompt_tokens: call.content.usage.prompt_tokens,
+                        completion_tokens: call.content.usage.completion_tokens,
+                    };
+
+                else {
+                    console.log("chat had no completion!!");
+                }
+            }
 
             // check if it was cancelled after calls if the call took a long time
             if ((res as IChatCompletionEntityDBO).status == "Cancelled") {
@@ -107,7 +125,7 @@ export class AIProxy {
     }
 
 
-    async send(completion: CreateChatCompletionRequest): Promise<AIProxyResponse> {
+    async send(completion: ChatCompletionCreateParamsNonStreaming): Promise<AIProxyResponse> {
         const res = await new ChatCompletionModel({
             status: "Pending",
             content: JSON.stringify(completion),
