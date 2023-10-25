@@ -16,7 +16,7 @@ export class AIVoiceUser {
     guildMember: GuildMember;
 
     // timer which 
-    dispatchTimer?: NodeJS.Timer;
+    dispatchTimer?: NodeJS.Timeout;
 
     // the time when the user started to talk
     firstMessageTime?: number;
