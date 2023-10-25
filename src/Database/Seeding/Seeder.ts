@@ -11,6 +11,7 @@ export class DbSeeder {
     public static async UnSeedDb(): Promise<void> {
         try {
             await PersonalitiesModel.collection.drop();
+            console.log("Db dropped");
         } catch {
             console.log("Didn't unseed Personalities. Maybe already dropped?");
         }
