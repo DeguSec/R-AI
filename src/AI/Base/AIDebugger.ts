@@ -1,6 +1,5 @@
-import { CreateChatCompletionResponse } from "openai";
-import { AxiosResponse } from "axios";
 import { CommonComponents } from "../../CommonComponents";
+import { ChatCompletion } from "openai/resources";
 
 // token ration: 0.002 / 1000
 const ratio = {cost: 2, per: 1000000}
@@ -36,9 +35,9 @@ export class AIDebugger {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    logResponse(res: AxiosResponse<CreateChatCompletionResponse, any>) {
+    logResponse(res: ChatCompletion) {
         // log tokens
-        const data = res.data.usage;
+        const data = res.usage;
         
         if(!data) 
             return

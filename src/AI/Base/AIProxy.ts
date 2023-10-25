@@ -1,5 +1,4 @@
-import { AxiosResponse } from "axios";
-import { CreateChatCompletionRequest, CreateChatCompletionResponse } from "openai";
+import { ChatCompletion } from "openai/resources";
 import { ChatCompletionModel, IChatCompletionEntity, IChatCompletionEntityDBO } from "../../Database/Models/AIProxy/ChatCompletion.model";
 import { sleep } from "../../Functions/Sleep";
 import { openai } from "../OpenAI";
@@ -8,11 +7,11 @@ const MAX_RETRIES = 7;
 const waitingFunction = (x: number) => x ** 2;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type chatCompletionType = AxiosResponse<CreateChatCompletionResponse, any>;
+export type chatCompletionType = ChatCompletion;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const openAICall = async (dbo: IChatCompletionEntityDBO): Promise<{ success: boolean, content?: chatCompletionType, error?: any }> => {
-    const unstring: CreateChatCompletionRequest = JSON.parse(dbo.content);
+    const unstring = JSON.parse(dbo.content);
 
     try {
         const req = await openai.createChatCompletion(unstring);
