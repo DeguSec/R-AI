@@ -1,18 +1,16 @@
 import { Channel, Message, TextChannel, Typing } from "discord.js";
-import { CheckSelfInteract } from "../Functions/CheckSelfInteract";
-import { SeparateMessages } from "../Functions/SeparateMessages";
-import { Personality, PersonalityFactory } from "./AIPersonality";
+import { CheckSelfInteract } from "../../Functions/CheckSelfInteract";
+import { SeparateMessages } from "../../Functions/SeparateMessages";
+import { Personality, generateBot, generateCustomBot } from "./AIPersonality";
 import { AIDebugger } from "./AIDebugger";
-import { CommonComponents } from "../CommonComponents";
-import { IMessageEntity } from "../Database/Models/Messages.model";
-import { ChannelModel } from "../Database/Models/Channel.model";
-import { AIProxy } from "./AIProxy";
-import { convertUserForBot } from "../Functions/UserFunctions";
-import { DEFAULT_IGNORE_STRING } from "../Defaults";
-import { IChatCompletionEntityDBO } from "../Database/Models/AIProxy/ChatCompletion.model";
-
-const personalityFactory = new PersonalityFactory();
-const proxy = new AIProxy();
+import { CommonComponents } from "../../CommonComponents";
+import { IMessageEntity } from "../../Database/Models/Messages.model";
+import { ChannelModel } from "../../Database/Models/Channel.model";
+import { convertUserForBot } from "../../Functions/UserFunctions";
+import { DEFAULT_IGNORE_STRING } from "../../Defaults";
+import { IChatCompletionEntityDBO } from "../../Database/Models/AIProxy/ChatCompletion.model";
+import { proxy } from "./_Base";
+import { extractResponse } from "../../Functions/ExtractResponse";
 
 export interface AIMessage {
     message: string,
@@ -89,9 +87,9 @@ export class AIController {
      */
     async strapPersonality(personalityString?: string) {
         if (!personalityString)
-            this.personality = await personalityFactory.generateBot(this.aiDebugger, this.channel.id);
+            this.personality = await generateBot(this.aiDebugger, this.channel.id);
         else
-            this.personality = await personalityFactory.generateCustomBot(this.aiDebugger, this.channel.id, personalityString);
+            this.personality = await generateCustomBot(this.aiDebugger, this.channel.id, personalityString);
     }
 
     /**
@@ -239,6 +237,7 @@ export class AIController {
         this.currentDBO = promise.dbObject;
 
         const res = await promise.response;
+        this.currentDBO = undefined;
 
         clearInterval(requestTyping);
 
@@ -254,7 +253,7 @@ export class AIController {
 
         this.aiDebugger.logResponse(res.response);
         // get the content from request
-        const resContent = res.response.data.choices[0].message?.content;
+        const resContent = extractResponse(res.response);
         if (!resContent)
             return;
 
@@ -276,14 +275,14 @@ export class AIController {
     }
 
     async changePersonality(personality: string) {
-        await this.personality?.deleteDB();
-        this.personality = await personalityFactory.generateBot(this.aiDebugger, this.channel.id, personality);
+        await this.personality?.deleteMessages();
+        this.personality = await generateBot(this.aiDebugger, this.channel.id, personality);
         await this.runAfterCreatingNewPersonality();
     }
 
     async replacePrompt(newPrompt: string) {
-        await this.personality?.deleteDB();
-        this.personality = await personalityFactory.generateCustomBot(this.aiDebugger, this.channel.id, newPrompt);
+        await this.personality?.deleteMessages();
+        this.personality = await generateCustomBot(this.aiDebugger, this.channel.id, newPrompt);
         await this.runAfterCreatingNewPersonality();
     }
 

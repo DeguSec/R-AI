@@ -7,6 +7,7 @@ import { ChannelEnable } from "./ChannelEnable";
 import { ChannelDisable } from "./ChannelDisable";
 import { CommonComponents } from "../CommonComponents";
 import { React } from "./React";
+import { Join } from "./Join";
 
 export interface RunnableCommand {
     name: string;
@@ -33,6 +34,7 @@ export const syncCommands: Array<Command> = [
     new ChannelEnable(),
     new ChannelDisable(),
     new React(),
+    new Join(),
 ];
 
 export const asyncCommands: Array<AsyncCommand> = [

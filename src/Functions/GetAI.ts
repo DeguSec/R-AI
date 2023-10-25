@@ -1,5 +1,5 @@
 import { TextBasedChannel } from "discord.js";
-import { AIController } from "../AI/AIController";
+import { AIController } from "../AI/Base/AIController";
 import { CommonComponents } from "../CommonComponents";
 
 export const GetAI = (cc: CommonComponents, channel?: TextBasedChannel | null): AIController | undefined => {
