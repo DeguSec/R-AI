@@ -15,7 +15,7 @@ export class AIVoice {
     voiceConnection: VoiceConnection;
     cc: CommonComponents
     vcUsers: Map<string, AudioReceiveStream> = new Map();
-    checkForUsersInterval: NodeJS.Timer;
+    checkForUsersInterval: NodeJS.Timeout;
     aiVoiceScheduler: VoiceScheduler;
 
     aiVoicePackets: Array<Buffer> = [];
