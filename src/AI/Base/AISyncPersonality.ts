@@ -1,4 +1,5 @@
-import { ChatCompletionRequestMessage, ChatCompletionRequestMessageRoleEnum, CreateChatCompletionRequest } from "openai";
+
+import { ChatCompletionCreateParamsNonStreaming, ChatCompletionMessageParam, ChatCompletionRole } from "openai/resources";
 import { AIDebugger } from "./AIDebugger";
 
 /**
@@ -6,7 +7,7 @@ import { AIDebugger } from "./AIDebugger";
  * @todo remove channel from requirements
  */
 export class SyncPersonality {
-    messages: Array<ChatCompletionRequestMessage> = [];
+    messages: Array<ChatCompletionMessageParam> = [];
     channel: string;
     protected initialSystemMessage: string;
     private _debug?: AIDebugger;
@@ -27,20 +28,20 @@ export class SyncPersonality {
 
     addAssistantMessage(message: string, name?: string) {
         this.log("assistant message added");
-        this.addMessage(ChatCompletionRequestMessageRoleEnum.Assistant, message, name);
+        this.addMessage("assistant", message, name);
     }
 
     addUserMessage(message: string, userId?: string) {
         this.log("user message added");
-        this.addMessage(ChatCompletionRequestMessageRoleEnum.User, message, userId);
+        this.addMessage("user", message, userId);
     }
 
     addSystemMessage(message: string) {
         this.log("system message added");
-        this.addMessage(ChatCompletionRequestMessageRoleEnum.System, message);
+        this.addMessage("system", message);
     }
 
-    addMessage(role: ChatCompletionRequestMessageRoleEnum, content: string, name?: string) {
+    addMessage(role: ChatCompletionRole, content: string, name?: string) {
         const messageObject = { role, content, name };
         this.addMessageObject(messageObject);
     }
@@ -48,7 +49,7 @@ export class SyncPersonality {
     /**
      * @param messageObject ChatCompletionRequestMessage 
      */
-    addMessageObject(messageObject: ChatCompletionRequestMessage) {
+    addMessageObject(messageObject: ChatCompletionMessageParam) {
         this.log("added object");
         this.log(messageObject);
 
@@ -65,7 +66,7 @@ export class SyncPersonality {
         this.messages.push(messageObject);
     }
 
-    getChatCompletion(): CreateChatCompletionRequest {
+    getChatCompletion(): ChatCompletionCreateParamsNonStreaming {
         this.log(this.messages);
         return {
             model: "gpt-3.5-turbo",
@@ -93,7 +94,7 @@ export class SyncPersonality {
 
     countUserMessages() {
         return this.messages
-            .filter((message) => message.role == ChatCompletionRequestMessageRoleEnum.User)
+            .filter((message) => message.role == "user")
             .length
     }
 }

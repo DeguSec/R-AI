@@ -1,6 +1,6 @@
-import { Configuration, OpenAIApi } from "openai";
+import OpenAI from "openai";
 import { EnvSecrets } from "../EnvSecrets";
 
-export const openai = new OpenAIApi(new Configuration({
+export const openai = new OpenAI({
     apiKey: EnvSecrets.getSecretKeyOrThrow('API_KEY')
-}));
+});
