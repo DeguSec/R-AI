@@ -1,5 +1,4 @@
 import { Client, Partials } from "discord.js";
-import mongoose from "mongoose";
 import { EnvSecrets } from "./EnvSecrets";
 import { StrapListeners } from "./Listeners/_Listeners";
 import { AIPool } from "./AI/Base/AIPool";
@@ -7,14 +6,13 @@ import { DbSeeder } from "./Database/Seeding/Seeder";
 import { CommonComponents, CommonComponentsPending } from "./CommonComponents";
 import { AITokenCounter } from "./AI/Base/AITokenCounter";
 import { AIVoicePool } from "./AI/Voice/AIVoicePool";
+import PrepDB from "./Functions/PrepDB";
 
 
 async function main() {
     console.log("Bot is starting...");
 
-    const db = await mongoose.connect(EnvSecrets.getSecretOrThrow<string>('DB_CONNECTION_STRING'), {
-        dbName: EnvSecrets.getSecretOrThrow<string>('DB_NAME'),
-    });
+    const db = await PrepDB();
 
     if (!db.connection)
         throw new Error("Database connection failed.");
@@ -23,12 +21,14 @@ async function main() {
         if (process.argv[2] == "seed") {
             console.log("Seeding");
             await DbSeeder.SeedDb();
+            await db.disconnect();
             return 0;
         }
 
         if (process.argv[2] == "unseed") {
             console.log("Unseeding");
             await DbSeeder.UnSeedDb();
+            await db.disconnect();
             return 0;
         }
     }

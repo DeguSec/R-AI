@@ -9,6 +9,18 @@
             "name": "Run yarn start",
             "request": "launch",
             "type": "node-terminal"
-        }
+        },
+        {
+            "command": "yarn run seed",
+            "name": "Seed the database",
+            "request": "launch",
+            "type": "node-terminal"
+        },
+        {
+            "command": "yarn run unseed",
+            "name": "Delete the database",
+            "request": "launch",
+            "type": "node-terminal"
+        },
     ]
 }

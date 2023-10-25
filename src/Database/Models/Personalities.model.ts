@@ -14,7 +14,7 @@ export interface IPersonality {
     _id?: string | null;
     Created?: Date | null;
     LastUpdated?: Date | null;
-    name: string;
+    name: string | "";
     initialSystemMessage: string;
 }
 
