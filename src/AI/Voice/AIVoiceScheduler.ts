@@ -8,7 +8,7 @@ import { VoicePersonality } from "./AIVoicePersonality";
 import { proxy } from "../Base/AIProxy";
 import { extractResponse } from "../../Functions/ExtractResponse";
 import { getTTS } from "./VoiceProcessing";
-import { AudioPlayer, StreamType, VoiceConnection, createAudioResource } from "@discordjs/voice";
+import { AudioPlayer, AudioPlayerStatus, StreamType, VoiceConnection, createAudioResource } from "@discordjs/voice";
 import { Readable } from "stream";
 import { sleep } from "../../Functions/Sleep";
 
@@ -82,7 +82,6 @@ export class VoiceScheduler {
 
     async react() {
         console.log("starting to react");
-        const start = Date.now();
 
         // check if this function is already running
         if(this.reacting)
@@ -92,18 +91,26 @@ export class VoiceScheduler {
 
         this.reacting = true;
 
-        // check if everyone has stopped talking (again)
-        // and also check if every user has been processed
-        while(this.userDataScheduling.size == 0 && !this.areUsersReady()) {
+        // here we want failure conditions:
+        // - check if anyone is talking
+        // - check if anyone hasn't been processed yet
+        // - check if the AI is still speaking
+        while(this.userDataScheduling.size != 0 || !this.areUsersReady() || this.isAISpeaking()) {
             console.log("array size: ", this.userDataScheduling.size);
-            console.log("ready?", this.areUsersReady())
-            // sleep for 1 second
+            console.log("ready? ", this.areUsersReady())
+            console.log("speaking?: ", this.isAISpeaking())
+
+            // sleep for 1 second until it clears up
             await sleep(1);
         }
 
+        // setting time here because otherwise messages time travel
+        const start = Date.now();
+
+        // get the chat completion for the current conversation.
         const chat = this.personality.getChatCompletion();
 
-        console.log("chat completion: ", chat);
+        console.log("chat", chat);
 
         const promise = await proxy.send(chat);
         const response = await promise.response;
@@ -116,8 +123,6 @@ export class VoiceScheduler {
 
         const aiContent = extractResponse(response.response);
 
-        // TODO: JSON TEST
-
         if(!aiContent) {
             console.error("there is no AI contnet");
             return
@@ -125,7 +130,7 @@ export class VoiceScheduler {
 
         this.personality.addAssistantMessage(aiContent, start);
 
-        // finish speaking before adding messages (blocked by this.reacting)
+        // finish speaking before adding messages (blocked by this.reacting higher up a little)
         await this.speak(aiContent);
 
         // done reacting
@@ -136,12 +141,16 @@ export class VoiceScheduler {
         // make call to get data
         const buff = await getTTS(text);
 
-        // complete the audio request
+        // complete the audio request and start playing
         this.audioPlayer.play(createAudioResource(Readable.from(buff), {
             inputType: StreamType.OggOpus
         }));
     }
 
+    /**
+     * 
+     * @returns all of the users currently in the room
+     */
     private getUsers() {
         const users: Array<AIVoiceUser> = [];
         this.users.forEach(user => users.push(user))
@@ -161,5 +170,13 @@ export class VoiceScheduler {
 
         // all users are ready
         return true
+    }
+
+    /**
+     * 
+     * @returns True if the AI is currently speaking
+     */
+    private isAISpeaking() {
+        return this.audioPlayer.state.status != AudioPlayerStatus.Idle;
     }
 }

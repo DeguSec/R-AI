@@ -72,10 +72,10 @@ export class AIVoiceUser {
         this.firstMessageTime = undefined;
 
         // get the text
-        const text = await curlFffmpegPipe(Readable.from(data));
+        const text = JSON.parse(await curlFffmpegPipe(Readable.from(data))) as {text: string};
 
         // call the listener with the converted text
-        this.convertedMessagesListener(messageTime, convertUserForBot(this.guildMember.user), text);
+        this.convertedMessagesListener(messageTime, convertUserForBot(this.guildMember.user), text.text);
 
         // concludes processing
         this.ready = true;
