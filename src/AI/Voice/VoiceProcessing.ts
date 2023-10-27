@@ -4,7 +4,7 @@ import { ProfanityOption, ResultReason, SpeechConfig, SpeechSynthesisOutputForma
 import { exec } from "node:child_process";
 import { Readable } from "node:stream";
 import { EnvSecrets } from "../../EnvSecrets";
-import { quote }  from "shell-quote";
+import { quote } from "shell-quote";
 
 // keys
 const apiKey = EnvSecrets.getSecretKeyOrThrow('API_KEY');
@@ -19,17 +19,14 @@ export const PacketTime = 60;
 export const MaxMumbleTime = 28_000; // for the sake of not going over Open AI
 
 export const getExecCurl = () => {
-    return exec(
-        quote(
-            [
-                `curl https://api.openai.com/v1/audio/transcriptions`,
-                `-H`, `Authorization: Bearer ${apiKey}`,
-                `-H`, "Content-Type: multipart/form-data", 
-                `-F`, `file="@-;filename=0.mp3"`,
-                `-F`, `model="whisper-1"`
-            ]
-        )
-    );
+    const command = 
+`curl https://api.openai.com/v1/audio/transcriptions 
+-H "Authorization: Bearer ${quote([apiKey])}"
+-H "Content-Type: multipart/form-data"
+-F file="@-;filename=0.mp3"
+-F model="whisper-1"
+`.replaceAll("\n", " ");
+    return exec(command);
 }
 
 export const curlFffmpegPipe = async (source: Readable): Promise<string> => {
@@ -53,7 +50,7 @@ export const curlFffmpegPipe = async (source: Readable): Promise<string> => {
         // I mean, most of the time, there's only 1 data chunk.
         // I haven't seen it do two chunks... I guess this is fine then.
         let text = "";
-    
+
         curl.stdout.on("data", (data: Buffer) => {
             text += data.toString();
         });
