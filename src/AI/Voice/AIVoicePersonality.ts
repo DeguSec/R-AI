@@ -39,6 +39,7 @@ export class VoicePersonality {
 
     addMessage(role: ChatCompletionRole, content: string, time: number, name?: string) {
         const messageObject = { role, content, name };
+        // console.log(messageObject);
         this.addMessageObject(messageObject, time);
     }
 

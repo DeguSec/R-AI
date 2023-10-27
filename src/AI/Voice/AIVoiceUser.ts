@@ -23,6 +23,9 @@ export class AIVoiceUser {
 
     convertedMessagesListener: AIVoiceUserListener;
 
+    // has the user voice been processed and is ready?
+    ready = true;
+
     constructor(guildMember: GuildMember, listener: AIVoiceUserListener) {
         this.guildMember = guildMember;
         this.convertedMessagesListener = listener;
@@ -36,6 +39,7 @@ export class AIVoiceUser {
     addData(data: Buffer) {
         const decodedOpus = opusEncoder.decode(data);
         this.awaitingData.push(decodedOpus);
+        this.ready = false;
 
         if(this.dispatchTimer)
             clearTimeout(this.dispatchTimer);
@@ -68,8 +72,12 @@ export class AIVoiceUser {
         this.firstMessageTime = undefined;
 
         // get the text
-        const text = await curlFffmpegPipe(Readable.from(data));
+        const text = JSON.parse(await curlFffmpegPipe(Readable.from(data))) as {text: string};
 
-        this.convertedMessagesListener(messageTime, convertUserForBot(this.guildMember.user), text);
+        // call the listener with the converted text
+        this.convertedMessagesListener(messageTime, convertUserForBot(this.guildMember.user), text.text);
+
+        // concludes processing
+        this.ready = true;
     }
 }
