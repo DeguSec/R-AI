@@ -10,6 +10,7 @@ import { extractResponse } from "../../Functions/ExtractResponse";
 import { getTTS } from "./VoiceProcessing";
 import { AudioPlayer, StreamType, VoiceConnection, createAudioResource } from "@discordjs/voice";
 import { Readable } from "stream";
+import { sleep } from "../../Functions/Sleep";
 
 const scheduling = 3000;
 
@@ -31,6 +32,9 @@ export class VoiceScheduler {
     // to play audio
     voiceConnection: VoiceConnection;
     audioPlayer: AudioPlayer;
+
+    // check if reacting
+    reacting = false;
 
     constructor(cc: CommonComponents, voiceConnection: VoiceConnection) {
         this.cc = cc;
@@ -77,9 +81,29 @@ export class VoiceScheduler {
     }
 
     async react() {
+        console.log("starting to react");
         const start = Date.now();
 
+        // check if this function is already running
+        if(this.reacting)
+            return;
+
+        console.log("continuing to react");
+
+        this.reacting = true;
+
+        // check if everyone has stopped talking (again)
+        // and also check if every user has been processed
+        while(this.userDataScheduling.size == 0 && !this.areUsersReady()) {
+            console.log("array size: ", this.userDataScheduling.size);
+            console.log("ready?", this.areUsersReady())
+            // sleep for 1 second
+            await sleep(1);
+        }
+
         const chat = this.personality.getChatCompletion();
+
+        console.log("chat completion: ", chat);
 
         const promise = await proxy.send(chat);
         const response = await promise.response;
@@ -92,6 +116,8 @@ export class VoiceScheduler {
 
         const aiContent = extractResponse(response.response);
 
+        // TODO: JSON TEST
+
         if(!aiContent) {
             console.error("there is no AI contnet");
             return
@@ -99,7 +125,11 @@ export class VoiceScheduler {
 
         this.personality.addAssistantMessage(aiContent, start);
 
-        this.speak(aiContent);
+        // finish speaking before adding messages (blocked by this.reacting)
+        await this.speak(aiContent);
+
+        // done reacting
+        this.reacting = false;
     }
 
     async speak(text: string) {
@@ -110,5 +140,26 @@ export class VoiceScheduler {
         this.audioPlayer.play(createAudioResource(Readable.from(buff), {
             inputType: StreamType.OggOpus
         }));
+    }
+
+    private getUsers() {
+        const users: Array<AIVoiceUser> = [];
+        this.users.forEach(user => users.push(user))
+
+        return users;
+    }
+
+    private areUsersReady() {
+        const users = this.getUsers();
+        for (let index = 0; index < users.length; index++) {
+            const user = users[index];
+
+            // user is not ready
+            if(!user.ready)
+                return false;
+        }
+
+        // all users are ready
+        return true
     }
 }
