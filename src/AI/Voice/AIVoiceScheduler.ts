@@ -113,7 +113,12 @@ export class VoiceScheduler {
         console.log("chat", chat);
 
         const promise = await proxy.send(chat);
+
+        console.log("got promise response");
+
         const response = await promise.response;
+
+        console.log("got response");
 
         if(!response.success || !response.response) {
             console.error("response not successful!");
@@ -128,9 +133,12 @@ export class VoiceScheduler {
             return
         }
 
+        console.log("gotten ai content");
+
         this.personality.addAssistantMessage(aiContent, start);
 
         // finish speaking before adding messages (blocked by this.reacting higher up a little)
+        console.log("speaking: ", aiContent);
         await this.speak(aiContent);
 
         // done reacting
