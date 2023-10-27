@@ -64,8 +64,8 @@ export const curlFffmpegPipe = async (source: Readable): Promise<string> => {
 // tts
 const speechConfig = SpeechConfig.fromSubscription(SPEECH_KEY, SPEECH_REGION);
 speechConfig.speechSynthesisOutputFormat = SpeechSynthesisOutputFormat.Ogg48Khz16BitMonoOpus;
-// speechConfig.speechSynthesisVoiceName = "en-US-JennyNeural"; 
-speechConfig.speechSynthesisVoiceName = "pl-PL-AgnieszkaNeural"; 
+speechConfig.speechSynthesisVoiceName = "en-US-JennyNeural"; 
+// speechConfig.speechSynthesisVoiceName = "pl-PL-AgnieszkaNeural"; 
 speechConfig.setProfanity(ProfanityOption.Raw);
 
 // Create the speech synthesizer.

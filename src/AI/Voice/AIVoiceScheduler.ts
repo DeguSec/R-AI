@@ -123,6 +123,7 @@ export class VoiceScheduler {
         if(!response.success || !response.response) {
             console.error("response not successful!");
             console.error(response.reason);
+            this.reacting = false;
             return;
         }
 
@@ -130,7 +131,8 @@ export class VoiceScheduler {
 
         if(!aiContent) {
             console.error("there is no AI contnet");
-            return
+            this.reacting = false;
+            return;
         }
 
         console.log("gotten ai content");
