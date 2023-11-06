@@ -354,6 +354,11 @@
   resolved "https://registry.yarnpkg.com/@types/webidl-conversions/-/webidl-conversions-7.0.0.tgz#2b8e60e33906459219aa587e9d1a612ae994cfe7"
   integrity sha512-xTE1E+YF4aWPJJeUzaZI5DRntlkY3+BCVJi0axFptnjGmAoWxkyREIh/XMrfxVLejwQxMCfDXdICo0VLxThrog==
 
+"@types/webrtc@^0.0.37":
+  version "0.0.37"
+  resolved "https://registry.yarnpkg.com/@types/webrtc/-/webrtc-0.0.37.tgz#693663dc5de8c6c85406f6cf5661ccc1e84e4c68"
+  integrity sha512-JGAJC/ZZDhcrrmepU4sPLQLIOIAgs5oIK+Ieq90K8fdaNMhfdfqmYatJdgif1NDQtvrSlTOGJDUYHIDunuufOg==
+
 "@types/whatwg-url@^8.2.1":
   version "8.2.2"
   resolved "https://registry.yarnpkg.com/@types/whatwg-url/-/whatwg-url-8.2.2.tgz#749d5b3873e845897ada99be4448041d4cc39e63"
@@ -1665,11 +1670,12 @@ micromatch@4.0.5, micromatch@^4.0.4:
     braces "^3.0.2"
     picomatch "^2.3.1"
 
-microsoft-cognitiveservices-speech-sdk@^1.32.0:
-  version "1.32.0"
-  resolved "https://registry.yarnpkg.com/microsoft-cognitiveservices-speech-sdk/-/microsoft-cognitiveservices-speech-sdk-1.32.0.tgz#bc33cf2fd98aea521179e7be45bd744c0a90c09d"
-  integrity sha512-TQqCIytCvW7x8MB2UT8DfyZkIjO34CSpy0zYlbQChkYWrYNzGgMIAA3uTGuYGj8hb0xMQBwRfqyAc5sA2VRgjQ==
+microsoft-cognitiveservices-speech-sdk@^1.33.0:
+  version "1.33.0"
+  resolved "https://registry.yarnpkg.com/microsoft-cognitiveservices-speech-sdk/-/microsoft-cognitiveservices-speech-sdk-1.33.0.tgz#d4f2bad1b75e5a13c8e5ecec936ef30585057239"
+  integrity sha512-1I9tDcUaR5PJ3V9m8ecfKaPhPbYpadBEpOHi7E8VS6b5VQYoCllkAQ34WCBs05EI2Zo+8VuYXq7ClMS/IVXY/A==
   dependencies:
+    "@types/webrtc" "^0.0.37"
     agent-base "^6.0.1"
     bent "^7.3.12"
     https-proxy-agent "^4.0.0"
