@@ -7,7 +7,7 @@
     "discord.js": "^14.13.0",
     "dotenv": "^16.3.1",
     "fluent-ffmpeg": "^2.1.2",
-    "microsoft-cognitiveservices-speech-sdk": "^1.32.0",
+    "microsoft-cognitiveservices-speech-sdk": "^1.33.1",
     "mongoose": "^7.6.3",
     "openai": "^4.14.1",
     "shell-quote": "^1.8.1",
