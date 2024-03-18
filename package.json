@@ -8,7 +8,7 @@
     "dotenv": "^16.4.2",
     "fluent-ffmpeg": "^2.1.2",
     "microsoft-cognitiveservices-speech-sdk": "^1.34.0",
-    "mongoose": "^8.0.3",
+    "mongoose": "^8.2.2",
     "openai": "^4.14.1",
     "shell-quote": "^1.8.1",
     "sodium-native": "^4.0.5"
