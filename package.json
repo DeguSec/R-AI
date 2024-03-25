@@ -29,7 +29,7 @@
     "mocha": "^10.2.0",
     "sinon": "^17.0.1",
     "ts-node": "^10.9.1",
-    "typescript": "^5.2.2"
+    "typescript": "^5.4.3"
   },
   "scripts": {
     "test": "rm -r dist/; tsc && mocha \"./dist/Test/**/*.js\"",
