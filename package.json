@@ -14,14 +14,14 @@
     "sodium-native": "^4.0.5"
   },
   "devDependencies": {
-    "@types/chai": "^4.3.9",
+    "@types/chai": "^5.0.0",
     "@types/fluent-ffmpeg": "^2.1.24",
     "@types/mocha": "^10.0.6",
     "@types/node": "^20.11.17",
     "@types/sinon": "^17.0.3",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
-    "chai": "^4.3.10",
+    "chai": "^5.1.2",
     "eslint": "^8.57.1",
     "eslint-plugin-unused-imports": "^3.0.0",
     "husky": "^9.0.11",
